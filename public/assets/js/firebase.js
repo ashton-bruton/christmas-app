@@ -40,7 +40,7 @@ function addUser(userId, firstName, lastName, email, status, character) {
   // Example usage
 //   addUser("userId1", "John", "Doe", "john.doe@example.com");
 
-import { get, ref } from "firebase/database";
+// import { get, ref } from "firebase/database";
 
 function getUser(userId) {
   const userRef = ref(database, 'users/' + userId);
