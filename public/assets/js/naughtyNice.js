@@ -4,11 +4,13 @@
   
 //   // Example usage
 //   console.log(getNaughtyNice()); // Randomly returns "nice" or "naughty"
+
+const a = "../"
   
   // Function to fetch data from a JSON file
-async function fetchJSON(file) {
+async function fetchJSON(filePath) {
     try {
-      const response = await fetch(file);
+      const response = await fetch(`../json/${filePath}`);
       const data = await response.json();
       return data.characters; // Return the "characters" array
     } catch (error) {
@@ -28,10 +30,10 @@ async function fetchJSON(file) {
     const result = getNaughtyNice(); // "nice" or "naughty"
   
     if (result === "nice") {
-      const heroes = await fetchJSON("../json/heroes.json");
+      const heroes = await fetchJSON("heroes.json");
       return getRandomValue(heroes); // Random hero
     } else {
-      const villains = await fetchJSON("../json/villains.json");
+      const villains = await fetchJSON("villains.json");
       return getRandomValue(villains); // Random villain
     }
   }
