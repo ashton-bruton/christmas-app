@@ -4,13 +4,17 @@
   
 //   // Example usage
 //   console.log(getNaughtyNice()); // Randomly returns "nice" or "naughty"
-
-const a = "../"
   
   // Function to fetch data from a JSON file
 async function fetchJSON(filePath) {
     try {
       const response = await fetch(`../json/${filePath}`);
+      console.log("Response:", response);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       return data.characters; // Return the "characters" array
     } catch (error) {
