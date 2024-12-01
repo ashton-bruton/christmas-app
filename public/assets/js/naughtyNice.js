@@ -8,13 +8,13 @@
   // Function to fetch data from a JSON file
 async function fetchJSON(filePath) {
     try {
-      const response = await fetch(`../json/${filePath}`);
+      const response = await fetch(`../../assets/json/${filePath}`);
       console.log("Response:", response);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       return data.characters; // Return the "characters" array
     } catch (error) {
