@@ -1,6 +1,7 @@
 {
   "hosting": {
     "public": "public",
+    "site": "christmas-app-e9bf7",
     "ignore": [
       "firebase.json",
       "**/.*",
