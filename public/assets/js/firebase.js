@@ -1,6 +1,4 @@
-// import { initializeApp } from "firebase/app";
-// import { getDatabase, ref, set } from "firebase/database";
-// Import the functions you need from the SDKs you need
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
 
@@ -20,29 +18,26 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const analytics = getAnalytics(app);
 
-function addUser(userId, firstName, lastName, email, status, character) {
-    const userRef = ref(database, 'users/' + userId);
-    set(userRef, {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      status: status,
-      character: character
-    })
+// Add a user to the database
+export function addUser(userId, firstName, lastName, email, status, character) {
+  const userRef = ref(database, 'users/' + userId);
+  set(userRef, {
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    status: status,
+    character: character
+  })
     .then(() => {
       console.log("User added successfully!");
     })
     .catch((error) => {
       console.error("Error adding user:", error);
     });
-  }
-  
-  // Example usage
-//   addUser("userId1", "John", "Doe", "john.doe@example.com");
+}
 
-// import { get, ref } from "firebase/database";
-
-function getUser(userId) {
+// Retrieve a user from the database
+export function getUser(userId) {
   const userRef = ref(database, 'users/' + userId);
   get(userRef)
     .then((snapshot) => {
@@ -56,8 +51,3 @@ function getUser(userId) {
       console.error("Error reading user data:", error);
     });
 }
-
-// Example usage
-// getUser("userId1");
-
-  
