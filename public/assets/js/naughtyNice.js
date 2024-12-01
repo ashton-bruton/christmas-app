@@ -35,9 +35,11 @@ async function fetchJSON(filePath) {
   
     if (result === "nice") {
       const heroes = await fetchJSON("heroes.json");
+      console.log(heroes);
       return getRandomValue(heroes); // Random hero
     } else {
       const villains = await fetchJSON("villains.json");
+      console.log(villains);
       return getRandomValue(villains); // Random villain
     }
   }
