@@ -16,12 +16,18 @@
 			</header>
 
 		<!-- Signup Form -->
-			<form id="signup-form" method="post" action="#">
-                <input type="text" name="firstName" id="firstName" placeholder="First Name" />
-                <input type="text" name="lastName" id="lastName" placeholder="Last Name" />
-				<input type="email" name="email" id="email" placeholder="Email Address" />
-				<input type="submit" value="Submit" />
-			</form>
+		<form id="signup-form" method="post" action="#">
+			<input type="text" name="firstName" id="firstName" placeholder="First Name" />
+			<input type="text" name="lastName" id="lastName" placeholder="Last Name" />
+			<input type="email" name="email" id="email" placeholder="Email Address" />
+			
+			<!-- Hidden inputs for naughty/nice status and character -->
+			<input type="hidden" name="status" id="status" />
+			<input type="hidden" name="character" id="character" />
+			
+			<input type="submit" value="Submit" />
+		  </form>
+		  
 
 		<!-- Footer -->
 			<footer id="footer">
