@@ -52,7 +52,13 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
   const lastName = document.getElementById("lastName").value;
   const email = document.getElementById("email").value;
 
-  // Get naughty/nice and character
+  // Validate form fields
+  if (!firstName || !lastName || !email) {
+    alert("Please fill out all fields before submitting.");
+    return;
+  }
+
+  // Get random naughty/nice status and character
   const { status, character } = await getRandomCharacter();
 
   // Update hidden input fields with values
@@ -66,7 +72,14 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
   addUser(userId, firstName, lastName, email, status, character);
 
   // Log the values to verify functionality (optional)
+  console.log("Form Submitted:");
+  console.log("User ID:", userId);
+  console.log("First Name:", firstName);
+  console.log("Last Name:", lastName);
+  console.log("Email:", email);
   console.log("Status:", status);
   console.log("Character:", character);
-  console.log("User added to Firebase:", { userId, firstName, lastName, email, status, character });
+
+  // Notify the user
+  alert(`Thank you, ${firstName}! You are on the ${status} list with ${character}!`);
 });
