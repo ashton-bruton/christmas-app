@@ -1,3 +1,4 @@
+// Function to fetch data from a JSON file
 async function fetchJSON(filePath) {
     try {
       const response = await fetch(`../../assets/json/${filePath}`);
@@ -42,7 +43,7 @@ async function fetchJSON(filePath) {
   
   // Add event listener to handle form submission
   document.getElementById("signup-form").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent the form from submitting normally
+    event.preventDefault(); // Prevent the default form submission and page reload
   
     // Get naughty/nice and character
     const { status, character } = await getRandomCharacter();
@@ -51,7 +52,12 @@ async function fetchJSON(filePath) {
     document.getElementById("status").value = status;
     document.getElementById("character").value = character;
   
-    // Submit the form
-    event.target.submit(); // Submit the form programmatically
+    // Log the values to verify functionality (optional)
+    console.log("Status:", status);
+    console.log("Character:", character);
+  
+    // Temporarily stop the form from submitting
+    // Uncomment the following line to re-enable form submission
+    // event.target.submit();
   });
   
