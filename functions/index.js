@@ -2,6 +2,12 @@
 const functions = require("firebase-functions");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
+const express = require('express');
+const app = express();
+const admin = require('firebase-admin');
+admin.initializeApp();
+require("dotenv").config();
+
 
 // Gmail API Configuration
 const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
@@ -16,11 +22,20 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-const port = process.env.PORT || 8080;
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
+  
+  exports.api = functions.https.onRequest(app);
+
+const port = process.env.PORT || 8344;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+exports.helloWorld = functions.https.onRequest((req, res) => {
+    res.send("Hello, world!");
+  });
 
 // Firebase Function
 exports.sendCharacterEmail = functions.https.onCall(async (data, context) => {
