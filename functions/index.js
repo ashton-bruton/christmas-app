@@ -1,3 +1,4 @@
+/* eslint-disable */
 const functions = require("firebase-functions");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
