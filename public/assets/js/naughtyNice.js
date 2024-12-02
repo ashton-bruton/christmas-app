@@ -43,6 +43,37 @@ async function getRandomCharacter() {
   return { status: result, character };
 }
 
+// Function to update the background based on the character
+function updateBackground(characterName) {
+  const formattedName = characterName.toLowerCase().replace(/ /g, "_");
+  const newBackground = `url('images/characters/${formattedName}.jpg')`;
+  const bgWrapper = document.querySelector("#bg");
+  const $body = document.querySelector("body");
+
+  if (!bgWrapper) {
+    $body.style.backgroundImage = newBackground;
+    $body.style.backgroundSize = "cover";
+    $body.style.backgroundPosition = "center";
+    $body.style.transition = "background-image 0.5s ease-in-out";
+  } else {
+    const newBgDiv = document.createElement("div");
+    newBgDiv.style.backgroundImage = newBackground;
+    newBgDiv.style.backgroundPosition = "center";
+    newBgDiv.style.backgroundSize = "cover";
+    newBgDiv.classList.add("visible", "top");
+
+    bgWrapper.appendChild(newBgDiv);
+
+    const currentBg = bgWrapper.querySelector(".visible:not(.top)");
+    if (currentBg) {
+      window.setTimeout(function () {
+        currentBg.classList.remove("visible");
+        bgWrapper.removeChild(currentBg);
+      }, 1500);
+    }
+  }
+}
+
 // Function to show the popup
 function showPopup(firstName, status, character) {
   const popup = document.getElementById("popup");
@@ -51,7 +82,7 @@ function showPopup(firstName, status, character) {
   // Set the content dynamically
   popupContent.innerHTML = `
     <h2>Thank you, ${firstName}!</h2>
-    <p>You are on the <strong>${status}</strong> list with <strong>${character}</strong>!</p>
+    <p>You are on the <strong>${status.toUpperCase()}</strong> list with <strong>${character}</strong>!</p>
   `;
 
   // Show the popup
@@ -90,6 +121,9 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
 
   // Save user data to Firebase
   addUser(userId, firstName, lastName, email, status, character);
+
+  // Update the background based on the character
+  updateBackground(character);
 
   // Show the popup instead of alerting
   showPopup(firstName, status, character);
