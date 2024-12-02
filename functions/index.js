@@ -3,10 +3,10 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
 // Gmail API Configuration
-const CLIENT_ID = "897073151487-1h29qb4looigntofs4onufchr3dnj2a0.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
+const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
+const CLIENT_SECRET = process.env.CLIENT_SECRET || functions.config().google.client_secret;
 const REDIRECT_URI = "https://christmas-app-e9bf7.web.app";
-const REFRESH_TOKEN = "1//04Ant9intZV1MCgYIARAAGAQSNwF-L9Irj6HQUSkCrn9hvIkPl8jsbt7SMP76X4PxFXBes1jfKV8H_eQVDcsUCoyb-gUCMWSuBgw";
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN || functions.config().google.refresh_token;
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
