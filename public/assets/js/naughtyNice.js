@@ -43,6 +43,26 @@ async function getRandomCharacter() {
   return { status: result, character };
 }
 
+// Function to show the popup
+function showPopup(firstName, status, character) {
+  const popup = document.getElementById("popup");
+  const popupContent = document.getElementById("popup-content");
+
+  // Set the content dynamically
+  popupContent.innerHTML = `
+    <h2>Thank you, ${firstName}!</h2>
+    <p>You are on the <strong>${status}</strong> list with <strong>${character}</strong>!</p>
+  `;
+
+  // Show the popup
+  popup.style.display = "flex";
+}
+
+// Close the popup
+document.getElementById("popup-close").addEventListener("click", () => {
+  document.getElementById("popup").style.display = "none";
+});
+
 // Add event listener to handle form submission
 document.getElementById("signup-form").addEventListener("submit", async (event) => {
   event.preventDefault(); // Prevent the default form submission and page reload
@@ -71,15 +91,6 @@ document.getElementById("signup-form").addEventListener("submit", async (event) 
   // Save user data to Firebase
   addUser(userId, firstName, lastName, email, status, character);
 
-  // Log the values to verify functionality (optional)
-  console.log("Form Submitted:");
-  console.log("User ID:", userId);
-  console.log("First Name:", firstName);
-  console.log("Last Name:", lastName);
-  console.log("Email:", email);
-  console.log("Status:", status);
-  console.log("Character:", character);
-
-  // Notify the user
-  alert(`Thank you, ${firstName}! You are on the ${status} list with ${character}!`);
+  // Show the popup instead of alerting
+  showPopup(firstName, status, character);
 });

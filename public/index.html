@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Christmas Game</title>
+		<title>Naughty Or Nice</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -10,8 +10,8 @@
 
 		<!-- Header -->
 			<header id="header">
-                <h1>Christmas Game Application</h1>
-                <p>Have you been <i>NAUGHTY</i> or <i>NICE</i></p>
+                <h1>Have you been <i>NAUGHTY</i> or <i>NICE</i></h1>
+                <!-- <p>Have you been <i>NAUGHTY</i> or <i>NICE</i></p> -->
 				<p>Enter your information below to find out...</p>
 			</header>
 
@@ -25,10 +25,16 @@
 			<input type="hidden" name="status" id="status" />
 			<input type="hidden" name="character" id="character" />
 			
-			
 			<input type="submit" value="Submit" />
 		  </form>
-		  
+
+		  <!-- Popup -->
+		  <div id="popup">
+			<div id="popup-content">
+			  <!-- Content will be dynamically added here -->
+			</div>
+			<button id="popup-close">Close</button>
+		  </div>		  
 
 		<!-- Footer -->
 			<footer id="footer">
