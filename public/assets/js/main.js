@@ -125,11 +125,12 @@
 	  }
 	}
   
-	// Signup Form with Background Change on Submit.
+	// Signup Form with Background Change on Submit and Hide Content.
 	(function () {
 	  var $form = document.querySelector("#signup-form"),
 		$submit = document.querySelector("#signup-form input[type='submit']"),
-		$message;
+		$message,
+		$mainContent = document.querySelector("#mainContent"); // Reference to mainContent.
   
 	  if (!("addEventListener" in $form)) return;
   
@@ -161,6 +162,11 @@
 		// Fetch character and update background.
 		const character = document.getElementById("character").value;
 		updateBackground(character);
+  
+		// Hide mainContent.
+		if ($mainContent) {
+		  $mainContent.style.display = "none";
+		}
   
 		// Reset form and re-enable submit.
 		window.setTimeout(function () {
