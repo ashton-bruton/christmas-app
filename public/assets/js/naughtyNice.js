@@ -90,9 +90,9 @@ function showPopup(firstName, status, character) {
 }
 
 // Close the popup
-document.getElementById("popup-close").addEventListener("click", () => {
-  document.getElementById("popup").style.display = "none";
-});
+// document.getElementById("popup-close").addEventListener("click", () => {
+//   document.getElementById("popup").style.display = "none";
+// });
 
 // Add event listener to handle form submission
 document.getElementById("signup-form").addEventListener("submit", async (event) => {
