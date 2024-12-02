@@ -16,6 +16,12 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+
 // Firebase Function
 exports.sendCharacterEmail = functions.https.onCall(async (data, context) => {
   const { email, character, status } = data;
