@@ -7,6 +7,20 @@
 (function () {
 	"use strict";
   
+	// Define `canUse` globally.
+	window.canUse = function (property) {
+	  const testElement = document.createElement("div");
+	  const capitalizedProperty = property.charAt(0).toUpperCase() + property.slice(1);
+  
+	  return (
+		property in testElement.style ||
+		`Moz${capitalizedProperty}` in testElement.style ||
+		`Webkit${capitalizedProperty}` in testElement.style ||
+		`O${capitalizedProperty}` in testElement.style ||
+		`ms${capitalizedProperty}` in testElement.style
+	  );
+	};
+  
 	var $body = document.querySelector("body");
   
 	// Play initial animations on page load.
@@ -30,44 +44,5 @@
 		delay: 6000,
 	  };
   
-	  var pos = 0,
-		lastPos = 0,
-		$wrapper,
-		$bgs = [],
-		$bg,
-		k;
-  
-	  $wrapper = document.createElement("div");
-	  $wrapper.id = "bg";
-	  $body.appendChild($wrapper);
-  
-	  for (k in settings.images) {
-		$bg = document.createElement("div");
-		$bg.style.backgroundImage = `url("${k}")`;
-		$bg.style.backgroundPosition = settings.images[k];
-		$wrapper.appendChild($bg);
-		$bgs.push($bg);
-	  }
-  
-	  $bgs[pos].classList.add("visible");
-	  $bgs[pos].classList.add("top");
-  
-	  if ($bgs.length == 1 || !canUse("transition")) return;
-  
-	  window.setInterval(function () {
-		lastPos = pos;
-		pos++;
-  
-		if (pos >= $bgs.length) pos = 0;
-  
-		$bgs[lastPos].classList.remove("top");
-		$bgs[pos].classList.add("visible");
-		$bgs[pos].classList.add("top");
-  
-		window.setTimeout(function () {
-		  $bgs[lastPos].classList.remove("visible");
-		}, settings.delay / 2);
-	  }, settings.delay);
-	})();
-  })();
+	  // 
   
