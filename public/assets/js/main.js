@@ -44,5 +44,131 @@
 		delay: 6000,
 	  };
   
-	  // 
+	  // Vars.
+	  var pos = 0,
+		lastPos = 0,
+		$wrapper,
+		$bgs = [],
+		$bg,
+		k;
+  
+	  // Create BG wrapper, BGs.
+	  $wrapper = document.createElement("div");
+	  $wrapper.id = "bg";
+	  $body.appendChild($wrapper);
+  
+	  for (k in settings.images) {
+		// Create BG.
+		$bg = document.createElement("div");
+		$bg.style.backgroundImage = 'url("' + k + '")';
+		$bg.style.backgroundPosition = settings.images[k];
+		$wrapper.appendChild($bg);
+  
+		// Add it to array.
+		$bgs.push($bg);
+	  }
+  
+	  // Main loop.
+	  $bgs[pos].classList.add("visible");
+	  $bgs[pos].classList.add("top");
+  
+	  // Bail if we only have a single BG or the client doesn't support transitions.
+	  if ($bgs.length == 1 || !canUse("transition")) return;
+  
+	  window.setInterval(function () {
+		lastPos = pos;
+		pos++;
+  
+		// Wrap to beginning if necessary.
+		if (pos >= $bgs.length) pos = 0;
+  
+		// Swap top images.
+		$bgs[lastPos].classList.remove("top");
+		$bgs[pos].classList.add("visible");
+		$bgs[pos].classList.add("top");
+  
+		// Hide last image after a short delay.
+		window.setTimeout(function () {
+		  $bgs[lastPos].classList.remove("visible");
+		}, settings.delay / 2);
+	  }, settings.delay);
+	})();
+  
+	// Update Background Based on Character
+	function updateBackground(character) {
+	  const bgWrapper = document.querySelector("#bg");
+	  const newBackground = `url('images/characters/${character}.jpg')`;
+  
+	  // Update body background if #bg is not present.
+	  if (!bgWrapper) {
+		$body.style.backgroundImage = newBackground;
+		$body.style.backgroundSize = "cover";
+		$body.style.backgroundPosition = "center";
+	  } else {
+		// Dynamically update the #bg div if slideshow exists.
+		const newBgDiv = document.createElement("div");
+		newBgDiv.style.backgroundImage = newBackground;
+		newBgDiv.style.backgroundPosition = "center";
+		newBgDiv.style.backgroundSize = "cover";
+		newBgDiv.classList.add("visible", "top");
+  
+		bgWrapper.appendChild(newBgDiv);
+  
+		// Hide the previous background after a short delay.
+		const currentBg = bgWrapper.querySelector(".visible:not(.top)");
+		if (currentBg) {
+		  window.setTimeout(function () {
+			currentBg.classList.remove("visible");
+			bgWrapper.removeChild(currentBg);
+		  }, 1500);
+		}
+	  }
+	}
+  
+	// Signup Form with Background Change on Submit.
+	(function () {
+	  var $form = document.querySelector("#signup-form"),
+		$submit = document.querySelector("#signup-form input[type='submit']"),
+		$message;
+  
+	  if (!("addEventListener" in $form)) return;
+  
+	  $message = document.createElement("span");
+	  $message.classList.add("message");
+	  $form.appendChild($message);
+  
+	  $message._show = function (type, text) {
+		$message.innerHTML = text;
+		$message.classList.add(type);
+		$message.classList.add("visible");
+  
+		window.setTimeout(function () {
+		  $message._hide();
+		}, 3000);
+	  };
+  
+	  $message._hide = function () {
+		$message.classList.remove("visible");
+	  };
+  
+	  $form.addEventListener("submit", async function (event) {
+		event.stopPropagation();
+		event.preventDefault();
+  
+		$message._hide();
+		$submit.disabled = true;
+  
+		// Fetch character and update background.
+		const character = document.getElementById("character").value;
+		updateBackground(character);
+  
+		// Reset form and re-enable submit.
+		window.setTimeout(function () {
+		  $form.reset();
+		  $submit.disabled = false;
+		  $message._show("success", "Thank you!");
+		}, 750);
+	  });
+	})();
+  })();
   
