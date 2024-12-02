@@ -1,6 +1,7 @@
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+import { getFunctions } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDSxcdKZxf4U1hI49hRPRd-jFOLADRO-EQ",
@@ -17,6 +18,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const analytics = getAnalytics(app);
+
+// Initialize Firebase Functions
+const functions = getFunctions();
 
 // Add a user to the database
 export function addUser(userId, firstName, lastName, email, status, character) {
@@ -51,3 +55,5 @@ export function getUser(userId) {
       console.error("Error reading user data:", error);
     });
 }
+
+export { functions };
