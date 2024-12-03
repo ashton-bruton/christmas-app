@@ -2,51 +2,54 @@
 const functions = require("firebase-functions");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const express = require('express');
-const admin = require('firebase-admin');
+const cors = require("cors"); // Add CORS middleware
+const express = require("express");
+const app = express();
+const admin = require("firebase-admin");
 admin.initializeApp();
 require("dotenv").config();
 
-// Gmail API Configuration
 const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
 const CLIENT_SECRET = process.env.CLIENT_SECRET || functions.config().google.client_secret;
-const REDIRECT_URI = "https://christmas-app-e9bf7.web.app";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN || functions.config().google.refresh_token;
-const API_KEY = process.env.API_KEY || functions.config().google.api_key;
 
-console.log("Client ID:", CLIENT_ID);
-
-// Initialize Google OAuth2 Client
-const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI
-);
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, "https://developers.google.com/oauthplayground");
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-const app = express();
+// Use CORS middleware to handle preflight requests
+app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
-// Export the Express app as a Firebase Function
-exports.api = functions.https.onRequest(app);
+app.listen(5001, () => {
+  console.log("Server is running on port 5001");
+});
 
-// Cloud Function for Sending Emails
-exports.sendCharacterEmail = functions.https.onCall(async (data, context) => {
-  const { email, character, status } = data;
+// Firebase Function to send email
+exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
+  if (req.method === "OPTIONS") {
+    // Handle preflight requests
+    res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
+    res.set("Access-Control-Allow-Methods", "POST");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.status(204).send("");
+    return;
+  }
+
+  res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
+
+  const { email, character, status } = req.body;
 
   try {
-    // Generate Access Token
     const accessToken = await oAuth2Client.getAccessToken();
 
-    // Nodemailer Transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         type: "OAuth2",
-        user: "ashton.bruton@gmail.com", // Sender's Gmail
+        user: "ashton.bruton@gmail.com",
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
         refreshToken: REFRESH_TOKEN,
@@ -54,7 +57,6 @@ exports.sendCharacterEmail = functions.https.onCall(async (data, context) => {
       },
     });
 
-    // Email Content
     const mailOptions = {
       from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",
       to: email,
@@ -66,11 +68,11 @@ exports.sendCharacterEmail = functions.https.onCall(async (data, context) => {
       `,
     };
 
-    // Send Email
     await transporter.sendMail(mailOptions);
-    return { success: true, message: "Email sent successfully." };
+
+    res.status(200).json({ success: true, message: "Email sent successfully." });
   } catch (error) {
     console.error("Error sending email:", error);
-    return { success: false, message: error.message };
+    res.status(500).json({ success: false, message: error.message });
   }
 });
