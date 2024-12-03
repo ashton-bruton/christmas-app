@@ -14,6 +14,12 @@ const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
 const CLIENT_SECRET = process.env.CLIENT_SECRET || functions.config().google.client_secret;
 const REDIRECT_URI = "https://christmas-app-e9bf7.web.app";
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN || functions.config().google.refresh_token;
+const PORT = process.env.PORT || functions.config().app.port;
+const PROJECT_CONFIG = process.env.PROJECT_CONFIG || JSON.parse(functions.config().app.project_config);
+const API_KEY = process.env.API_KEY || functions.config().google.api_key;
+
+console.log("Client ID:", CLIENT_ID);
+console.log("Project Config:", PROJECT_CONFIG);
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -28,8 +34,7 @@ app.get('/', (req, res) => {
   
   exports.api = functions.https.onRequest(app);
 
-const port = process.env.PORT || 5001;
-app.listen(port, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${port}`);
 });
 
