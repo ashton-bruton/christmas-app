@@ -3,7 +3,6 @@ import { getRandomCharacter } from "./naughtyNice.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 import { addUser } from "./firebase.js";
 
-
 (function () {
   "use strict";
 
@@ -71,6 +70,26 @@ import { addUser } from "./firebase.js";
     }
   }
 
+  // Show Popup
+  function showPopup(firstName, status, character) {
+    const popup = document.getElementById("popup");
+    const popupContent = document.getElementById("popup-content");
+
+    // Set the content dynamically
+    popupContent.innerHTML = `
+      <h2>Thank you, ${firstName}!</h2>
+      <p>You are on the <strong>${status.toUpperCase()}</strong> list with <strong>${character}</strong>!</p>
+    `;
+
+    // Show the popup
+    popup.style.display = "flex";
+
+    // Close functionality
+    document.getElementById("popup-close").addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+  }
+
   // Signup Form
   (function () {
     const $form = document.querySelector("#signup-form");
@@ -97,6 +116,8 @@ import { addUser } from "./firebase.js";
       addUser(userId, firstName, lastName, email, status, character);
 
       updateBackground(character);
+
+      showPopup(firstName, status, character);
 
       $mainContent.style.display = "none";
 
