@@ -94,7 +94,7 @@ import { addUser } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 5000);
+      }, 9999999999);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
