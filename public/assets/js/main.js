@@ -1,6 +1,8 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
+import { addUser } from "./firebase.js";
+
 
 (function () {
   "use strict";
