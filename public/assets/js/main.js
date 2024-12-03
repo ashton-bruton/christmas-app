@@ -2,31 +2,10 @@ import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
 import { addUser } from "./firebase.js";
 
-(async function () {
+(function () {
   "use strict";
 
   const $body = document.querySelector("body");
-
-  // Secret Santa data
-  const secretSantaData = await fetch("secret_santa.json").then((res) => res.json());
-  let assignedNames = {};
-
-  // Helper to assign Secret Santa name
-  function assignSecretSanta(email) {
-    if (secretSantaData[email]) {
-      const availableNames = Object.keys(secretSantaData).filter(
-        (name) => !Object.values(assignedNames).includes(name) && name !== email
-      );
-
-      if (availableNames.length > 0) {
-        const randomIndex = Math.floor(Math.random() * availableNames.length);
-        const assignedName = availableNames[randomIndex];
-        assignedNames[email] = assignedName;
-        return assignedName;
-      }
-    }
-    return null;
-  }
 
   // Play initial animations on page load
   window.addEventListener("load", () => {
@@ -102,7 +81,7 @@ import { addUser } from "./firebase.js";
   }
 
   // Show Popup
-  function showPopup(firstName, status, character, assignedName) {
+  function showPopup(firstName, status, character) {
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
@@ -118,11 +97,6 @@ import { addUser } from "./firebase.js";
         <div class="popup-body">
           <p>You are on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
           <p>Your character is <strong class="character">${character}</strong>.</p>
-          ${
-            assignedName
-              ? `<p>Your Secret Santa is: <strong>${assignedName}</strong>.</p>`
-              : ""
-          }
         </div>
       `;
 
@@ -137,11 +111,27 @@ import { addUser } from "./firebase.js";
     }
   }
 
+  // Assign Unique Character Logic
+  async function assignCharacter(existingCharacters) {
+    let uniqueCharacter = null;
+    while (!uniqueCharacter) {
+      const { status, character } = await getRandomCharacter();
+      if (!existingCharacters.includes(character)) {
+        uniqueCharacter = { status, character };
+        existingCharacters.push(character);
+      }
+    }
+    return uniqueCharacter;
+  }
+
   // Signup Form
   (function () {
     const $form = document.querySelector("#signup-form");
     const $submit = $form.querySelector("input[type='submit']");
     const $mainContent = document.querySelector("#mainContent");
+
+    // Track assigned characters to prevent duplicates
+    const assignedCharacters = [];
 
     $form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -158,15 +148,12 @@ import { addUser } from "./firebase.js";
         return;
       }
 
-      const { status, character } = await getRandomCharacter();
-      const assignedName = assignSecretSanta(email);
+      const { status, character } = await assignCharacter(assignedCharacters);
       const userId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      addUser(userId, firstName, lastName, email, status, character, assignedName);
+      addUser(userId, firstName, lastName, email, status, character);
 
       updateBackground(character);
-
-      showPopup(firstName, status, character, assignedName);
+      showPopup(firstName, status, character);
 
       if ($mainContent) {
         $mainContent.style.display = "none";
@@ -180,13 +167,7 @@ import { addUser } from "./firebase.js";
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              email,
-              character,
-              status,
-              firstName,
-              assignedName,
-            }),
+            body: JSON.stringify({ email, character, status, firstName }),
           }
         );
 
