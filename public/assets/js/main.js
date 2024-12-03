@@ -15,7 +15,13 @@ import { addUser } from "./firebase.js";
   // Slideshow Background
   (function () {
     const settings = {
-      images: ["images/image1.jpg", "images/image2.jpg", "images/image3.jpg", "images/image4.jpg", "images/image5.jpg"],
+      images: [
+        "images/image1.jpg",
+        "images/image2.jpg",
+        "images/image3.jpg",
+        "images/image4.jpg",
+        "images/image5.jpg",
+      ],
       delay: 6000,
     };
 
@@ -42,7 +48,10 @@ import { addUser } from "./firebase.js";
         $bgs[lastPos].classList.remove("top");
         $bgs[pos].classList.add("visible", "top");
 
-        setTimeout(() => $bgs[lastPos].classList.remove("visible"), settings.delay / 2);
+        setTimeout(
+          () => $bgs[lastPos].classList.remove("visible"),
+          settings.delay / 2
+        );
       }, settings.delay);
     }
   })();
@@ -50,7 +59,9 @@ import { addUser } from "./firebase.js";
   // Update Background
   function updateBackground(character) {
     const bgWrapper = document.querySelector("#bg");
-    const newBackground = `url('images/characters/${character.toLowerCase().replace(/ /g, "_")}.jpg')`;
+    const newBackground = `url('images/characters/${character
+      .toLowerCase()
+      .replace(/ /g, "_")}.jpg')`;
 
     const newBgDiv = document.createElement("div");
     newBgDiv.style.backgroundImage = newBackground;
@@ -134,13 +145,16 @@ import { addUser } from "./firebase.js";
       }
 
       try {
-        const response = await fetch("https://us-central1-christmas-app-e9bf7.cloudfunctions.net/sendCharacterEmail", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, character, status }),
-        });
+        const response = await fetch(
+          "https://us-central1-christmas-app-e9bf7.cloudfunctions.net/sendCharacterEmail",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, character, status, firstName }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
