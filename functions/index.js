@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
   
   exports.api = functions.https.onRequest(app);
 
-const port = process.env.PORT || 8344;
+const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
