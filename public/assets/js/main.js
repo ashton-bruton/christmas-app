@@ -1,165 +1,112 @@
-/*
-    Eventually by HTML5 UP
-    html5up.net | @ajlkn
-    Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
-
 import { functions } from "./firebase.js";
+import { getRandomCharacter } from "./naughtyNice.js";
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 
 (function () {
   "use strict";
 
-  // Define `canUse` globally.
-  window.canUse = function (property) {
-    const testElement = document.createElement("div");
-    const capitalizedProperty = property.charAt(0).toUpperCase() + property.slice(1);
-
-    return (
-      property in testElement.style ||
-      `Moz${capitalizedProperty}` in testElement.style ||
-      `Webkit${capitalizedProperty}` in testElement.style ||
-      `O${capitalizedProperty}` in testElement.style ||
-      `ms${capitalizedProperty}` in testElement.style
-    );
-  };
-
   const $body = document.querySelector("body");
 
-  // Play initial animations on page load.
-  window.addEventListener("load", function () {
-    window.setTimeout(function () {
-      $body.classList.remove("is-preload");
-    }, 100);
+  // Play initial animations on page load
+  window.addEventListener("load", () => {
+    setTimeout(() => $body.classList.remove("is-preload"), 100);
   });
 
-  // Slideshow Background.
+  // Slideshow Background
   (function () {
     const settings = {
-      images: {
-        "images/image1.jpg": "center",
-        "images/image2.jpg": "center",
-        "images/image3.jpg": "center",
-        "images/image4.jpg": "center",
-        "images/image5.jpg": "center",
-      },
+      images: ["images/image1.jpg", "images/image2.jpg", "images/image3.jpg", "images/image4.jpg", "images/image5.jpg"],
       delay: 6000,
     };
 
-    let pos = 0,
-      lastPos = 0,
-      $wrapper,
-      $bgs = [],
-      $bg,
-      k;
+    let pos = 0;
 
-    $wrapper = document.createElement("div");
+    const $wrapper = document.createElement("div");
     $wrapper.id = "bg";
     $body.appendChild($wrapper);
 
-    for (k in settings.images) {
-      $bg = document.createElement("div");
-      $bg.style.backgroundImage = `url("${k}")`;
-      $bg.style.backgroundPosition = settings.images[k];
+    const $bgs = settings.images.map((src) => {
+      const $bg = document.createElement("div");
+      $bg.style.backgroundImage = `url(${src})`;
       $wrapper.appendChild($bg);
-      $bgs.push($bg);
+      return $bg;
+    });
+
+    $bgs[pos].classList.add("visible", "top");
+
+    if ($bgs.length > 1) {
+      setInterval(() => {
+        const lastPos = pos;
+        pos = (pos + 1) % $bgs.length;
+
+        $bgs[lastPos].classList.remove("top");
+        $bgs[pos].classList.add("visible", "top");
+
+        setTimeout(() => $bgs[lastPos].classList.remove("visible"), settings.delay / 2);
+      }, settings.delay);
     }
-
-    $bgs[pos].classList.add("visible");
-    $bgs[pos].classList.add("top");
-
-    if ($bgs.length === 1 || !canUse("transition")) return;
-
-    window.setInterval(function () {
-      lastPos = pos;
-      pos++;
-
-      if (pos >= $bgs.length) pos = 0;
-
-      $bgs[lastPos].classList.remove("top");
-      $bgs[pos].classList.add("visible");
-      $bgs[pos].classList.add("top");
-
-      window.setTimeout(function () {
-        $bgs[lastPos].classList.remove("visible");
-      }, settings.delay / 2);
-    }, settings.delay);
   })();
 
-  // Update Background Based on Character
+  // Update Background
   function updateBackground(character) {
     const bgWrapper = document.querySelector("#bg");
-    const newBackground = `url('images/characters/${character}.jpg')`;
+    const newBackground = `url('images/characters/${character.toLowerCase().replace(/ /g, "_")}.jpg')`;
 
-    if (!bgWrapper) {
-      $body.style.backgroundImage = newBackground;
-      $body.style.backgroundSize = "cover";
-      $body.style.backgroundPosition = "center";
-    } else {
-      const newBgDiv = document.createElement("div");
-      newBgDiv.style.backgroundImage = newBackground;
-      newBgDiv.style.backgroundPosition = "center";
-      newBgDiv.style.backgroundSize = "cover";
-      newBgDiv.classList.add("visible", "top");
+    const newBgDiv = document.createElement("div");
+    newBgDiv.style.backgroundImage = newBackground;
+    newBgDiv.style.backgroundPosition = "center";
+    newBgDiv.style.backgroundSize = "cover";
+    newBgDiv.classList.add("visible", "top");
 
-      bgWrapper.appendChild(newBgDiv);
+    bgWrapper.appendChild(newBgDiv);
 
-      const currentBg = bgWrapper.querySelector(".visible:not(.top)");
-      if (currentBg) {
-        window.setTimeout(function () {
-          currentBg.classList.remove("visible");
-          bgWrapper.removeChild(currentBg);
-        }, 1500);
-      }
+    const currentBg = bgWrapper.querySelector(".visible:not(.top)");
+    if (currentBg) {
+      setTimeout(() => {
+        currentBg.classList.remove("visible");
+        bgWrapper.removeChild(currentBg);
+      }, 1500);
     }
   }
 
-  // Signup Form with Background Change on Submit and Email Functionality.
+  // Signup Form
   (function () {
-    const $form = document.querySelector("#signup-form"),
-      $submit = document.querySelector("#signup-form input[type='submit']"),
-      $mainContent = document.querySelector("#mainContent");
+    const $form = document.querySelector("#signup-form");
+    const $submit = $form.querySelector("input[type='submit']");
+    const $mainContent = document.querySelector("#mainContent");
 
-    if (!("addEventListener" in $form)) return;
-
-    $form.addEventListener("submit", async function (event) {
-      event.stopPropagation();
+    $form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       $submit.disabled = true;
 
-      const email = document.getElementById("email").value;
-      const status = document.getElementById("status").value;
-      const character = document.getElementById("character").value;
+      const firstName = $form.firstName.value;
+      const lastName = $form.lastName.value;
+      const email = $form.email.value;
 
-      // Update background.
+      if (!firstName || !lastName || !email) {
+        alert("Please fill out all fields.");
+        $submit.disabled = false;
+        return;
+      }
+
+      const { status, character } = await getRandomCharacter();
+      const userId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      addUser(userId, firstName, lastName, email, status, character);
+
       updateBackground(character);
 
-      // Hide mainContent.
-      if ($mainContent) {
-        $mainContent.style.display = "none";
-      }
+      $mainContent.style.display = "none";
 
-      // Send email with character details.
       try {
         const sendEmail = httpsCallable(functions, "sendCharacterEmail");
-        const emailResponse = await sendEmail({
-          email,
-          character,
-          status,
-        });
-
-        if (emailResponse.data.success) {
-          console.log("Email sent successfully.");
-        } else {
-          console.error("Error sending email:", emailResponse.data.message);
-        }
+        await sendEmail({ email, character, status });
+        console.log("Email sent successfully.");
       } catch (error) {
-        console.error("Error calling email function:", error);
+        console.error("Error sending email:", error);
       }
 
-      // Reset form and re-enable submit.
-      window.setTimeout(function () {
+      setTimeout(() => {
         $form.reset();
         $submit.disabled = false;
       }, 750);

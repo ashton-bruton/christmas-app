@@ -1,6 +1,5 @@
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
 import { getFunctions } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 
 const firebaseConfig = {
@@ -11,38 +10,30 @@ const firebaseConfig = {
   storageBucket: "christmas-app-e9bf7.firebasestorage.app",
   messagingSenderId: "897073151487",
   appId: "1:897073151487:web:aa0b74bc46ba9cce167bca",
-  measurementId: "G-MC7796V71Y"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
-const analytics = getAnalytics(app);
-
-// Initialize Firebase Functions
-const functions = getFunctions();
+const functions = getFunctions(app);
 
 // Add a user to the database
 export function addUser(userId, firstName, lastName, email, status, character) {
-  const userRef = ref(database, 'users/' + userId);
+  const userRef = ref(database, "users/" + userId);
   set(userRef, {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    status: status,
-    character: character
+    firstName,
+    lastName,
+    email,
+    status,
+    character,
   })
-    .then(() => {
-      console.log("User added successfully!");
-    })
-    .catch((error) => {
-      console.error("Error adding user:", error);
-    });
+    .then(() => console.log("User added successfully!"))
+    .catch((error) => console.error("Error adding user:", error));
 }
 
 // Retrieve a user from the database
 export function getUser(userId) {
-  const userRef = ref(database, 'users/' + userId);
+  const userRef = ref(database, "users/" + userId);
   get(userRef)
     .then((snapshot) => {
       if (snapshot.exists()) {
@@ -51,9 +42,7 @@ export function getUser(userId) {
         console.log("No user data available");
       }
     })
-    .catch((error) => {
-      console.error("Error reading user data:", error);
-    });
+    .catch((error) => console.error("Error reading user data:", error));
 }
 
 export { functions };
