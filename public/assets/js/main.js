@@ -88,7 +88,7 @@ import { addUser } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 5000);
+      }, 99999999999);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
@@ -142,7 +142,7 @@ import { addUser } from "./firebase.js";
       setTimeout(() => {
         $form.reset();
         $submit.disabled = false;
-      }, 9999999);
+      }, 500);
     });
   })();
 })();
