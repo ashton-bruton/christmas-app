@@ -147,6 +147,28 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
               .character-card .character-info {
                 font-size: 16px;
               }
+              .merch-section {
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-top: 1px solid #ddd;
+                text-align: center;
+              }
+              .merch-section h3 {
+                margin: 0 0 10px;
+                font-size: 18px;
+                color: #333;
+              }
+              .merch-section p {
+                font-size: 14px;
+                margin: 10px 0;
+              }
+              .merch-section a {
+                color: #1cb495;
+                text-decoration: none;
+              }
+              .merch-section a:hover {
+                text-decoration: underline;
+              }
               .email-footer {
                 background-color: #f4f4f4;
                 padding: 10px;
@@ -184,6 +206,15 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
                   </div>
                 </div>
                 <p>We wish you a joyous holiday season filled with laughter, love, and maybe a bit of magic. 🎄✨</p>
+              </div>
+              <div class="merch-section">
+                <h3>Shop Merchandise for Your Character!</h3>
+                <p>Explore apparel and more related to <strong>${character}</strong> on:</p>
+                <p>
+                    <a href="https://www.amazon.com" target="_blank">Amazon</a> |
+                    <a href="https://www.redbubble.com" target="_blank">Redbubble</a> |
+                    <a href="https://www.teepublic.com" target="_blank">TeePublic</a>
+                </p>
               </div>
               <div class="email-footer">
                 <p>Thank you for playing <strong>Naughty or Nice</strong>.</p>

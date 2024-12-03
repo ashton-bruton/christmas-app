@@ -111,11 +111,27 @@ import { addUser } from "./firebase.js";
     }
   }
 
+  // Assign Unique Character Logic
+  async function assignCharacter(existingCharacters) {
+    let uniqueCharacter = null;
+    while (!uniqueCharacter) {
+      const { status, character } = await getRandomCharacter();
+      if (!existingCharacters.includes(character)) {
+        uniqueCharacter = { status, character };
+        existingCharacters.push(character);
+      }
+    }
+    return uniqueCharacter;
+  }
+
   // Signup Form
   (function () {
     const $form = document.querySelector("#signup-form");
     const $submit = $form.querySelector("input[type='submit']");
     const $mainContent = document.querySelector("#mainContent");
+
+    // Track assigned characters to prevent duplicates
+    const assignedCharacters = [];
 
     $form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -132,12 +148,11 @@ import { addUser } from "./firebase.js";
         return;
       }
 
-      const { status, character } = await getRandomCharacter();
+      const { status, character } = await assignCharacter(assignedCharacters);
       const userId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       addUser(userId, firstName, lastName, email, status, character);
 
       updateBackground(character);
-
       showPopup(firstName, status, character);
 
       if ($mainContent) {
