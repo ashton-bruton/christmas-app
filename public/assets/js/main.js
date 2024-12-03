@@ -62,7 +62,7 @@ import { addUser } from "./firebase.js";
       setTimeout(() => {
         $form.reset();
         $submit.disabled = false;
-      }, 99999999999999);
+      }, 750);
     });
   })();
 })();
