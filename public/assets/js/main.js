@@ -76,15 +76,16 @@ import { addUser } from "./firebase.js";
 
     if (popup && popupContent) {
       const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
+      const statusColor = status.toLowerCase() === "nice" ? "green" : "red";
 
       popupContent.innerHTML = `
         <div class="popup-header" style="background: linear-gradient(135deg, #1cb495, #ff2361);">
           <div class="icon">${icon}</div>
           <h2>Thank You, ${firstName}!</h2>
         </div>
-        <div class="popup-body">
+        <div class="popup-body" style="color: ${statusColor};">
           <p>You are on the <strong>${status.toUpperCase()}</strong> list!</p>
-          <p>Your character is <strong>${character}</strong>.</p>
+          <p>Your character is <span class="character"><strong>${character}</strong></span>.</p>
         </div>
       `;
 
@@ -93,7 +94,7 @@ import { addUser } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 99999999999);
+      }, 5000);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
