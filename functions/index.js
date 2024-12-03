@@ -60,7 +60,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       subject: "Your Christmas Character",
       html: `
         <h1>Congratulations!</h1>
-        <p>You are on the <strong>${status?.toUpperCase()}</strong> list!</p>
+        <p>You are on the <strong>${(status || '').toUpperCase()}</strong> list!</p>
         <p>Your character is: <strong>${character}</strong></p>
       `,
     };
