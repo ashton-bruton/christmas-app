@@ -75,19 +75,23 @@ import { addUser } from "./firebase.js";
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
-    // Set the content dynamically
-    popupContent.innerHTML = `
-      <h2>Thank you, ${firstName}!</h2>
-      <p>You are on the <strong>${status.toUpperCase()}</strong> list with <strong>${character}</strong>!</p>
-    `;
+    if (popup && popupContent) {
+      // Set the content dynamically
+      popupContent.innerHTML = `
+        <h2>Thank you, ${firstName}!</h2>
+        <p>You are on the <strong>${status.toUpperCase()}</strong> list with <strong>${character}</strong>!</p>
+      `;
 
-    // Show the popup
-    popup.style.display = "flex";
+      // Show the popup
+      popup.style.display = "flex";
 
-    // Close functionality
-    document.getElementById("popup-close").addEventListener("click", () => {
-      popup.style.display = "none";
-    });
+      // Automatically hide the popup after 5 seconds
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 5000);
+    } else {
+      console.error("Popup or popup content is missing in the DOM.");
+    }
   }
 
   // Signup Form
@@ -119,7 +123,9 @@ import { addUser } from "./firebase.js";
 
       showPopup(firstName, status, character);
 
-      $mainContent.style.display = "none";
+      if ($mainContent) {
+        $mainContent.style.display = "none";
+      }
 
       try {
         const sendEmail = httpsCallable(functions, "sendCharacterEmail");
