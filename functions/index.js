@@ -49,7 +49,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
 
   res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
 
-  const { email, character, status, firstName } = req.body;
+  const { email, character, status, firstName, assignedName } = req.body;
 
   if (!email || !character || !status || !firstName) {
     res
@@ -74,6 +74,10 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     });
 
     const statusColor = status.toLowerCase() === "naughty" ? "red" : "green";
+
+    const secretSantaSection = assignedName
+      ? `<p>You drew <strong>${assignedName}</strong> in this year's Secret Santa. </p>`
+      : "";
 
     const mailOptions = {
       from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",
@@ -205,6 +209,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
                     <p>A fitting companion for someone on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
                   </div>
                 </div>
+                ${secretSantaSection}
                 <p>We wish you a joyous holiday season filled with laughter, love, and maybe a bit of magic. 🎄✨</p>
               </div>
               <div class="merch-section">
