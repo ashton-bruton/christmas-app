@@ -16,13 +16,21 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN || functions.config().google.ref
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, "https://developers.google.com/oauthplayground");
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
+// Middleware to parse JSON and handle CORS
 app.use(express.json());
+app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.listen(5001, () => {
+  console.log("Server is running on port 5001");
+});
 
 // Firebase Function to send email
 exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
   if (req.method === "OPTIONS") {
-    // Handle preflight requests
     res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
     res.set("Access-Control-Allow-Methods", "POST");
     res.set("Access-Control-Allow-Headers", "Content-Type");
@@ -35,7 +43,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
   const { email, character, status } = req.body;
 
   if (!email || !character || !status) {
-    res.status(400).json({ success: false, message: "Missing required fields: email, character, or status." });
+    res.status(400).json({ success: false, message: "Missing required fields." });
     return;
   }
 
@@ -60,7 +68,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       subject: "Your Christmas Character",
       html: `
         <h1>Congratulations!</h1>
-        <p>You are on the <strong>${(status || '').toUpperCase()}</strong> list!</p>
+        <p>You are on the <strong>${status.toUpperCase()}</strong> list!</p>
         <p>Your character is: <strong>${character}</strong></p>
       `,
     };
@@ -70,6 +78,6 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     res.status(200).json({ success: true, message: "Email sent successfully." });
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: "Internal server error." });
   }
 });

@@ -1,6 +1,5 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
-import { httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 import { addUser } from "./firebase.js";
 
 (function () {
@@ -88,7 +87,7 @@ import { addUser } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 5000);
+      }, 99999999999);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
@@ -128,18 +127,23 @@ import { addUser } from "./firebase.js";
       }
 
       try {
-        const sendEmail = httpsCallable(functions, "sendCharacterEmail");
-        const response = await sendEmail({ email, character, status });
+        const response = await fetch("https://us-central1-christmas-app-e9bf7.cloudfunctions.net/sendCharacterEmail", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, character, status }),
+        });
 
-        if (response?.data?.success) {
-          console.log("Email sent successfully.");
-        } else {
-          console.error("Error sending email:", response?.data?.message || "Unknown error.");
-          alert("Failed to send email. Please try again.");
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error sending email:", errorData.message);
+          return;
         }
+
+        console.log("Email sent successfully.");
       } catch (error) {
-        console.error("Error sending email:", error);
-        alert("An unexpected error occurred. Please try again.");
+        console.error("Error in fetch request:", error);
       }
 
       setTimeout(() => {
