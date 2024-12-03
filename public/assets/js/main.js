@@ -83,9 +83,9 @@ import { addUser } from "./firebase.js";
           <div class="icon">${icon}</div>
           <h2>Thank You, ${firstName}!</h2>
         </div>
-        <div class="popup-body" style="color: ${statusColor};">
-          <p>You are on the <strong>${status.toUpperCase()}</strong> list!</p>
-          <p>Your character is <span class="character"><strong>${character}</strong></span>.</p>
+        <div class="popup-body">
+          <p>You are on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
+          <p>Your character is <strong class="character">${character}</strong>.</p>
         </div>
       `;
 
