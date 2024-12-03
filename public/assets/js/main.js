@@ -88,7 +88,7 @@ import { addUser } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 99999999999);
+      }, 5000);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
@@ -129,20 +129,23 @@ import { addUser } from "./firebase.js";
 
       try {
         const sendEmail = httpsCallable(functions, "sendCharacterEmail");
-        const emailResponse = await sendEmail({ email, character, status });
-        if (emailResponse?.data?.success) {
+        const response = await sendEmail({ email, character, status });
+
+        if (response?.data?.success) {
           console.log("Email sent successfully.");
         } else {
-          console.error("Error sending email:", emailResponse?.data?.message || "Unknown error.");
+          console.error("Error sending email:", response?.data?.message || "Unknown error.");
+          alert("Failed to send email. Please try again.");
         }
       } catch (error) {
         console.error("Error sending email:", error);
+        alert("An unexpected error occurred. Please try again.");
       }
 
       setTimeout(() => {
         $form.reset();
         $submit.disabled = false;
-      }, 500);
+      }, 750);
     });
   })();
 })();

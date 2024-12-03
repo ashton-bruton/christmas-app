@@ -18,13 +18,10 @@ oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 // Use CORS middleware to handle preflight requests
 app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
-});
-
-app.listen(5001, () => {
-  console.log("Server is running on port 5001");
 });
 
 // Firebase Function to send email
@@ -41,6 +38,11 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
   res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
 
   const { email, character, status } = req.body;
+
+  if (!email || !character || !status) {
+    res.status(400).json({ success: false, message: "Missing required parameters." });
+    return;
+  }
 
   try {
     const accessToken = await oAuth2Client.getAccessToken();
