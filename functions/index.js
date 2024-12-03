@@ -2,7 +2,7 @@
 const functions = require("firebase-functions");
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const cors = require("cors"); // Add CORS middleware
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const admin = require("firebase-admin");
@@ -16,13 +16,8 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN || functions.config().google.ref
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, "https://developers.google.com/oauthplayground");
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-// Use CORS middleware to handle preflight requests
 app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
 app.use(express.json());
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
 
 // Firebase Function to send email
 exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
@@ -40,7 +35,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
   const { email, character, status } = req.body;
 
   if (!email || !character || !status) {
-    res.status(400).json({ success: false, message: "Missing required parameters." });
+    res.status(400).json({ success: false, message: "Missing required fields: email, character, or status." });
     return;
   }
 
@@ -65,7 +60,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       subject: "Your Christmas Character",
       html: `
         <h1>Congratulations!</h1>
-        <p>You are on the <strong>${status.toUpperCase()}</strong> list!</p>
+        <p>You are on the <strong>${status?.toUpperCase()}</strong> list!</p>
         <p>Your character is: <strong>${character}</strong></p>
       `,
     };
