@@ -1,54 +1,48 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>Naughty Or Nice</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/christmas_favicon.png">
-    	<link rel="shortcut icon" href="images/favicon/christmas_favicon.png">
-	</head>
-	<body class="is-preload">
+  <head>
+    <title>Naughty Or Nice</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/christmas_favicon.png">
+    <link rel="shortcut icon" href="images/favicon/christmas_favicon.png">
+  </head>
+  <body class="is-preload">
+    <div id="mainContent">
+      <!-- Header -->
+      <header id="header">
+        <h1>Have you been <i>NAUGHTY</i> or <i>NICE?</i></h1>
+        <p>Enter your information below to find out...</p>
+      </header>
 
-		<div id="mainContent">
-		<!-- Header -->
-			<header id="header">
-                <h1>Have you been <i>NAUGHTY</i> or <i>NICE?</i></h1>
-				<p>Enter your information below to find out...</p>
-			</header>
+      <!-- Signup Form -->
+      <form id="signup-form" method="post" action="#">
+        <input type="text" name="firstName" id="firstName" placeholder="First Name" />
+        <input type="text" name="lastName" id="lastName" placeholder="Last Name" />
+        <input type="email" name="email" id="email" placeholder="Email Address" />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
 
-		<!-- Signup Form -->
-		<form id="signup-form" method="post" action="#">
-			<input type="text" name="firstName" id="firstName" placeholder="First Name" />
-			<input type="text" name="lastName" id="lastName" placeholder="Last Name" />
-			<input type="email" name="email" id="email" placeholder="Email Address" />
-			
-			<!-- Hidden inputs for naughty/nice status and character -->
-			<input type="hidden" name="status" id="status" />
-			<input type="hidden" name="character" id="character" />
-			
-			<input type="submit" value="Submit" />
-		  </form>
-		</div>
+    <!-- Popup -->
+    <div id="popup">
+      <div id="popup-content">
+        <!-- Content will be dynamically added here -->
+      </div>
+    </div>
 
-		  <!-- Popup -->
-		<div id="popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 1000;">
-			<div id="popup-content" style="background: #fff; border-radius: 10px; padding: 20px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);">
-				<!-- Dynamic content will be added here by JavaScript -->
-			</div>
-		</div>
+    <!-- Footer -->
+    <footer id="footer">
+      <ul class="copyright">
+        <li>&copy; NaughtyOrNice.</li>
+        <li>Credits: <a href="">Project BlvckJvck</a></li>
+      </ul>
+    </footer>
 
-		<!-- Footer -->
-			<footer id="footer">
-				<ul class="copyright">
-					<li>&copy; NaughtyOrNice.</li><li>Credits: <a href=""">Project BlvckJvck</a></li>
-				</ul>
-			</footer>
-
-		<!-- Scripts -->
-            <script type="module" src="assets/js/main.js"></script>
-			<script type="module" src="assets/js/firebase.js"></script>
-			<script type="module" src="assets/js/naughtyNice.js"></script>
-
-	</body>
+    <!-- Scripts -->
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/firebase.js"></script>
+    <script type="module" src="assets/js/naughtyNice.js"></script>
+  </body>
 </html>

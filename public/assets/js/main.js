@@ -70,44 +70,34 @@ import { addUser } from "./firebase.js";
   }
 
   // Show Popup
-function showPopup(firstName, status, character) {
+  function showPopup(firstName, status, character) {
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
     if (popup && popupContent) {
-        const statusColor = status.toLowerCase() === "nice" ? "#28a745" : "#dc3545";
-        const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
+      const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
 
-        // Set the content dynamically
-        popupContent.innerHTML = `
-            <div style="font-size: 40px; margin-bottom: 10px;">${icon}</div>
-            <h2 style="color: ${statusColor}; margin-bottom: 15px;">
-                Thank You, ${firstName}!
-            </h2>
-            <p style="font-size: 16px; color: #333; margin-bottom: 20px;">
-                You are on the 
-                <strong style="color: ${statusColor}; text-transform: uppercase;">${status}</strong> list!<br>
-                Your character is <strong>${character}</strong>!
-            </p>
-            <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <button style="padding: 10px 20px; background: ${statusColor}; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
-                    Share Your Result!
-                </button>
-            </div>
-        `;
+      popupContent.innerHTML = `
+        <div class="popup-header" style="background: linear-gradient(135deg, #1cb495, #ff2361);">
+          <div class="icon">${icon}</div>
+          <h2>Thank You, ${firstName}!</h2>
+        </div>
+        <div class="popup-body">
+          <p>You are on the <strong>${status.toUpperCase()}</strong> list!</p>
+          <p>Your character is <strong>${character}</strong>.</p>
+        </div>
+      `;
 
-        // Show the popup
-        popup.style.display = "flex";
+      popup.style.display = "flex";
 
-        // Automatically hide the popup after 5 seconds
-        setTimeout(() => {
-            popup.style.display = "none";
-        }, 5000);
+      // Automatically hide the popup after 5 seconds
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 99999999999);
     } else {
-        console.error("Popup or popup content is missing in the DOM.");
+      console.error("Popup or popup content is missing in the DOM.");
     }
-}
-
+  }
 
   // Signup Form
   (function () {
