@@ -96,7 +96,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     const statusColor = status.toLowerCase() === "naughty" ? "red" : "green";
 
     const secretSantaMessage = secretSantaMap[email]
-      ? `<p><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
+      ? `<p class="secretSanta-body"><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
       : "";
 
     const mailOptions = {
@@ -206,6 +206,9 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
               }
               .email-footer a:hover {
                 text-decoration: underline;
+              }
+              .secretSanta-body {
+                padding: 20px;
               }
             </style>
           </head>

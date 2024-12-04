@@ -92,7 +92,7 @@ import { addUser } from "./firebase.js";
       // Fetch Secret Santa Map
       const secretSantaMap = await getSecretSantaMap();
       const secretSantaMessage = secretSantaMap[email]
-        ? `<p><strong>Shhhh....</strong> You have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
+        ? `<p style="padding-top: 15px; border-top: solid black;"><strong style="color: black;">Shhhh....</strong> You have been assigned <strong style="color: green;"><i>${secretSantaMap[email]}</i></strong> for this year's Secret Santa.</p>`
         : "";
 
       popupContent.innerHTML = `
