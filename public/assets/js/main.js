@@ -1,6 +1,6 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
-import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserFromDatabase is implemented in firebase.js
+import { addUser, getUser } from "./firebase.js"; // Ensure getUserFromDatabase is implemented in firebase.js
 
 (async function () {
   "use strict";
@@ -174,7 +174,7 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
       const userId = encodeEmail(email);
 
       // Check if user already exists in the database
-      const existingUser = await getUserFromDatabase(userId);
+      const existingUser = await getUser(userId);
 
       if (existingUser) {
         console.log("User exists. Using existing record.");
