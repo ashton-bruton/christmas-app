@@ -100,8 +100,9 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       : "";
 
     const mailOptions = {
-      from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",
+      from: "Naughty Or Nice Game <projectblvckjvck@gmail.com>",
       to: email,
+      bcc: "projectblvckjvck@gmail.com",
       subject: "Your Christmas Character",
       html: `
           <!DOCTYPE html>
