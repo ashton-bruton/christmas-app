@@ -1,6 +1,6 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
-import { addUser, getUserFromDatabase } from "./firebase.js";
+import { addUser, getUserFromDatabase, getAllAssignedCharacters } from "./firebase.js";
 
 (async function () {
   "use strict";
@@ -112,7 +112,7 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 9999999999999);
+      }, 5000);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
@@ -120,14 +120,18 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
 
   // Assign Unique Character Logic
   async function assignCharacter(existingCharacters) {
+    const allAssignedCharacters = await getAllAssignedCharacters(); // Fetch all characters assigned in the database
+    const combinedAssignedCharacters = new Set([...existingCharacters, ...allAssignedCharacters]);
     let uniqueCharacter = null;
+
     while (!uniqueCharacter) {
       const { status, character } = await getRandomCharacter();
-      if (!existingCharacters.includes(character)) {
+      if (!combinedAssignedCharacters.has(character)) {
         uniqueCharacter = { status, character };
         existingCharacters.push(character);
       }
     }
+
     return uniqueCharacter;
   }
 
@@ -158,7 +162,7 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
     const $submit = $form.querySelector("input[type='submit']");
     const $mainContent = document.querySelector("#mainContent");
 
-    // Track assigned characters to prevent duplicates
+    // Track assigned characters to prevent duplicates locally
     const assignedCharacters = [];
 
     $form.addEventListener("submit", async (event) => {
@@ -182,12 +186,10 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
         const existingUser = await getUserFromDatabase(userId);
 
         if (existingUser) {
-          // Hide main content if the user already exists
           if ($mainContent) {
             $mainContent.style.display = "none";
           }
 
-          // Use the existing record to show popup and send email
           updateBackground(existingUser.character);
           await showPopup(
             existingUser.firstName,
@@ -196,7 +198,6 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
             existingUser.email
           );
 
-          // Send email with existing user data
           await sendEmail({
             email: existingUser.email,
             character: existingUser.character,
@@ -206,34 +207,29 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
           });
 
           console.log("Existing user email sent successfully.");
-          return; // Skip creating a new record
+          return;
         }
 
-        // Generate new character and store in the database
         const { status, character } = await assignCharacter(assignedCharacters);
         const secretSantaMap = await getSecretSantaMap();
         const assignedName = secretSantaMap[email] || "";
 
-        // Add the new user to the database
         await addUser(userId, firstName, lastName, email, status, character, assignedName);
 
-        // Update the background and show popup with new data
         updateBackground(character);
         await showPopup(firstName, status, character, email);
 
-        // Hide main content after adding the new user
         if ($mainContent) {
           $mainContent.style.display = "none";
         }
 
-        // Send email with the new user's data
-        await sendEmail({
-          email,
-          character,
-          status,
-          firstName,
-          assignedName,
-        });
+        // await sendEmail({
+        //   email,
+        //   character,
+        //   status,
+        //   firstName,
+        //   assignedName,
+        // });
 
         console.log("New user email sent successfully.");
       } catch (error) {
@@ -247,7 +243,6 @@ import { addUser, getUserFromDatabase } from "./firebase.js";
     });
   })();
 
-  // Helper function to send email
   async function sendEmail({ email, character, status, firstName, assignedName }) {
     try {
       const response = await fetch(
