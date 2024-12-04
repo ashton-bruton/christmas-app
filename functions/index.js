@@ -209,6 +209,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
               }
               .secretSanta-body {
                 padding: 20px;
+                border: 0.5px dotted darkred;
               }
             </style>
           </head>
