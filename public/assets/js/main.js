@@ -1,6 +1,6 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
-import { addUser } from "./firebase.js";
+import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserFromDatabase is implemented in firebase.js
 
 (async function () {
   "use strict";
@@ -81,7 +81,7 @@ import { addUser } from "./firebase.js";
   }
 
   // Show Popup
-  async function showPopup(firstName, status, character, email) {
+  async function showPopup(firstName, status, character, email, assignedName) {
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
@@ -89,10 +89,8 @@ import { addUser } from "./firebase.js";
       const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
       const statusColor = status.toLowerCase() === "nice" ? "green" : "red";
 
-      // Fetch Secret Santa Map
-      const secretSantaMap = await getSecretSantaMap();
-      const secretSantaMessage = secretSantaMap[email]
-        ? `<p style="padding-top: 15px; border-top: solid black;"><strong style="color: black;">Shhhh....</strong> You have been assigned <strong style="color: green;"><i>${secretSantaMap[email]}</i></strong> for this year's Secret Santa.</p>`
+      const secretSantaMessage = assignedName
+        ? `<p style="padding-top: 15px; border-top: solid black;"><strong style="color: black;">Shhhh....</strong> You have been assigned <strong style="color: green;"><i>${assignedName}</i></strong> for this year's Secret Santa.</p>`
         : "";
 
       popupContent.innerHTML = `
@@ -109,7 +107,6 @@ import { addUser } from "./firebase.js";
 
       popup.style.display = "flex";
 
-      // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
       }, 99999999999);
@@ -134,8 +131,7 @@ import { addUser } from "./firebase.js";
   // Generate ID
   function encodeEmail(email) {
     const encodedEmail = btoa(email.replace(/\./g, ","));
-    const idString = encodedEmail.replace(/=+$/, "") + "-ID";
-    return idString;
+    return encodedEmail.replace(/=+$/, "") + "-ID";
   }
 
   // Fetch Secret Santa Map
@@ -158,7 +154,6 @@ import { addUser } from "./firebase.js";
     const $submit = $form.querySelector("input[type='submit']");
     const $mainContent = document.querySelector("#mainContent");
 
-    // Track assigned characters to prevent duplicates
     const assignedCharacters = [];
 
     $form.addEventListener("submit", async (event) => {
@@ -176,14 +171,32 @@ import { addUser } from "./firebase.js";
         return;
       }
 
-	  const { status, character } = await assignCharacter(assignedCharacters);
-	  const secretSantaMap = await getSecretSantaMap();
-      const assignedName = secretSantaMap[email] || "";
       const userId = encodeEmail(email);
-      addUser(userId, firstName, lastName, email, status, character, assignedName) ;
+
+      // Check if user already exists in the database
+      const existingUser = await getUserFromDatabase(userId);
+
+      if (existingUser) {
+        console.log("User exists. Using existing record.");
+        const { status, character, assignedName } = existingUser;
+
+        updateBackground(character);
+        await showPopup(firstName, status, character, email, assignedName);
+
+        $submit.disabled = false;
+        return; // Exit here as the user already exists
+      }
+
+      // Generate a new character and save the user to the database
+      const { status, character } = await assignCharacter(assignedCharacters);
+      const secretSantaMap = await getSecretSantaMap();
+      const assignedName = secretSantaMap[email] || "";
+
+      // Save the user to the database
+      await addUser(userId, firstName, lastName, email, status, character, assignedName);
 
       updateBackground(character);
-      await showPopup(firstName, status, character, email);
+      await showPopup(firstName, status, character, email, assignedName);
 
       if ($mainContent) {
         $mainContent.style.display = "none";
