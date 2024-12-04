@@ -223,13 +223,13 @@ import { addUser, getUserFromDatabase, getAllAssignedCharacters } from "./fireba
           $mainContent.style.display = "none";
         }
 
-        // await sendEmail({
-        //   email,
-        //   character,
-        //   status,
-        //   firstName,
-        //   assignedName,
-        // });
+        await sendEmail({
+          email,
+          character,
+          status,
+          firstName,
+          assignedName,
+        });
 
         console.log("New user email sent successfully.");
       } catch (error) {
