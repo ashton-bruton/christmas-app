@@ -3,6 +3,8 @@ import {
   ref,
   set,
   get,
+  child,
+  onValue,
 } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getFunctions } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
@@ -33,7 +35,7 @@ export function addUser(
   assignedName
 ) {
   const userRef = ref(database, "users/" + userId);
-  set(userRef, {
+  return set(userRef, {
     firstName,
     lastName,
     email,
@@ -41,33 +43,18 @@ export function addUser(
     character,
     assignedName,
   })
-    .then(() => console.log("User added successfully!"))
-    .catch((error) => console.error("Error adding user:", error));
+    .then(() => {
+      console.log("User added successfully!");
+    })
+    .catch((error) => {
+      console.error("Error adding user:", error);
+    });
 }
 
 // Retrieve a user from the database
-export function getUser(userId) {
-  const userRef = ref(database, "users/" + userId);
-  get(userRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        console.log("User data:", snapshot.val());
-      } else {
-        console.log("No user data available");
-      }
-    })
-    .catch((error) => console.error("Error reading user data:", error));
-}
-
-/**
- * Fetch user data from the database based on user ID.
- * @param {string} userId - The ID of the user to fetch.
- * @returns {Promise<Object|null>} - The user data or null if not found.
- */
 export async function getUserFromDatabase(userId) {
   try {
-    const db = getDatabase();
-    const userRef = ref(db, `users/${userId}`);
+    const userRef = ref(database, "users/" + userId);
     const snapshot = await get(userRef);
 
     if (snapshot.exists()) {
@@ -81,14 +68,15 @@ export async function getUserFromDatabase(userId) {
   }
 }
 
+// Fetch all assigned characters to ensure uniqueness
 export async function getAllAssignedCharacters() {
   try {
-    const db = getDatabase(); // Replace with actual database initialization
-    const snapshot = await db.ref("users").once("value");
+    const usersRef = ref(database, "users");
+    const snapshot = await get(usersRef);
 
     if (snapshot.exists()) {
       const data = snapshot.val();
-      return Object.values(data).map(user => user.character); // Assuming 'character' is stored in user records
+      return Object.values(data).map((user) => user.character); // Assuming 'character' is stored in user records
     }
 
     return [];
@@ -96,6 +84,19 @@ export async function getAllAssignedCharacters() {
     console.error("Error fetching assigned characters from database:", error);
     return [];
   }
+}
+
+// Real-time listener for changes in the database (optional, for real-time updates)
+export function onUserDataChange(callback) {
+  const usersRef = ref(database, "users");
+  onValue(usersRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      callback(data);
+    } else {
+      callback({});
+    }
+  });
 }
 
 export { functions };

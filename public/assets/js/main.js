@@ -112,7 +112,7 @@ import { addUser, getUserFromDatabase, getAllAssignedCharacters } from "./fireba
       // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 5000);
+      }, 99999999999);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
