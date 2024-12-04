@@ -176,9 +176,11 @@ import { addUser } from "./firebase.js";
         return;
       }
 
-      const { status, character } = await assignCharacter(assignedCharacters);
+	  const { status, character } = await assignCharacter(assignedCharacters);
+	  const secretSantaMap = await getSecretSantaMap();
+      const assignedName = secretSantaMap[email] || "";
       const userId = encodeEmail(email);
-      addUser(userId, firstName, lastName, email, status, character);
+      addUser(userId, firstName, lastName, email, status, character, assignedName) ;
 
       updateBackground(character);
       await showPopup(firstName, status, character, email);
@@ -195,7 +197,7 @@ import { addUser } from "./firebase.js";
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email, character, status, firstName }),
+            body: JSON.stringify({ email, character, status, firstName, assignedName }),
           }
         );
 

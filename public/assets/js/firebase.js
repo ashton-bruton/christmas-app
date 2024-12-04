@@ -18,7 +18,7 @@ const database = getDatabase(app);
 const functions = getFunctions(app);
 
 // Add a user to the database
-export function addUser(userId, firstName, lastName, email, status, character) {
+export function addUser(userId, firstName, lastName, email, status, character, assignedName) {
   const userRef = ref(database, "users/" + userId);
   set(userRef, {
     firstName,
@@ -26,6 +26,7 @@ export function addUser(userId, firstName, lastName, email, status, character) {
     email,
     status,
     character,
+    assignedName,
   })
     .then(() => console.log("User added successfully!"))
     .catch((error) => console.error("Error adding user:", error));
