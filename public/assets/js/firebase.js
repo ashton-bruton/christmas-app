@@ -81,4 +81,21 @@ export async function getUserFromDatabase(userId) {
   }
 }
 
+export async function getAllAssignedCharacters() {
+  try {
+    const db = getDatabase(); // Replace with actual database initialization
+    const snapshot = await db.ref("users").once("value");
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      return Object.values(data).map(user => user.character); // Assuming 'character' is stored in user records
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Error fetching assigned characters from database:", error);
+    return [];
+  }
+}
+
 export { functions };
