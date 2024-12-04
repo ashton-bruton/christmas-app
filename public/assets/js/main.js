@@ -1,6 +1,6 @@
 import { functions } from "./firebase.js";
 import { getRandomCharacter } from "./naughtyNice.js";
-import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserFromDatabase is implemented in firebase.js
+import { addUser, getUserFromDatabase } from "./firebase.js";
 
 (async function () {
   "use strict";
@@ -81,7 +81,7 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
   }
 
   // Show Popup
-  async function showPopup(firstName, status, character, email, assignedName) {
+  async function showPopup(firstName, status, character, email) {
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
@@ -89,8 +89,10 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
       const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
       const statusColor = status.toLowerCase() === "nice" ? "green" : "red";
 
-      const secretSantaMessage = assignedName
-        ? `<p style="padding-top: 15px; border-top: solid black;"><strong style="color: black;">Shhhh....</strong> You have been assigned <strong style="color: green;"><i>${assignedName}</i></strong> for this year's Secret Santa.</p>`
+      // Fetch Secret Santa Map
+      const secretSantaMap = await getSecretSantaMap();
+      const secretSantaMessage = secretSantaMap[email]
+        ? `<p style="padding-top: 15px; border-top: solid black;"><strong style="color: black;">Shhhh....</strong> You have been assigned <strong style="color: green;"><i>${secretSantaMap[email]}</i></strong> for this year's Secret Santa.</p>`
         : "";
 
       popupContent.innerHTML = `
@@ -107,9 +109,10 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
 
       popup.style.display = "flex";
 
+      // Automatically hide the popup after 5 seconds
       setTimeout(() => {
         popup.style.display = "none";
-      }, 99999999999);
+      }, 5000);
     } else {
       console.error("Popup or popup content is missing in the DOM.");
     }
@@ -131,7 +134,8 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
   // Generate ID
   function encodeEmail(email) {
     const encodedEmail = btoa(email.replace(/\./g, ","));
-    return encodedEmail.replace(/=+$/, "") + "-ID";
+    const idString = encodedEmail.replace(/=+$/, "") + "-ID";
+    return idString;
   }
 
   // Fetch Secret Santa Map
@@ -154,6 +158,7 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
     const $submit = $form.querySelector("input[type='submit']");
     const $mainContent = document.querySelector("#mainContent");
 
+    // Track assigned characters to prevent duplicates
     const assignedCharacters = [];
 
     $form.addEventListener("submit", async (event) => {
@@ -173,62 +178,97 @@ import { addUser, getUserFromDatabase } from "./firebase.js"; // Ensure getUserF
 
       const userId = encodeEmail(email);
 
-      // Check if user already exists in the database
-      const existingUser = await getUserFromDatabase(userId);
-
-      if (existingUser) {
-        console.log("User exists. Using existing record.");
-        const { status, character, assignedName } = existingUser;
-
-        updateBackground(character);
-        await showPopup(firstName, status, character, email, assignedName);
-
-        $submit.disabled = false;
-        return; // Exit here as the user already exists
-      }
-
-      // Generate a new character and save the user to the database
-      const { status, character } = await assignCharacter(assignedCharacters);
-      const secretSantaMap = await getSecretSantaMap();
-      const assignedName = secretSantaMap[email] || "";
-
-      // Save the user to the database
-      await addUser(userId, firstName, lastName, email, status, character, assignedName);
-
-      updateBackground(character);
-      await showPopup(firstName, status, character, email, assignedName);
-
-      if ($mainContent) {
-        $mainContent.style.display = "none";
-      }
-
       try {
-        const response = await fetch(
-          "https://us-central1-christmas-app-e9bf7.cloudfunctions.net/sendCharacterEmail",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email, character, status, firstName, assignedName }),
-          }
-        );
+        const existingUser = await getUserFromDatabase(userId);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error sending email:", errorData.message);
-          return;
+        if (existingUser) {
+          // Hide main content if the user already exists
+          if ($mainContent) {
+            $mainContent.style.display = "none";
+          }
+
+          // Use the existing record to show popup and send email
+          updateBackground(existingUser.character);
+          await showPopup(
+            existingUser.firstName,
+            existingUser.status,
+            existingUser.character,
+            existingUser.email
+          );
+
+          // Send email with existing user data
+          await sendEmail({
+            email: existingUser.email,
+            character: existingUser.character,
+            status: existingUser.status,
+            firstName: existingUser.firstName,
+            assignedName: existingUser.assignedName || "",
+          });
+
+          console.log("Existing user email sent successfully.");
+          return; // Skip creating a new record
         }
 
-        console.log("Email sent successfully.");
-      } catch (error) {
-        console.error("Error in fetch request:", error);
-      }
+        // Generate new character and store in the database
+        const { status, character } = await assignCharacter(assignedCharacters);
+        const secretSantaMap = await getSecretSantaMap();
+        const assignedName = secretSantaMap[email] || "";
 
-      setTimeout(() => {
-        $form.reset();
-        $submit.disabled = false;
-      }, 750);
+        // Add the new user to the database
+        await addUser(userId, firstName, lastName, email, status, character, assignedName);
+
+        // Update the background and show popup with new data
+        updateBackground(character);
+        await showPopup(firstName, status, character, email);
+
+        // Hide main content after adding the new user
+        if ($mainContent) {
+          $mainContent.style.display = "none";
+        }
+
+        // Send email with the new user's data
+        await sendEmail({
+          email,
+          character,
+          status,
+          firstName,
+          assignedName,
+        });
+
+        console.log("New user email sent successfully.");
+      } catch (error) {
+        console.error("Error handling user submission:", error);
+      } finally {
+        setTimeout(() => {
+          $form.reset();
+          $submit.disabled = false;
+        }, 750);
+      }
     });
   })();
+
+  // Helper function to send email
+  async function sendEmail({ email, character, status, firstName, assignedName }) {
+    try {
+      const response = await fetch(
+        "https://us-central1-christmas-app-e9bf7.cloudfunctions.net/sendCharacterEmail",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, character, status, firstName, assignedName }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error sending email:", errorData.message);
+      } else {
+        console.log("Email sent successfully.");
+      }
+    } catch (error) {
+      console.error("Error in sendEmail:", error);
+    }
+  }
 })();
