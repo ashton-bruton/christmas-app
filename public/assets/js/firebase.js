@@ -1,4 +1,9 @@
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
 import { getFunctions } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-functions.js";
 
@@ -18,7 +23,15 @@ const database = getDatabase(app);
 const functions = getFunctions(app);
 
 // Add a user to the database
-export function addUser(userId, firstName, lastName, email, status, character, assignedName) {
+export function addUser(
+  userId,
+  firstName,
+  lastName,
+  email,
+  status,
+  character,
+  assignedName
+) {
   const userRef = ref(database, "users/" + userId);
   set(userRef, {
     firstName,
@@ -44,6 +57,28 @@ export function getUser(userId) {
       }
     })
     .catch((error) => console.error("Error reading user data:", error));
+}
+
+/**
+ * Fetch user data from the database based on user ID.
+ * @param {string} userId - The ID of the user to fetch.
+ * @returns {Promise<Object|null>} - The user data or null if not found.
+ */
+export async function getUserFromDatabase(userId) {
+  try {
+    const db = getDatabase();
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      return null; // User does not exist
+    }
+  } catch (error) {
+    console.error("Error fetching user from database:", error);
+    throw error;
+  }
 }
 
 export { functions };
