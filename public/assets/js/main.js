@@ -104,7 +104,7 @@ import { addUser, getUserFromDatabase, getAllAssignedCharacters } from "./fireba
           <p>You are on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
           <p>Your character is <strong class="character">${character}</strong>.</p>
 		  ${secretSantaMessage}
-		  <p>Please check your email inbox for more details.</p>
+		  <p style="padding-top: 15px; border-top: solid black;">Please check your email inbox for more details.</p>
         </div>
       `;
 
