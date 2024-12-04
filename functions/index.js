@@ -4,21 +4,30 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const cors = require("cors");
 const express = require("express");
+const fetch = require("node-fetch");
 const app = express();
 const admin = require("firebase-admin");
 admin.initializeApp();
 require("dotenv").config();
-const fs = require("fs");
-const path = require("path");
-const secretSantaPath = path.resolve(__dirname, "secret_santa.json");
-let secretSantaMap = {};
 
-try {
-    const secretSantaData = fs.readFileSync(secretSantaPath, "utf8");
-    secretSantaMap = JSON.parse(secretSantaData);
+const SECRET_SANTA_URL = "https://christmas-app-e9bf7.web.app/assets/json/secret_santa.json";
+
+// Fetch and cache Secret Santa map
+let secretSantaMap = {};
+async function loadSecretSantaMap() {
+  try {
+    const response = await fetch(SECRET_SANTA_URL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch secret_santa.json: ${response.statusText}`);
+    }
+    secretSantaMap = await response.json();
+    console.log("Secret Santa map loaded successfully.");
   } catch (error) {
     console.error("Error loading secret_santa.json:", error);
+    secretSantaMap = {}; // Fallback to empty map
   }
+}
+loadSecretSantaMap(); // Load data on initialization
 
 const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
 const CLIENT_SECRET =
@@ -87,8 +96,8 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     const statusColor = status.toLowerCase() === "naughty" ? "red" : "green";
 
     const secretSantaMessage = secretSantaMap[email]
-  ? `<p><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
-  : "";
+      ? `<p><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
+      : "";
 
     const mailOptions = {
       from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",

@@ -9,6 +9,10 @@
     ],
     "rewrites": [
       {
+        "source": "/assets/json/secret_santa.json",
+        "destination": "/assets/json/secret_santa.json"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
