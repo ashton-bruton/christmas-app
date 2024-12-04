@@ -239,6 +239,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
               ${secretSantaMessage}
               <div class="merch-section">
                 <h3>Shop Merchandise for Your Character!</h3>
+                <p>Come to the Christmas gathering dressed in apparel related to your character. Feel free to be as creative as you would like!!!</p>
                 <p>Explore apparel and more related to <strong>${character}</strong> on:</p>
                 <p>
                     <a href="https://www.amazon.com" target="_blank">Amazon</a> |
