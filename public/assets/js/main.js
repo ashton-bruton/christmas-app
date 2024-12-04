@@ -81,13 +81,19 @@ import { addUser } from "./firebase.js";
   }
 
   // Show Popup
-  function showPopup(firstName, status, character) {
+  function showPopup(firstName, status, character, email) {
     const popup = document.getElementById("popup");
     const popupContent = document.getElementById("popup-content");
 
     if (popup && popupContent) {
       const icon = status.toLowerCase() === "nice" ? "🎅" : "😈";
-      const statusColor = status.toLowerCase() === "nice" ? "green" : "red";
+	  const statusColor = status.toLowerCase() === "nice" ? "green" : "red";
+	  
+	  // Fetch Secret Santa Map
+	  const secretSantaMap = await getSecretSantaMap();
+	  const secretSantaMessage = secretSantaMap[email]
+		? `<p><strong>Shhhh....</strong> You have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
+		: "";
 
       popupContent.innerHTML = `
         <div class="popup-header" style="background: linear-gradient(135deg, #1cb495, #ff2361);">
@@ -96,7 +102,8 @@ import { addUser } from "./firebase.js";
         </div>
         <div class="popup-body">
           <p>You are on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
-          <p>Your character is <strong class="character">${character}</strong>.</p>
+		  <p>Your character is <strong class="character">${character}</strong>.</p>
+		  ${secretSantaMessage}
         </div>
       `;
 
@@ -124,6 +131,27 @@ import { addUser } from "./firebase.js";
     return uniqueCharacter;
   }
 
+  // Generate ID
+  function encodeEmail(email) {
+	const encodedEmail = btoa(email.replace(/\./g, ','));
+	const idString = encodedEmail.replace(/=+$/, '') + '-ID';
+	return idString;
+  }
+
+  // Santa Map
+  async function getSecretSantaMap() {
+	try {
+	  const response = await fetch("secret_santa.json");
+	  if (!response.ok) {
+		throw new Error("Failed to load Secret Santa data.");
+	  }
+	  return await response.json();
+	} catch (error) {
+	  console.error("Error fetching Secret Santa map:", error);
+	  return {};
+	}
+  }
+
   // Signup Form
   (function () {
     const $form = document.querySelector("#signup-form");
@@ -149,11 +177,12 @@ import { addUser } from "./firebase.js";
       }
 
       const { status, character } = await assignCharacter(assignedCharacters);
-      const userId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	//   const userId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	  const userId = encodeEmail(email);
       addUser(userId, firstName, lastName, email, status, character);
 
       updateBackground(character);
-      showPopup(firstName, status, character);
+      showPopup(firstName, status, character, email);
 
       if ($mainContent) {
         $mainContent.style.display = "none";

@@ -8,6 +8,17 @@ const app = express();
 const admin = require("firebase-admin");
 admin.initializeApp();
 require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
+const secretSantaPath = path.resolve(__dirname, "secret_santa.json");
+let secretSantaMap = {};
+
+try {
+    const secretSantaData = fs.readFileSync(secretSantaPath, "utf8");
+    secretSantaMap = JSON.parse(secretSantaData);
+  } catch (error) {
+    console.error("Error loading secret_santa.json:", error);
+  }
 
 const CLIENT_ID = process.env.CLIENT_ID || functions.config().google.client_id;
 const CLIENT_SECRET =
@@ -74,6 +85,10 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     });
 
     const statusColor = status.toLowerCase() === "naughty" ? "red" : "green";
+
+    const secretSantaMessage = secretSantaMap[email]
+  ? `<p><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
+  : "";
 
     const mailOptions = {
       from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",
@@ -207,6 +222,7 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
                 </div>
                 <p>We wish you a joyous holiday season filled with laughter, love, and maybe a bit of magic. 🎄✨</p>
               </div>
+              ${secretSantaMessage}
               <div class="merch-section">
                 <h3>Shop Merchandise for Your Character!</h3>
                 <p>Explore apparel and more related to <strong>${character}</strong> on:</p>
