@@ -44,6 +44,37 @@
 
 			</div>
 
+			<div id="game-configuration" class="popover">
+				<h2>Game Configuration</h2>
+				<form id="config-form">
+				  <label for="team-red">Team 1 Name:</label>
+				  <input type="text" id="team-red" placeholder="Red" value="Red" />
+				  
+				  <label for="team-blue">Team 2 Name:</label>
+				  <input type="text" id="team-blue" placeholder="Blue" value="Blue" />
+				  
+				  <label for="game-score">Play to:</label>
+				  <select id="game-score">
+					<option value="11">11</option>
+					<option value="21">21</option>
+				  </select>
+				  
+				  <button type="submit">Start Game</button>
+				</form>
+			  </div>
+			  
+			  <div id="scoreboard" class="hidden">
+				<div class="team" id="team-1">
+				  <h3 id="team-red-name">Red</h3>
+				  <p id="team-red-score">0</p>
+				</div>
+				<div class="team" id="team-2">
+				  <h3 id="team-blue-name">Blue</h3>
+				  <p id="team-blue-score">0</p>
+				</div>
+			  </div>
+			  
+
 		<!-- Scripts -->
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/browser.min.js"></script>

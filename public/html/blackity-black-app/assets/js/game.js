@@ -82,3 +82,87 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+// Helper to set and get localStorage with expiration
+function setStorageWithExpiration(key, value, hours) {
+  const now = new Date();
+  const expiration = now.getTime() + hours * 60 * 60 * 1000;
+  const data = { value, expiration };
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function getStorageWithExpiration(key) {
+  const data = JSON.parse(localStorage.getItem(key));
+  if (!data) return null;
+  const now = new Date();
+  if (now.getTime() > data.expiration) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return data.value;
+}
+
+// Initialize game settings
+document.addEventListener("DOMContentLoaded", () => {
+  const configForm = document.getElementById("config-form");
+  const popover = document.getElementById("game-configuration");
+  const scoreboard = document.getElementById("scoreboard");
+
+  // Check if a game is ongoing
+  const gameState = getStorageWithExpiration("gameState");
+
+  if (gameState) {
+    // Resume game
+    updateScoreboard(gameState);
+    scoreboard.classList.remove("hidden");
+  } else {
+    // Show configuration popover
+    popover.classList.remove("hidden");
+  }
+
+  // Handle form submission
+  configForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const teamRedName = document.getElementById("team-red").value || "Red";
+    const teamBlueName = document.getElementById("team-blue").value || "Blue";
+    const playTo = parseInt(document.getElementById("game-score").value, 10);
+
+    const initialGameState = {
+      teamRed: { name: teamRedName, score: 0 },
+      teamBlue: { name: teamBlueName, score: 0 },
+      playTo,
+    };
+
+    setStorageWithExpiration("gameState", initialGameState, 12); // Store game state for 12 hours
+    updateScoreboard(initialGameState);
+    popover.classList.add("hidden");
+    scoreboard.classList.remove("hidden");
+  });
+});
+
+// Update scoreboard dynamically
+function updateScoreboard(state) {
+  document.getElementById("team-red-name").textContent = state.teamRed.name;
+  document.getElementById("team-red-score").textContent = state.teamRed.score;
+  document.getElementById("team-blue-name").textContent = state.teamBlue.name;
+  document.getElementById("team-blue-score").textContent = state.teamBlue.score;
+}
+
+// Example of updating scores (add logic for button clicks)
+function addPointToTeam(team) {
+  const gameState = getStorageWithExpiration("gameState");
+  if (!gameState) return;
+
+  gameState[team].score += 1;
+
+  if (gameState[team].score >= gameState.playTo) {
+    // Declare winner
+    document.body.innerHTML = `<h1>${gameState[team].name} Wins!</h1>`;
+    localStorage.removeItem("gameState"); // Clear game state
+    return;
+  }
+
+  setStorageWithExpiration("gameState", gameState, 12);
+  updateScoreboard(gameState);
+}
+
