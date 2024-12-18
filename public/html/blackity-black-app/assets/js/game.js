@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreboard = document.getElementById("scoreboard");
   const contentSection = document.querySelector(".content");
 
-  // Set initial popover styles
+  // Set popover text color to black
   popover.style.color = "black";
 
   // Check if a game is ongoing
@@ -119,9 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resume game
     updateScoreboard(gameState);
     scoreboard.classList.remove("hidden");
+    popover.style.display = "none";
+    contentSection.style.visibility = "visible";
   } else {
     // Show configuration popover and hide content
-    popover.classList.remove("hidden");
+    popover.style.display = "block";
     contentSection.style.visibility = "hidden";
   }
 
@@ -142,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateScoreboard(initialGameState);
 
     // Hide configuration popover and show content
-    popover.classList.add("hidden");
+    popover.style.display = "none";
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
   });
