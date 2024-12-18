@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Beat Shazam - Soul Edition</title>
+  <title>Beat Shazam - Spotify Edition</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,8 +11,9 @@
       text-align: center;
       padding: 20px;
     }
-    #songPreview {
-      margin: 20px;
+    h1 {
+      font-size: 2rem;
+      color: #333;
     }
     #optionsContainer button {
       margin: 10px;
@@ -20,11 +21,36 @@
       font-size: 16px;
       cursor: pointer;
     }
+    #score {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #555;
+    }
+    #authMessage {
+      color: red;
+      font-size: 1rem;
+      margin-top: 20px;
+    }
+    #loginButton {
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #1db954;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #loginButton:hover {
+      background-color: #1ed760;
+    }
   </style>
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </head>
 <body>
-  <h1>Beat Shazam - Soul Edition</h1>
-  <audio id="songPreview" controls></audio>
+  <h1>Beat Shazam - Spotify Edition</h1>
+  <p id="authMessage"></p>
+  <button id="loginButton" style="display: none;">Login with Spotify</button>
   <div id="optionsContainer"></div>
   <p id="score">Score: 0</p>
   <script src="../assets/js/game.js"></script>

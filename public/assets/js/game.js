@@ -1,47 +1,69 @@
 (async function () {
     "use strict";
   
-    const $body = document.querySelector("body");
-    const audioElement = document.getElementById("songPreview");
+    const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
+    const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html"; // Update to match your app's redirect URI
+    const SCOPES = "streaming user-read-playback-state user-modify-playback-state";
+  
+    const authMessage = document.getElementById("authMessage");
+    const loginButton = document.getElementById("loginButton");
     const optionsContainer = document.getElementById("optionsContainer");
+    const scoreElement = document.getElementById("score");
+  
+    let token = null;
+    let player = null;
     let game = { score: 0, correctSong: null, allSongs: [] };
   
-    // Your Spotify Client ID and Secret
-    const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
-    const CLIENT_SECRET = "03f58379bd854c468edbeead30dd61c4";
+    // Authentication Flow
+    async function authenticate() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get("access_token");
   
-    // Fetch Spotify OAuth Token
-    async function getSpotifyToken() {
-      try {
-        const response = await fetch("https://accounts.spotify.com/api/token", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: "Basic " + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
-          },
-          body: "grant_type=client_credentials",
+      if (accessToken) {
+        token = accessToken;
+        window.history.pushState("", document.title, window.location.pathname); // Remove token from URL
+        initializePlayer();
+      } else {
+        loginButton.style.display = "block";
+        loginButton.addEventListener("click", () => {
+          const authUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
+            REDIRECT_URI
+          )}&scope=${encodeURIComponent(SCOPES)}`;
+          window.location.href = authUrl;
         });
-  
-        if (!response.ok) {
-          throw new Error("Failed to fetch Spotify token");
-        }
-  
-        const data = await response.json();
-        return data.access_token;
-      } catch (error) {
-        console.error("Error fetching Spotify token:", error.message);
-        return null;
       }
+    }
+  
+    // Initialize Spotify Player
+    function initializePlayer() {
+      authMessage.textContent = "Initializing Spotify Player...";
+      loginButton.style.display = "none";
+  
+      player = new Spotify.Player({
+        name: "Beat Shazam Game",
+        getOAuthToken: cb => cb(token),
+        volume: 0.5,
+      });
+  
+      player.addListener("ready", ({ device_id }) => {
+        authMessage.textContent = "Player is ready! Let's play!";
+        console.log("Device ID", device_id);
+        fetchSongs("soul"); // Fetch songs in the "Soul" genre
+      });
+  
+      player.addListener("not_ready", ({ device_id }) => {
+        console.error("Device ID has gone offline", device_id);
+      });
+  
+      player.connect();
     }
   
     // Fetch Songs from Spotify
     async function fetchSongs(genre) {
       try {
-        const token = await getSpotifyToken();
-        if (!token) throw new Error("Unable to get Spotify token");
-  
         const response = await fetch(
-          `https://api.spotify.com/v1/search?q=genre:"${genre}"&type=track&limit=20`,
+          `https://api.spotify.com/v1/search?q=genre:${genre}&type=track&limit=10`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,39 +74,15 @@
         if (!response.ok) throw new Error("Failed to fetch songs from Spotify");
   
         const data = await response.json();
-  
-        // Filter tracks to include only those with a preview URL
-        game.allSongs = data.tracks.items
-          .filter((track) => track.preview_url) // Exclude tracks with no preview URL
-          .map((track) => ({
-            id: track.id,
-            songName: track.name,
-            artist: track.artists.map((artist) => artist.name).join(", "),
-            previewUrl: track.preview_url,
-            album: track.album.name,
-          }));
-  
-        if (game.allSongs.length === 0) {
-          throw new Error("No tracks with preview URLs found.");
-        }
+        game.allSongs = data.tracks.items.map(track => ({
+          uri: track.uri,
+          songName: track.name,
+          artist: track.artists.map(artist => artist.name).join(", "),
+        }));
+        loadGameRound();
       } catch (error) {
         console.error("Error fetching songs:", error.message);
-        alert("Failed to fetch playable tracks. Please try again later.");
       }
-    }
-  
-    // Select Random Song
-    function getRandomSong() {
-      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
-      return game.allSongs[randomIndex];
-    }
-  
-    // Generate Options (Including Correct Answer)
-    function generateOptions(correctSong) {
-      const allOptions = game.allSongs.filter((song) => song.id !== correctSong.id);
-      const randomOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
-      randomOptions.push(correctSong); // Add the correct answer
-      return randomOptions.sort(() => 0.5 - Math.random()); // Shuffle options
     }
   
     // Load Game Round
@@ -93,23 +91,50 @@
       const options = generateOptions(correctSong);
       game.correctSong = correctSong;
   
-      // Play Song Preview
-      audioElement.src = correctSong.previewUrl;
-      audioElement.play();
+      // Play Song
+      playTrack(correctSong.uri);
   
       // Display Options
       optionsContainer.innerHTML = "";
-      options.forEach((option) => {
+      options.forEach(option => {
         const button = document.createElement("button");
         button.textContent = `${option.songName} - ${option.artist}`;
-        button.addEventListener("click", () => checkAnswer(option.id));
+        button.addEventListener("click", () => checkAnswer(option.uri));
         optionsContainer.appendChild(button);
       });
     }
   
+    // Get Random Song
+    function getRandomSong() {
+      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
+      return game.allSongs[randomIndex];
+    }
+  
+    // Generate Answer Options
+    function generateOptions(correctSong) {
+      const allOptions = game.allSongs.filter(song => song.uri !== correctSong.uri);
+      const randomOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
+      randomOptions.push(correctSong); // Include the correct answer
+      return randomOptions.sort(() => 0.5 - Math.random()); // Shuffle options
+    }
+  
+    // Play Track
+    function playTrack(trackUri) {
+      fetch("https://api.spotify.com/v1/me/player/play", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          uris: [trackUri],
+        }),
+      }).catch(error => console.error("Error playing track:", error));
+    }
+  
     // Check Answer
-    function checkAnswer(selectedId) {
-      if (selectedId === game.correctSong.id) {
+    function checkAnswer(selectedUri) {
+      if (selectedUri === game.correctSong.uri) {
         alert("🎉 Correct! Great job!");
         game.score++;
       } else {
@@ -117,20 +142,11 @@
           `❌ Wrong! The correct answer was: ${game.correctSong.songName} by ${game.correctSong.artist}`
         );
       }
-      document.getElementById("score").textContent = `Score: ${game.score}`;
+      scoreElement.textContent = `Score: ${game.score}`;
       loadGameRound();
     }
   
-    // Initialize Game
-    async function initGame() {
-      await fetchSongs("soul"); // Fetch songs in the "Soul" genre
-      if (game.allSongs.length > 0) {
-        loadGameRound();
-      } else {
-        console.error("No songs available to start the game.");
-      }
-    }
-  
-    await initGame();
+    // Start the authentication process
+    await authenticate();
   })();
   
