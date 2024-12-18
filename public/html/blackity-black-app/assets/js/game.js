@@ -2,7 +2,7 @@
 fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
-    const questionData = data[0]; // Get the first question
+    const questionData = data[0];
 
     // Populate the question text
     const questionElement = document.getElementById('question');
@@ -10,7 +10,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     // Prepare answers
     const allAnswers = [...questionData.incorrect_answers, questionData.answer];
-    shuffleArray(allAnswers);
+    shuffleArray(allAnswers); // Randomize the order of answers
 
     // Populate answer choices
     const answerChoices = document.querySelectorAll('#answer-choices li');
@@ -36,6 +36,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     // Submit button logic
     submitButton.addEventListener('click', () => {
       const selectedChoice = document.querySelector('.selected');
+
       if (!selectedChoice) return;
 
       const feedback = document.createElement('p');
@@ -67,7 +68,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       // Add event listener to the next button
       document.getElementById('next').addEventListener('click', () => {
-        location.reload(); // Reload the page for simplicity
+        location.reload();
       });
     });
   })
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateScoreboard(gameState);
     scoreboard.classList.remove("hidden");
   } else {
-    popover.classList.remove("hidden");
+    popover.classList.add("visible");
   }
 
   // Handle form submission
@@ -131,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setStorageWithExpiration("gameState", initialGameState, 12);
     updateScoreboard(initialGameState);
-    popover.classList.add("hidden");
+    popover.classList.remove("visible");
     scoreboard.classList.remove("hidden");
   });
 });
