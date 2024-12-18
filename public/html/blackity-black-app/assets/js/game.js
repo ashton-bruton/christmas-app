@@ -1,5 +1,5 @@
 // Load the JSON file and dynamically populate the HTML
-fetch('/json/questions.json')
+fetch('../json/questions.json')
   .then(response => response.json())
   .then(data => {
     // Get the first question (modify if you want to use more questions)
