@@ -2,6 +2,7 @@
 fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
+    // Get the first question (modify if you want to use more questions)
     const questionData = data[0];
 
     // Populate the question text
@@ -15,8 +16,8 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     // Populate answer choices
     const answerChoices = document.querySelectorAll('#answer-choices li');
     const submitButton = document.getElementById('submit');
-    submitButton.classList.remove('active');
-    submitButton.disabled = true;
+    submitButton.classList.remove('active'); // Ensure button is hidden initially
+    submitButton.disabled = true; // Initially disabled
 
     answerChoices.forEach((choice, index) => {
       choice.textContent = allAnswers[index];
@@ -37,10 +38,10 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     submitButton.addEventListener('click', () => {
       const selectedChoice = document.querySelector('.selected');
 
-      if (!selectedChoice) return;
+      if (!selectedChoice) return; // Prevent submission without a selection
 
       const feedback = document.createElement('p');
-      feedback.classList.add('feedback');
+      feedback.classList.add('feedback'); // Add feedback styling class
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
         feedback.classList.add('correct');
@@ -52,23 +53,23 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       // Replace content with the YouTube iframe
       const questionBlock = document.getElementById('question-block');
       questionBlock.innerHTML = `
-        <div class="content color0 span-3-75" style="margin:0 auto;">
-          <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
-            ${feedback.textContent}
-          </p>
-          <iframe width="560" height="315" 
-            src="${questionData.content}&autoplay=1" 
-            title="YouTube video player" frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-          </iframe>
-          <button id="next">Next</button>
+      <div class="content color0 span-3-75" style="margin:0 auto;">
+        <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+          ${feedback.textContent}
+        </p>
+        <iframe width="560" height="315" 
+          src="${questionData.content}&autoplay=1" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+        </iframe>
+        <button id="next">Next</button>
         </div>
       `;
 
       // Add event listener to the next button
       document.getElementById('next').addEventListener('click', () => {
-        location.reload();
+        location.reload(); // Reload the page for simplicity (modify if needed for multi-question support)
       });
     });
   })
@@ -106,15 +107,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const configForm = document.getElementById("config-form");
   const popover = document.getElementById("game-configuration");
   const scoreboard = document.getElementById("scoreboard");
+  const contentSection = document.querySelector(".content");
+
+  // Set initial popover styles
+  popover.style.color = "black";
 
   // Check if a game is ongoing
   const gameState = getStorageWithExpiration("gameState");
 
   if (gameState) {
+    // Resume game
     updateScoreboard(gameState);
     scoreboard.classList.remove("hidden");
   } else {
-    popover.classList.add("visible");
+    // Show configuration popover and hide content
+    popover.classList.remove("hidden");
+    contentSection.style.visibility = "hidden";
   }
 
   // Handle form submission
@@ -130,9 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
       playTo,
     };
 
-    setStorageWithExpiration("gameState", initialGameState, 12);
+    setStorageWithExpiration("gameState", initialGameState, 12); // Store game state for 12 hours
     updateScoreboard(initialGameState);
-    popover.classList.remove("visible");
+
+    // Hide configuration popover and show content
+    popover.classList.add("hidden");
+    contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
   });
 });
@@ -145,7 +156,7 @@ function updateScoreboard(state) {
   document.getElementById("team-blue-score").textContent = state.teamBlue.score;
 }
 
-// Example of updating scores
+// Example of updating scores (add logic for button clicks)
 function addPointToTeam(team) {
   const gameState = getStorageWithExpiration("gameState");
   if (!gameState) return;
@@ -153,8 +164,9 @@ function addPointToTeam(team) {
   gameState[team].score += 1;
 
   if (gameState[team].score >= gameState.playTo) {
+    // Declare winner
     document.body.innerHTML = `<h1>${gameState[team].name} Wins!</h1>`;
-    localStorage.removeItem("gameState");
+    localStorage.removeItem("gameState"); // Clear game state
     return;
   }
 
