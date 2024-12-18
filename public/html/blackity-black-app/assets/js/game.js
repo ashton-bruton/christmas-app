@@ -2,8 +2,18 @@
 fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
-    // Get the first question (modify if you want to use more questions)
-    const questionData = data[0];
+    // Filter out questions that have already been asked
+    const askedQuestions = getAskedQuestions();
+    const remainingQuestions = data.filter(question => !askedQuestions.includes(question.id));
+
+    if (remainingQuestions.length === 0) {
+      alert("All questions have been used!");
+      return;
+    }
+
+    // Select a random question from the remaining ones
+    const questionData = remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
+    storeAskedQuestion(questionData.id); // Store the asked question ID
 
     // Populate the question text
     const questionElement = document.getElementById('question');
@@ -94,6 +104,18 @@ function shuffleArray(array) {
   }
 }
 
+// Helper to store asked question IDs
+function storeAskedQuestion(id) {
+  const askedQuestions = getAskedQuestions();
+  askedQuestions.push(id);
+  localStorage.setItem("askedQuestions", JSON.stringify(askedQuestions));
+}
+
+// Helper to retrieve asked question IDs
+function getAskedQuestions() {
+  return JSON.parse(localStorage.getItem("askedQuestions")) || [];
+}
+
 // Helper to set and get localStorage with expiration
 function setStorageWithExpiration(key, value, hours) {
   const now = new Date();
@@ -120,26 +142,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreboard = document.getElementById("scoreboard-container");
   const contentSection = document.querySelector(".content");
 
-  // Set popover text color to black
   popover.style.color = "black";
 
-  // Check if a game is ongoing
   const gameState = getStorageWithExpiration("gameState");
 
   if (gameState) {
-    // Resume game
     updateScoreboard(gameState);
-    highlightActiveTeam(gameState.currentTeam); // Highlight active team
+    highlightActiveTeam(gameState.currentTeam);
     scoreboard.classList.remove("hidden");
     popover.style.display = "none";
     contentSection.style.visibility = "visible";
   } else {
-    // Show configuration popover and hide content
     popover.style.display = "block";
     contentSection.style.visibility = "hidden";
   }
 
-  // Handle form submission
   configForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const teamRedName = document.getElementById("team-red").value || "Red";
@@ -149,18 +166,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialGameState = {
       teamRed: { name: teamRedName, score: 0 },
       teamBlue: { name: teamBlueName, score: 0 },
-      currentTeam: "teamRed", // Set initial team
+      currentTeam: "teamRed",
       playTo,
     };
 
-    setStorageWithExpiration("gameState", initialGameState, 12); // Store game state for 12 hours
+    setStorageWithExpiration("gameState", initialGameState, 12);
     updateScoreboard(initialGameState);
-
-    // Hide configuration popover and show content
     popover.style.display = "none";
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
-    highlightActiveTeam("teamRed"); // Highlight the starting team
+    highlightActiveTeam("teamRed");
   });
 });
 
@@ -177,15 +192,12 @@ function highlightActiveTeam(team) {
   const teamRedName = document.getElementById("team-red-name");
   const teamBlueName = document.getElementById("team-blue-name");
 
-  // Remove glow effect from both team names
   teamRedName.classList.remove("active");
   teamBlueName.classList.remove("active");
 
-  // Add glow effect to the active team's name
   if (team === "teamRed") {
     teamRedName.classList.add("active");
   } else {
     teamBlueName.classList.add("active");
   }
 }
-
