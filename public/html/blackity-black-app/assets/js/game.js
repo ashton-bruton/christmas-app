@@ -15,6 +15,10 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     // Populate answer choices
     const answerChoices = document.querySelectorAll('#answer-choices li');
+    const submitButton = document.getElementById('submit');
+    submitButton.classList.remove('active'); // Ensure button is hidden initially
+    submitButton.disabled = true; // Initially disabled
+
     answerChoices.forEach((choice, index) => {
       choice.textContent = allAnswers[index];
       choice.dataset.answer = allAnswers[index];
@@ -24,32 +28,34 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         answerChoices.forEach(c => c.classList.remove('selected'));
         choice.classList.add('selected');
 
-        // Enable the submit button
-        document.getElementById('submit').disabled = false;
+        // Enable and show the submit button
+        submitButton.disabled = false;
+        submitButton.classList.add('active');
       });
     });
 
     // Submit button logic
-    const submitButton = document.getElementById('submit');
-    submitButton.disabled = true; // Initially disabled
     submitButton.addEventListener('click', () => {
       const selectedChoice = document.querySelector('.selected');
 
       if (!selectedChoice) return; // Prevent submission without a selection
 
       const feedback = document.createElement('p');
+      feedback.classList.add('feedback'); // Add feedback styling class
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
-        feedback.style.color = 'green';
+        feedback.classList.add('correct');
       } else {
         feedback.textContent = 'Incorrect';
-        feedback.style.color = 'red';
+        feedback.classList.add('incorrect');
       }
 
       // Replace content with the YouTube iframe
       const questionBlock = document.getElementById('question-block');
       questionBlock.innerHTML = `
-        <p>${feedback.textContent}</p>
+        <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+          ${feedback.textContent}
+        </p>
         <iframe width="560" height="315" 
           src="${questionData.content}" 
           title="YouTube video player" frameborder="0" 

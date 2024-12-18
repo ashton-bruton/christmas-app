@@ -3700,7 +3700,7 @@ input, select, textarea {
 		flex-direction: row;
 	}
 
-	/* General Styling */
+/* General Styling */
 .content {
 	padding: 20px;
 	margin: 20px auto;
@@ -3709,43 +3709,52 @@ input, select, textarea {
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	max-width: 600px;
 	text-align: center;
-  }
-  
-  /* Question Styling */
-  #question {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+}
+
+/* Question Styling */
+#question {
 	font-size: 1.5em;
 	font-weight: bold;
 	margin-bottom: 20px;
-  }
-  
-  /* Answer Choices Styling */
-  #answer-choices {
+}
+
+/* Answer Choices Styling */
+#answer-choices {
 	list-style-type: none;
 	padding: 0;
-  }
-  
-  #answer-choices li {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 10px;
+}
+
+#answer-choices li {
 	background: #e0e0e0;
 	margin: 10px 0;
 	padding: 15px;
 	border-radius: 5px;
 	cursor: pointer;
 	transition: background 0.3s;
-  }
-  
-  #answer-choices li:hover {
+}
+
+#answer-choices li:hover {
 	background: #d6d6d6;
-  }
-  
-  /* Active Selection */
-  #answer-choices li.selected {
+}
+
+/* Active Selection */
+#answer-choices li.selected {
 	background: #cce5ff;
 	font-weight: bold;
 	color: #004085;
-  }
-  
-  /* Submit Button */
-  #submit {
+}
+
+/* Submit Button */
+#submit {
 	display: none;
 	background: #007bff;
 	color: #fff;
@@ -3755,43 +3764,49 @@ input, select, textarea {
 	border-radius: 5px;
 	cursor: pointer;
 	transition: background 0.3s;
-  }
-  
-  #submit:disabled {
+	align-self: center;
+	margin-top: 20px;
+}
+
+#submit.active {
+	display: block;
+}
+
+#submit:disabled {
 	background: #d6d6d6;
 	cursor: not-allowed;
-  }
-  
-  #submit:hover:not(:disabled) {
+}
+
+#submit:hover:not(:disabled) {
 	background: #0056b3;
-  }
-  
-  /* Feedback Message */
-  .feedback {
+}
+
+/* Feedback Message */
+.feedback {
 	font-size: 1.2em;
 	font-weight: bold;
 	margin: 20px 0;
-  }
-  
-  .feedback.correct {
+}
+
+.feedback.correct {
 	color: #28a745;
-  }
-  
-  .feedback.incorrect {
+}
+
+.feedback.incorrect {
 	color: #dc3545;
-  }
-  
-  /* Iframe Styling */
-  iframe {
+}
+
+/* Iframe Styling */
+iframe {
 	margin: 20px auto;
 	display: block;
 	border: none;
 	max-width: 100%;
 	height: auto;
-  }
-  
-  /* Next Button */
-  #next {
+}
+
+/* Next Button */
+#next {
 	background: #28a745;
 	color: #fff;
 	border: none;
@@ -3801,9 +3816,8 @@ input, select, textarea {
 	cursor: pointer;
 	margin-top: 20px;
 	transition: background 0.3s;
-  }
-  
-  #next:hover {
+}
+
+#next:hover {
 	background: #218838;
-  }
-  
+}
