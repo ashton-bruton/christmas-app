@@ -37,33 +37,44 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     // Submit button logic
     submitButton.addEventListener('click', () => {
       const selectedChoice = document.querySelector('.selected');
-
       if (!selectedChoice) return; // Prevent submission without a selection
 
       const feedback = document.createElement('p');
       feedback.classList.add('feedback'); // Add feedback styling class
+
+      const gameState = getStorageWithExpiration("gameState");
+      const currentTeam = gameState.currentTeam;
+
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
         feedback.classList.add('correct');
+        gameState[currentTeam].score += 1; // Increment score for current team
       } else {
         feedback.textContent = 'Incorrect';
         feedback.classList.add('incorrect');
       }
 
+      // Switch turns to the other team
+      gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
+      setStorageWithExpiration("gameState", gameState, 12); // Update game state
+
+      updateScoreboard(gameState); // Update the scoreboard
+      highlightActiveTeam(gameState.currentTeam); // Highlight the active team
+
       // Replace content with the YouTube iframe
       const questionBlock = document.getElementById('question-block');
       questionBlock.innerHTML = `
-      <div class="content color0 span-3-75" style="margin:0 auto;">
-        <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
-          ${feedback.textContent}
-        </p>
-        <iframe width="560" height="315" 
-          src="${questionData.content}&autoplay=1" 
-          title="YouTube video player" frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-        </iframe>
-        <button id="next">Next</button>
+        <div class="content color0 span-3-75" style="margin:0 auto;">
+          <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+            ${feedback.textContent}
+          </p>
+          <iframe width="560" height="315" 
+            src="${questionData.content}&autoplay=1" 
+            title="YouTube video player" frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+          </iframe>
+          <button id="next">Next</button>
         </div>
       `;
 
@@ -118,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (gameState) {
     // Resume game
     updateScoreboard(gameState);
+    highlightActiveTeam(gameState.currentTeam); // Highlight active team
     scoreboard.classList.remove("hidden");
     popover.style.display = "none";
     contentSection.style.visibility = "visible";
@@ -137,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialGameState = {
       teamRed: { name: teamRedName, score: 0 },
       teamBlue: { name: teamBlueName, score: 0 },
+      currentTeam: "teamRed", // Set initial team
       playTo,
     };
 
@@ -147,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     popover.style.display = "none";
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
+    highlightActiveTeam("teamRed"); // Highlight the starting team
   });
 });
 
@@ -158,20 +172,17 @@ function updateScoreboard(state) {
   document.getElementById("team-blue-score").textContent = state.teamBlue.score;
 }
 
-// Example of updating scores (add logic for button clicks)
-function addPointToTeam(team) {
-  const gameState = getStorageWithExpiration("gameState");
-  if (!gameState) return;
+// Highlight active team
+function highlightActiveTeam(team) {
+  const teamRed = document.getElementById("team-red-name").parentElement;
+  const teamBlue = document.getElementById("team-blue-name").parentElement;
 
-  gameState[team].score += 1;
+  teamRed.classList.remove("active");
+  teamBlue.classList.remove("active");
 
-  if (gameState[team].score >= gameState.playTo) {
-    // Declare winner
-    document.body.innerHTML = `<h1>${gameState[team].name} Wins!</h1>`;
-    localStorage.removeItem("gameState"); // Clear game state
-    return;
+  if (team === "teamRed") {
+    teamRed.classList.add("active");
+  } else {
+    teamBlue.classList.add("active");
   }
-
-  setStorageWithExpiration("gameState", gameState, 12);
-  updateScoreboard(gameState);
 }

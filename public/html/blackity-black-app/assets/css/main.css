@@ -3689,23 +3689,12 @@ input, select, textarea {
 
 	}
 
-	#scoreboard {
-		position: sticky;
-		top: 0; /* Sticks the element to the top of its parent */
-		z-index: 10; /* Ensures it stays above other content if needed */
-		background-color: transparent; /* Optional: Give it a background to make it stand out */
-		padding: 10px; /* Optional: Adjust spacing for better appearance */
-		width: 100%;
-		display: flex;
-		flex-direction: row;
-	}
-
 /* General Styling */
 .content {
 	padding: 20px;
 	margin: 20px auto;
 	background: #f9f9f9;
-	border-radius: 10px;
+	/* border-radius: 10px; */
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	max-width: 600px;
 	text-align: center;
@@ -3860,7 +3849,7 @@ iframe {
   
   /* Scoreboard Styling */
   #scoreboard {
-	position: fixed;
+	/* position: fixed; */
 	top: 0;
 	width: 100%;
 	display: flex;
@@ -3869,6 +3858,10 @@ iframe {
 	color: #fff;
 	padding: 10px;
 	animation: fadeIn 0.5s ease-in-out;
+  }
+
+  #scoreboard-container {
+	  width: 580px;
   }
   
   .team {
@@ -3886,6 +3879,12 @@ iframe {
 	margin: 5px 0;
 	color: #ffd700; /* Golden score */
   }
+
+  .team.active {
+	box-shadow: 0 0 20px 5px rgba(255, 255, 0, 0.7); /* Glowing yellow effect */
+	transition: box-shadow 0.3s ease-in-out;
+  }
+  
   
   @keyframes fadeIn {
 	from {
