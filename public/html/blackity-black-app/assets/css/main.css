@@ -3772,10 +3772,11 @@ input, select, textarea {
 	transition: background 0.3s;
 	align-self: center;
 	margin: 0 auto;
+	align-items: center;
 }
 
 #submit.active {
-	display: block;
+	display: inline-flex;
 }
 
 #submit:disabled {
