@@ -59,7 +59,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         <iframe width="560" height="315" 
           src="${questionData.content}" 
           title="YouTube video player" frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allow="accelerometer; autoplay=1; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
         </iframe>
         <button id="next">Next</button>
