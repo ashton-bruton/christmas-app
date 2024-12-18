@@ -1,5 +1,5 @@
 // Load the JSON file and dynamically populate the HTML
-fetch('../../assets/json/questions.json')
+fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
     // Get the first question (modify if you want to use more questions)
