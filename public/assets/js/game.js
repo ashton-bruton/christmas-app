@@ -2,7 +2,7 @@
     "use strict";
   
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
-    const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html"; // Update to match your app's redirect URI
+    const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html";
     const SCOPES = "streaming user-read-playback-state user-modify-playback-state";
   
     const authMessage = document.getElementById("authMessage");
@@ -35,14 +35,14 @@
       }
     }
   
-    // Initialize Spotify Player
-    function initializePlayer() {
+    // Spotify Web Playback SDK Initialization
+    window.onSpotifyWebPlaybackSDKReady = () => {
       authMessage.textContent = "Initializing Spotify Player...";
       loginButton.style.display = "none";
   
       player = new Spotify.Player({
         name: "Beat Shazam Game",
-        getOAuthToken: cb => cb(token),
+        getOAuthToken: (cb) => cb(token),
         volume: 0.5,
       });
   
@@ -57,7 +57,7 @@
       });
   
       player.connect();
-    }
+    };
   
     // Fetch Songs from Spotify
     async function fetchSongs(genre) {
@@ -74,10 +74,10 @@
         if (!response.ok) throw new Error("Failed to fetch songs from Spotify");
   
         const data = await response.json();
-        game.allSongs = data.tracks.items.map(track => ({
+        game.allSongs = data.tracks.items.map((track) => ({
           uri: track.uri,
           songName: track.name,
-          artist: track.artists.map(artist => artist.name).join(", "),
+          artist: track.artists.map((artist) => artist.name).join(", "),
         }));
         loadGameRound();
       } catch (error) {
@@ -96,7 +96,7 @@
   
       // Display Options
       optionsContainer.innerHTML = "";
-      options.forEach(option => {
+      options.forEach((option) => {
         const button = document.createElement("button");
         button.textContent = `${option.songName} - ${option.artist}`;
         button.addEventListener("click", () => checkAnswer(option.uri));
@@ -112,7 +112,7 @@
   
     // Generate Answer Options
     function generateOptions(correctSong) {
-      const allOptions = game.allSongs.filter(song => song.uri !== correctSong.uri);
+      const allOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
       const randomOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
       randomOptions.push(correctSong); // Include the correct answer
       return randomOptions.sort(() => 0.5 - Math.random()); // Shuffle options
@@ -129,7 +129,7 @@
         body: JSON.stringify({
           uris: [trackUri],
         }),
-      }).catch(error => console.error("Error playing track:", error));
+      }).catch((error) => console.error("Error playing track:", error));
     }
   
     // Check Answer
