@@ -1,12 +1,23 @@
 [
     {
       "id": 1,
-      "question": "Who are the five best rappers of all-time",
+      "question": "Who are the five best rappers of all-time?",
       "answer": "Dylan, Dylan, Dylan, Dylan, Dylan",
       "incorrect_answers": ["Jay-Z, Kendrick Lamar, 2pac, Notorious B.I.G., Nas", "Mos Def, Talib Kweli, Black Thought, Big L, Lupe Fiasco", "Lil Pump, Lil Xan, Jack Harlow, Machine Gun Kelly, Ian"],
       "content": "https://www.youtube.com/embed/5HRY4LUl5lc?si=I5tzu1eeAHWNRwcA&amp;controls=0",
       "content_type": "youtube_video",
-      "category": ["comedy", "pop culture", "music"]
+      "category": ["comedy", "pop culture", "music"],
+      "challenge": 1
+    },
+    {
+      "id": 2,
+      "question": "In the song \"Papa Was A Rollin' Stone\" by The Temptations, what day in September will he always remember?",
+      "answer": "3rd",
+      "incorrect_answers": ["21st", "15th", "What?"],
+      "content": "https://www.youtube.com/embed/71l85z2bXAs?si=RTRzlcFAaofuIJ-m&amp;controls=0&amp;start=233",
+      "content_type": "youtube_video",
+      "category": ["pop culture", "music"],
+      "challenge": 1
     }
   ]
   
