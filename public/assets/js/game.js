@@ -26,8 +26,8 @@
   
       if (token) {
         window.history.pushState("", document.title, window.location.pathname);
-        authMessage.textContent = "Authenticated! Initializing player...";
-        loadSpotifySDK();
+        authMessage.textContent = "Authenticated! Loading player...";
+        await loadSpotifySDK();
       } else {
         loginButton.style.display = "block";
         loginButton.addEventListener("click", () => {
@@ -36,37 +36,53 @@
       }
     }
   
-    // Load Spotify SDK and Initialize Player
-    function loadSpotifySDK() {
-      const script = document.createElement("script");
-      script.src = "https://sdk.scdn.co/spotify-player.js";
-      script.async = true;
-      document.body.appendChild(script);
+    // Dynamically Load Spotify SDK
+    async function loadSpotifySDK() {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
   
-      window.onSpotifyWebPlaybackSDKReady = () => {
-        player = new Spotify.Player({
-          name: "Beat Shazam Game",
-          getOAuthToken: (cb) => cb(token),
-          volume: 0.5,
-        });
+        // Define onSpotifyWebPlaybackSDKReady globally
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          try {
+            initializePlayer();
+            resolve();
+          } catch (error) {
+            console.error("Error initializing Spotify Player:", error);
+            reject(error);
+          }
+        };
   
-        player.addListener("ready", ({ device_id }) => {
-          console.log("Player Ready with Device ID:", device_id);
-          authMessage.textContent = "Player ready! Fetching songs...";
-          fetchSongs("soul");
-        });
+        script.onerror = () => reject(new Error("Failed to load Spotify Web Playback SDK"));
+        document.body.appendChild(script);
+      });
+    }
   
-        player.addListener("not_ready", ({ device_id }) => {
-          console.error("Player went offline with Device ID:", device_id);
-        });
+    // Initialize Spotify Player
+    function initializePlayer() {
+      player = new Spotify.Player({
+        name: "Beat Shazam Game",
+        getOAuthToken: (cb) => cb(token),
+        volume: 0.5,
+      });
   
-        player.addListener("authentication_error", ({ message }) => {
-          console.error("Authentication error:", message);
-          authMessage.textContent = "Authentication error. Please log in again.";
-        });
+      player.addListener("ready", ({ device_id }) => {
+        console.log("Player Ready with Device ID:", device_id);
+        authMessage.textContent = "Player ready! Fetching songs...";
+        fetchSongs("soul");
+      });
   
-        player.connect();
-      };
+      player.addListener("not_ready", ({ device_id }) => {
+        console.error("Player went offline with Device ID:", device_id);
+      });
+  
+      player.addListener("authentication_error", ({ message }) => {
+        console.error("Authentication error:", message);
+        authMessage.textContent = "Authentication error. Please log in again.";
+      });
+  
+      player.connect();
     }
   
     // Fetch Songs from Backend
