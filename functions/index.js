@@ -128,6 +128,7 @@ app.get("/spotify-token", async (req, res) => {
     if (!spotifyAccessToken) await refreshSpotifyToken();
     res.status(200).json({ accessToken: spotifyAccessToken });
   } catch (error) {
+    console.error("Error fetching Spotify token:", error.message);
     res.status(500).json({ success: false, message: "Failed to fetch Spotify token." });
   }
 });

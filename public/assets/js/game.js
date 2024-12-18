@@ -5,7 +5,7 @@
     const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html";
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
-    )}&scope=streaming`;
+    )}&scope=streaming user-read-playback-state user-modify-playback-state`;
   
     const loginButton = document.getElementById("loginButton");
     const authMessage = document.getElementById("authMessage");
@@ -17,12 +17,11 @@
   
     // Spotify Authorization Flow
     async function authenticate() {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      token = params.get("access_token");
+      const response = await fetch("/spotify-token");
+      const data = await response.json();
   
-      if (token) {
-        window.history.pushState("", document.title, window.location.pathname);
+      if (data.accessToken) {
+        token = data.accessToken;
         authMessage.textContent = "Authenticated! Loading player...";
         initializePlayer();
       } else {
@@ -37,7 +36,7 @@
     window.onSpotifyWebPlaybackSDKReady = function () {
       player = new Spotify.Player({
         name: "Beat Shazam Game",
-        getOAuthToken: cb => cb(token),
+        getOAuthToken: (cb) => cb(token),
         volume: 0.5,
       });
   
@@ -85,7 +84,7 @@
       playSong(correctSong.uri);
   
       optionsContainer.innerHTML = "";
-      options.forEach(option => {
+      options.forEach((option) => {
         const button = document.createElement("button");
         button.textContent = `${option.songName} - ${option.artist}`;
         button.addEventListener("click", () => checkAnswer(option.uri));
@@ -101,7 +100,9 @@
   
     // Generate Answer Options
     function generateOptions(correctSong) {
-      const otherOptions = game.allSongs.filter(song => song.uri !== correctSong.uri);
+      const otherOptions = game.allSongs.filter(
+        (song) => song.uri !== correctSong.uri
+      );
       const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
       randomOptions.push(correctSong);
       return randomOptions.sort(() => Math.random() - 0.5);
