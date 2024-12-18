@@ -118,6 +118,7 @@ app.get("/fetch-songs", async (req, res) => {
     const songs = await fetchSpotifySongs(genre);
     res.status(200).json({ success: true, songs });
   } catch (error) {
+    console.error("Error fetching songs:", error.message);
     res.status(500).json({ success: false, message: "Failed to fetch songs." });
   }
 });
@@ -186,15 +187,14 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       bcc: "projectblvckjvck@gmail.com",
       subject: "Your Christmas Character",
       html: `
-        <!-- Your HTML email content -->
-        ${secretSantaMessage}
+        <div>${secretSantaMessage}</div>
       `,
     };
 
     await transporter.sendMail(mailOptions);
     res.status(200).json({ success: true, message: "Email sent successfully." });
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email:", error.message);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 });
