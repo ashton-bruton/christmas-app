@@ -4,12 +4,26 @@
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
     const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/redirect.html";
     const SCOPES = [
-      "streaming",
-      "user-read-playback-state",
-      "user-modify-playback-state",
-      "user-read-currently-playing",
-      "app-remote-control",
-    ].join(" ");
+        "streaming",                           // Enable Web Playback SDK
+        "user-read-playback-state",            // Read current playback state
+        "user-modify-playback-state",          // Modify playback state
+        "user-read-currently-playing",         // Read currently playing track
+        "app-remote-control",                  // App remote control
+        "playlist-read-private",               // Read private playlists
+        "playlist-read-collaborative",         // Read collaborative playlists
+        "playlist-modify-public",              // Modify public playlists
+        "playlist-modify-private",             // Modify private playlists
+        "user-library-read",                   // Read user’s library
+        "user-library-modify",                 // Modify user’s library
+        "user-top-read",                       // Read user’s top artists/tracks
+        "user-read-recently-played",           // Read recently played tracks
+        "user-follow-read",                    // Read followed artists/users
+        "user-follow-modify",                  // Follow or unfollow artists/users
+        "user-read-email",                     // Read user email
+        "user-read-private",                   // Read user private information
+        "user-read-playback-position",         // Read playback position in content
+      ].join(" ");
+      
   
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
