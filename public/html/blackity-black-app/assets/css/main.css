@@ -3790,9 +3790,9 @@ input, select, textarea {
 
 /* Feedback Message */
 .feedback {
-	font-size: 1.2em;
+	font-size: 2.2em;
 	font-weight: bold;
-	margin: 20px 0;
+	/* margin: 10px 0; */
 }
 
 .feedback.correct {
@@ -3805,7 +3805,7 @@ input, select, textarea {
 
 /* Iframe Styling */
 iframe {
-	margin: 20px auto;
+	margin: 40px auto;
 	display: block;
 	border: none;
 	max-width: 100%;
