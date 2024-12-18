@@ -53,6 +53,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       // Replace content with the YouTube iframe
       const questionBlock = document.getElementById('question-block');
       questionBlock.innerHTML = `
+      <div class="content color0 span-3-75" style="margin:0 auto;">
         <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
           ${feedback.textContent}
         </p>
@@ -63,6 +64,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
           referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
         </iframe>
         <button id="next">Next</button>
+        </div>
       `;
 
       // Add event listener to the next button
