@@ -8,6 +8,7 @@
       "user-read-playback-state",
       "user-modify-playback-state",
       "user-read-currently-playing",
+      "app-remote-control",
     ].join(" ");
   
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
@@ -33,12 +34,14 @@
         window.history.pushState("", document.title, window.location.pathname);
   
         try {
-          await verifyScopes(token); // Validate token
+          await verifyScopes(token);
           authMessage.textContent = "Authenticated! Loading player...";
+          loginButton.style.display = "none"; // Hide login button
           await loadSpotifySDK(token);
         } catch (error) {
-          authMessage.textContent = "Failed to authenticate. Please log in again.";
+          authMessage.textContent = "Authentication error. Please log in again.";
           console.error("Authentication error:", error.message);
+          loginButton.style.display = "block";
         }
       } else {
         loginButton.style.display = "block";
@@ -71,7 +74,7 @@
           resolve();
         };
   
-        script.onerror = () => reject(new Error("Failed to load Spotify Web Playback SDK"));
+        script.onerror = () => reject(new Error("Failed to load Spotify SDK"));
         document.body.appendChild(script);
       });
     }
@@ -86,7 +89,7 @@
   
       player.addListener("ready", async ({ device_id }) => {
         console.log("Player Ready with Device ID:", device_id);
-        authMessage.textContent = "Player ready! Fetching songs...";
+        authMessage.textContent = "Player Ready! Start Playing!";
         try {
           await transferPlayback(device_id);
           fetchSongs("soul");
@@ -98,11 +101,13 @@
   
       player.addListener("not_ready", ({ device_id }) => {
         console.error("Player went offline with Device ID:", device_id);
+        authMessage.textContent = "Player offline. Please reconnect.";
       });
   
       player.addListener("authentication_error", ({ message }) => {
         console.error("Authentication error:", message);
         authMessage.textContent = "Authentication error. Please log in again.";
+        loginButton.style.display = "block";
       });
   
       player.connect();
@@ -111,11 +116,15 @@
     // Transfer Playback to Spotify Player
     async function transferPlayback(deviceId) {
       const token = localStorage.getItem("spotify_access_token");
-      await fetch("https://api.spotify.com/v1/me/player", {
+      const response = await fetch("https://api.spotify.com/v1/me/player", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({ device_ids: [deviceId], play: false }),
       });
+  
+      if (!response.ok) {
+        throw new Error("Failed to transfer playback to Spotify Web Player.");
+      }
     }
   
     // Fetch Songs from Backend
@@ -153,20 +162,6 @@
       });
     }
   
-    // Get Random Song
-    function getRandomSong() {
-      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
-      return game.allSongs[randomIndex];
-    }
-  
-    // Generate Answer Options
-    function generateOptions(correctSong) {
-      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
-      const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
-      randomOptions.push(correctSong);
-      return randomOptions.sort(() => Math.random() - 0.5);
-    }
-  
     // Play a Song
     async function playSong(uri) {
       try {
@@ -184,7 +179,18 @@
       }
     }
   
-    // Check Answer
+    function getRandomSong() {
+      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
+      return game.allSongs[randomIndex];
+    }
+  
+    function generateOptions(correctSong) {
+      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
+      const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
+      randomOptions.push(correctSong);
+      return randomOptions.sort(() => Math.random() - 0.5);
+    }
+  
     function checkAnswer(selectedUri) {
       if (selectedUri === game.correctSong.uri) {
         alert("🎉 Correct! Great job!");
