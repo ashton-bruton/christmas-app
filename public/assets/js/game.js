@@ -15,74 +15,23 @@
     const scoreElement = document.getElementById("score");
   
     let game = { score: 0, correctSong: null, allSongs: [] };
-    let token = null;
-    let player = null;
   
     // Spotify Authentication
     async function authenticate() {
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
-      token = params.get("access_token");
+      const token = params.get("access_token");
   
       if (token) {
+        localStorage.setItem("spotify_access_token", token);
         window.history.pushState("", document.title, window.location.pathname);
         authMessage.textContent = "Authenticated! Loading player...";
-        await loadSpotifySDK();
       } else {
         loginButton.style.display = "block";
         loginButton.addEventListener("click", () => {
           window.location.href = AUTH_URL;
         });
       }
-    }
-  
-    // Dynamically Load Spotify SDK
-    async function loadSpotifySDK() {
-      return new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://sdk.scdn.co/spotify-player.js";
-        script.async = true;
-  
-        // Define onSpotifyWebPlaybackSDKReady globally
-        window.onSpotifyWebPlaybackSDKReady = () => {
-          try {
-            initializePlayer();
-            resolve();
-          } catch (error) {
-            console.error("Error initializing Spotify Player:", error);
-            reject(error);
-          }
-        };
-  
-        script.onerror = () => reject(new Error("Failed to load Spotify Web Playback SDK"));
-        document.body.appendChild(script);
-      });
-    }
-  
-    // Initialize Spotify Player
-    function initializePlayer() {
-      player = new Spotify.Player({
-        name: "Beat Shazam Game",
-        getOAuthToken: (cb) => cb(token),
-        volume: 0.5,
-      });
-  
-      player.addListener("ready", ({ device_id }) => {
-        console.log("Player Ready with Device ID:", device_id);
-        authMessage.textContent = "Player ready! Fetching songs...";
-        fetchSongs("soul");
-      });
-  
-      player.addListener("not_ready", ({ device_id }) => {
-        console.error("Player went offline with Device ID:", device_id);
-      });
-  
-      player.addListener("authentication_error", ({ message }) => {
-        console.error("Authentication error:", message);
-        authMessage.textContent = "Authentication error. Please log in again.";
-      });
-  
-      player.connect();
     }
   
     // Fetch Songs from Backend
@@ -120,23 +69,10 @@
       });
     }
   
-    // Get Random Song
-    function getRandomSong() {
-      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
-      return game.allSongs[randomIndex];
-    }
-  
-    // Generate Answer Options
-    function generateOptions(correctSong) {
-      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
-      const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
-      randomOptions.push(correctSong);
-      return randomOptions.sort(() => Math.random() - 0.5);
-    }
-  
     // Play a Song
     async function playSong(uri) {
       try {
+        const token = localStorage.getItem("spotify_access_token");
         await fetch("https://api.spotify.com/v1/me/player/play", {
           method: "PUT",
           headers: {
@@ -148,18 +84,6 @@
       } catch (error) {
         console.error("Error playing song:", error.message);
       }
-    }
-  
-    // Check Answer
-    function checkAnswer(selectedUri) {
-      if (selectedUri === game.correctSong.uri) {
-        alert("🎉 Correct! Great job!");
-        game.score++;
-      } else {
-        alert(`❌ Wrong! The correct answer was: ${game.correctSong.songName}`);
-      }
-      scoreElement.textContent = `Score: ${game.score}`;
-      loadGameRound();
     }
   
     // Start Authentication Process
