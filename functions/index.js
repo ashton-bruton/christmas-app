@@ -111,60 +111,6 @@ async function fetchSpotifySongs(genre) {
   }
 }
 
-// Spotify OAuth Authorization URL
-app.get("/spotify-login-url", (req, res) => {
-  const scopes = [
-    "streaming",
-    "user-read-playback-state",
-    "user-modify-playback-state",
-    "user-read-currently-playing",
-  ].join(" ");
-  const redirectUri = process.env.SPOTIFY_REDIRECT_URI || "https://christmas-app-e9bf7.web.app/html/redirect.html";
-
-  const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&scope=${encodeURIComponent(scopes)}`;
-
-  res.status(200).json({ authUrl });
-});
-
-// Spotify Token Exchange Endpoint
-app.post("/spotify-token-exchange", async (req, res) => {
-  const { code } = req.body;
-
-  if (!code) {
-    res.status(400).json({ success: false, message: "Authorization code is required." });
-    return;
-  }
-
-  try {
-    const response = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${Buffer.from(
-          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
-        ).toString("base64")}`,
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: process.env.SPOTIFY_REDIRECT_URI || "https://christmas-app-e9bf7.web.app/html/redirect.html",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to exchange token: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    res.status(200).json({ success: true, accessToken: data.access_token, refreshToken: data.refresh_token });
-  } catch (error) {
-    console.error("Error exchanging token:", error.message);
-    res.status(500).json({ success: false, message: "Token exchange failed." });
-  }
-});
-
 // Endpoint for fetching songs
 app.get("/fetch-songs", async (req, res) => {
   const genre = req.query.genre || "soul"; // Default to "soul" genre if not provided
@@ -231,12 +177,158 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
       : "";
 
     const mailOptions = {
-      from: "Naughty Or Nice Game <projectblvckjvck@gmail.com>",
+      from: "Naughty Or Nice Game <ashton.bruton@gmail.com>",
       to: email,
-      bcc: "projectblvckjvck@gmail.com",
       subject: "Your Christmas Character",
       html: `
-        <div>${secretSantaMessage}</div>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f4f4f4;
+              color: #333;
+            }
+            .email-wrapper {
+              max-width: 600px;
+              margin: 20px auto;
+              background-color: #fff;
+              border-radius: 10px;
+              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+              overflow: hidden;
+            }
+            .email-header {
+              background: linear-gradient(135deg, #1cb495, #ff2361);
+              color: #fff;
+              padding: 20px;
+              text-align: center;
+            }
+            .email-header h1 {
+              margin: 0;
+              font-size: 24px;
+            }
+            .email-header .icon {
+              font-size: 50px;
+              margin: 10px 0;
+            }
+            .email-body {
+              padding: 20px;
+            }
+            .email-body h2 {
+              margin: 0 0 10px;
+              font-size: 20px;
+              color: #ff2361;
+            }
+            .email-body p {
+              font-size: 16px;
+              line-height: 1.5;
+              margin: 10px 0;
+            }
+            .email-body .character-card {
+              display: flex;
+              align-items: center;
+              margin-top: 20px;
+              background-color: #f9f9f9;
+              border: 1px solid #ddd;
+              border-radius: 8px;
+              padding: 15px;
+            }
+            .character-card img {
+              border-radius: 8px;
+              width: 80px;
+              height: 80px;
+              object-fit: cover;
+              margin-right: 15px;
+            }
+            .character-card .character-info {
+              font-size: 16px;
+            }
+            .merch-section {
+              background-color: #f9f9f9;
+              padding: 20px;
+              border-top: 1px solid #ddd;
+              text-align: center;
+            }
+            .merch-section h3 {
+              margin: 0 0 10px;
+              font-size: 18px;
+              color: #333;
+            }
+            .merch-section p {
+              font-size: 14px;
+              margin: 10px 0;
+            }
+            .merch-section a {
+              color: #1cb495;
+              text-decoration: none;
+            }
+            .merch-section a:hover {
+              text-decoration: underline;
+            }
+            .email-footer {
+              background-color: #f4f4f4;
+              padding: 10px;
+              text-align: center;
+              font-size: 14px;
+              color: #888;
+            }
+            .email-footer a {
+              color: #1cb495;
+              text-decoration: none;
+            }
+            .email-footer a:hover {
+              text-decoration: underline;
+            }
+            .secretSanta-body {
+              padding: 20px;
+              border: 0.5px dotted darkred;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="email-wrapper">
+            <div class="email-header">
+              <div class="icon">🎅</div>
+              <h1>Your Naughty or Nice Results Are In!</h1>
+            </div>
+            <div class="email-body">
+              <h2>Congratulations!</h2>
+              <p>Dear <strong>${firstName}</strong>,</p>
+              <p>You’ve been assessed and placed on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list this year!</p>
+              <p>Your character is:</p>
+              <div class="character-card">
+                <img src="https://christmas-app-e9bf7.web.app/images/characters/${character
+                  .toLowerCase()
+                  .replace(/ /g, "_")}.jpg" alt="${character}">
+                <div class="character-info">
+                  <strong>${character}</strong>
+                  <p>A fitting companion for someone on the <strong style="color: ${statusColor};">${status.toUpperCase()}</strong> list!</p>
+                </div>
+              </div>
+              <p>We wish you a joyous holiday season filled with laughter, love, and maybe a bit of magic. 🎄✨</p>
+            </div>
+            ${secretSantaMessage}
+            <div class="merch-section">
+              <h3>Shop Merchandise for Your Character!</h3>
+              <p>Explore apparel and more related to <strong>${character}</strong> on:</p>
+              <p>
+                  <a href="https://www.amazon.com" target="_blank">Amazon</a> |
+                  <a href="https://www.redbubble.com" target="_blank">Redbubble</a> |
+                  <a href="https://www.teepublic.com" target="_blank">TeePublic</a>
+              </p>
+            </div>
+            <div class="email-footer">
+              <p>Thank you for playing <strong>Naughty or Nice</strong>.</p>
+              <p><a href="https://christmas-app-e9bf7.web.app">Visit our site in the future</a> for more fun holiday games!</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `,
     };
 
@@ -246,9 +338,4 @@ exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
     console.error("Error sending email:", error.message);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
-});
-
-// Start Express Server
-app.listen(5001, () => {
-  console.log("Server is running on port 5001");
 });
