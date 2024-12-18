@@ -39,22 +39,51 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-// Middleware to parse JSON and handle CORS
+// Spotify credentials
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || functions.config().spotify.spotify_client_id;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || functions.config().spotify.spotify_client_secret;
+const SPOTIFY_REDIRECT_URI = process.env.SPOTIFY_REDIRECT_URI || "https://christmas-app-e9bf7.web.app/html/redirect.html";
+const SPOTIFY_SCOPES = [
+  "streaming",
+  "user-read-playback-state",
+  "user-modify-playback-state",
+  "user-read-currently-playing",
+  "app-remote-control",
+  "playlist-read-private",
+  "playlist-read-collaborative",
+  "playlist-modify-public",
+  "playlist-modify-private",
+  "user-library-read",
+  "user-library-modify",
+  "user-top-read",
+  "user-read-recently-played",
+  "user-follow-read",
+  "user-follow-modify",
+  "user-read-email",
+  "user-read-private",
+  "user-read-playback-position"
+].join(" ");
+
+let spotifyAccessToken = null;
+let spotifyRefreshToken = null;
+
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "https://christmas-app-e9bf7.web.app" }));
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+// Generate Spotify authorization URL
+app.get("/spotify-auth-url", (req, res) => {
+  const authUrl = `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
+    SPOTIFY_REDIRECT_URI
+  )}&scope=${encodeURIComponent(SPOTIFY_SCOPES)}`;
+
+  res.status(200).json({ url: authUrl });
 });
 
-// Spotify Authorization
-const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || functions.config().spotify.spotify_client_id;
-const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || functions.config().spotify.spotify_client_secret;
-let spotifyAccessToken = null;
+// Exchange authorization code for tokens
+app.get("/spotify-callback", async (req, res) => {
+  const code = req.query.code;
 
-// Refresh Spotify Token
-async function refreshSpotifyToken() {
   try {
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
@@ -65,26 +94,73 @@ async function refreshSpotifyToken() {
         ).toString("base64")}`,
       },
       body: new URLSearchParams({
-        grant_type: "client_credentials",
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URI,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch Spotify token: ${response.statusText}`);
+      throw new Error(`Failed to exchange code for token: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    spotifyAccessToken = data.access_token;
+    spotifyRefreshToken = data.refresh_token;
+
+    console.log("Spotify tokens acquired successfully.");
+    res.status(200).json({ success: true, message: "Spotify tokens acquired." });
+  } catch (error) {
+    console.error("Error during Spotify callback:", error.message);
+    res.status(500).json({ success: false, message: "Failed to handle Spotify callback." });
+  }
+});
+
+// Refresh Spotify Token
+app.get("/refresh-spotify-token", async (req, res) => {
+  try {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+        ).toString("base64")}`,
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: spotifyRefreshToken,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to refresh Spotify token: ${response.statusText}`);
     }
 
     const data = await response.json();
     spotifyAccessToken = data.access_token;
     console.log("Spotify token refreshed successfully.");
+
+    res.status(200).json({ success: true, accessToken: spotifyAccessToken });
   } catch (error) {
     console.error("Error refreshing Spotify token:", error);
+    res.status(500).json({ success: false, message: "Failed to refresh Spotify token." });
   }
-}
+});
+
+// Endpoint to get Spotify access token
+app.get("/token", (req, res) => {
+  if (spotifyAccessToken) {
+    res.status(200).json({ success: true, accessToken: spotifyAccessToken });
+  } else {
+    res.status(401).json({ success: false, message: "No active Spotify token available." });
+  }
+});
 
 // Fetch Spotify Songs
 async function fetchSpotifySongs(genre) {
   try {
-    if (!spotifyAccessToken) await refreshSpotifyToken();
+    if (!spotifyAccessToken) throw new Error("Spotify token not available.");
 
     const response = await fetch(
       `https://api.spotify.com/v1/search?q=genre:${genre}&type=track&limit=10`,
@@ -113,7 +189,7 @@ async function fetchSpotifySongs(genre) {
 
 // Endpoint for fetching songs
 app.get("/fetch-songs", async (req, res) => {
-  const genre = req.query.genre || "soul"; // Default to "soul" genre if not provided
+  const genre = req.query.genre || "soul";
   try {
     const songs = await fetchSpotifySongs(genre);
     res.status(200).json({ success: true, songs });
@@ -123,78 +199,7 @@ app.get("/fetch-songs", async (req, res) => {
   }
 });
 
-// Endpoint to get Spotify token
-app.get("/spotify-token", async (req, res) => {
-  try {
-    if (!spotifyAccessToken) await refreshSpotifyToken();
-    res.status(200).json({ accessToken: spotifyAccessToken });
-  } catch (error) {
-    console.error("Error fetching Spotify token:", error.message);
-    res.status(500).json({ success: false, message: "Failed to fetch Spotify token." });
-  }
-});
-
-// Spotify Token Refresh Scheduler (Every Hour)
-setInterval(refreshSpotifyToken, 3600 * 1000); // Refresh every hour
-
 // Start Express Server
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
-});
-
-// Firebase Functions
-exports.sendCharacterEmail = functions.https.onRequest(async (req, res) => {
-  if (req.method === "OPTIONS") {
-    res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
-    res.set("Access-Control-Allow-Methods", "POST");
-    res.set("Access-Control-Allow-Headers", "Content-Type");
-    res.status(204).send("");
-    return;
-  }
-
-  res.set("Access-Control-Allow-Origin", "https://christmas-app-e9bf7.web.app");
-
-  const { email, character, status, firstName } = req.body;
-
-  if (!email || !character || !status || !firstName) {
-    res.status(400).json({ success: false, message: "Missing required fields." });
-    return;
-  }
-
-  try {
-    const accessToken = await oAuth2Client.getAccessToken();
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: "ashton.bruton@gmail.com",
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token,
-      },
-    });
-
-    const statusColor = status.toLowerCase() === "naughty" ? "red" : "green";
-    const secretSantaMessage = secretSantaMap[email]
-      ? `<p class="secretSanta-body"><strong>Shhhh....</strong> you have been assigned <strong>${secretSantaMap[email]}</strong> for this year's Secret Santa.</p>`
-      : "";
-
-    const mailOptions = {
-      from: "Naughty Or Nice Game <projectblvckjvck@gmail.com>",
-      to: email,
-      bcc: "projectblvckjvck@gmail.com",
-      subject: "Your Christmas Character",
-      html: `
-        <div>${secretSantaMessage}</div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true, message: "Email sent successfully." });
-  } catch (error) {
-    console.error("Error sending email:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error." });
-  }
 });
