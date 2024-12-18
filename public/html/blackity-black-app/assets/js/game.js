@@ -108,8 +108,8 @@ function shuffleArray(array) {
 function storeAskedQuestion(id) {
   const askedQuestions = getAskedQuestions();
   askedQuestions.push(id);
-  // localStorage.setItem("askedQuestions", JSON.stringify(askedQuestions));
-  setStorageWithExpiration("askedQuestions", JSON.stringify(askedQuestions), 12);
+  localStorage.setItem("askedQuestions", JSON.stringify(askedQuestions));
+  // setStorageWithExpiration("askedQuestions", JSON.stringify(askedQuestions), 12);
 }
 
 // Helper to retrieve asked question IDs
