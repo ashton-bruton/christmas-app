@@ -2,7 +2,7 @@
     "use strict";
   
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
-    const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html";
+    const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/redirect.html";
     const SCOPES = "streaming user-read-playback-state user-modify-playback-state";
   
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <script>
+    (function () {
+      // Parse the URL hash to extract the access token
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const token = params.get("access_token");
+
+      if (token) {
+        // Store the token in localStorage (or use another secure storage method)
+        localStorage.setItem("spotify_access_token", token);
+
+        // Redirect back to the main application
+        window.location.href = "https://christmas-app-e9bf7.web.app/html/music-game.html";
+      } else {
+        // If no token is found, handle the error
+        alert("Authentication failed. Please try again.");
+        window.location.href = "https://christmas-app-e9bf7.web.app/html/login-failure.html";
+      }
+    })();
+  </script>
+</head>
+<body>
+  <h1>Redirecting...</h1>
+  <p>Please wait while we log you in to Spotify.</p>
+</body>
+</html>
