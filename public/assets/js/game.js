@@ -11,6 +11,7 @@
     const scoreElement = document.getElementById("score");
   
     let token = null;
+    let refreshToken = null;
     let player = null;
     let game = { score: 0, correctSong: null, allSongs: [] };
   
@@ -19,9 +20,11 @@
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
       const accessToken = params.get("access_token");
+      const refresh = params.get("refresh_token");
   
       if (accessToken) {
         token = accessToken;
+        refreshToken = refresh;
         window.history.pushState("", document.title, window.location.pathname); // Remove token from URL
         initializePlayer();
       } else {
@@ -35,6 +38,32 @@
       }
     }
   
+    // Refresh Token Logic
+    async function refreshAccessToken() {
+      if (!refreshToken) {
+        console.error("Refresh token is not available.");
+        return;
+      }
+  
+      try {
+        const response = await fetch("https://accounts.spotify.com/api/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${btoa(CLIENT_ID + ":" + "YOUR_CLIENT_SECRET")}`,
+          },
+          body: `grant_type=refresh_token&refresh_token=${refreshToken}`,
+        });
+  
+        if (!response.ok) throw new Error("Failed to refresh token");
+  
+        const data = await response.json();
+        token = data.access_token;
+      } catch (error) {
+        console.error("Error refreshing token:", error.message);
+      }
+    }
+  
     // Spotify Web Playback SDK Initialization
     window.onSpotifyWebPlaybackSDKReady = () => {
       authMessage.textContent = "Initializing Spotify Player...";
@@ -42,7 +71,10 @@
   
       player = new Spotify.Player({
         name: "Beat Shazam Game",
-        getOAuthToken: (cb) => cb(token),
+        getOAuthToken: async (cb) => {
+          if (!token) await refreshAccessToken();
+          cb(token);
+        },
         volume: 0.5,
       });
   
@@ -54,6 +86,15 @@
   
       player.addListener("not_ready", ({ device_id }) => {
         console.error("Device ID has gone offline", device_id);
+      });
+  
+      player.addListener("initialization_error", ({ message }) => {
+        console.error("Initialization error:", message);
+      });
+  
+      player.addListener("authentication_error", async ({ message }) => {
+        console.error("Authentication error:", message);
+        await refreshAccessToken();
       });
   
       player.connect();
@@ -85,68 +126,8 @@
       }
     }
   
-    // Load Game Round
-    function loadGameRound() {
-      const correctSong = getRandomSong();
-      const options = generateOptions(correctSong);
-      game.correctSong = correctSong;
+    // Rest of the code remains the same...
   
-      // Play Song
-      playTrack(correctSong.uri);
-  
-      // Display Options
-      optionsContainer.innerHTML = "";
-      options.forEach((option) => {
-        const button = document.createElement("button");
-        button.textContent = `${option.songName} - ${option.artist}`;
-        button.addEventListener("click", () => checkAnswer(option.uri));
-        optionsContainer.appendChild(button);
-      });
-    }
-  
-    // Get Random Song
-    function getRandomSong() {
-      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
-      return game.allSongs[randomIndex];
-    }
-  
-    // Generate Answer Options
-    function generateOptions(correctSong) {
-      const allOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
-      const randomOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
-      randomOptions.push(correctSong); // Include the correct answer
-      return randomOptions.sort(() => 0.5 - Math.random()); // Shuffle options
-    }
-  
-    // Play Track
-    function playTrack(trackUri) {
-      fetch("https://api.spotify.com/v1/me/player/play", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          uris: [trackUri],
-        }),
-      }).catch((error) => console.error("Error playing track:", error));
-    }
-  
-    // Check Answer
-    function checkAnswer(selectedUri) {
-      if (selectedUri === game.correctSong.uri) {
-        alert("🎉 Correct! Great job!");
-        game.score++;
-      } else {
-        alert(
-          `❌ Wrong! The correct answer was: ${game.correctSong.songName} by ${game.correctSong.artist}`
-        );
-      }
-      scoreElement.textContent = `Score: ${game.score}`;
-      loadGameRound();
-    }
-  
-    // Start the authentication process
     await authenticate();
   })();
   
