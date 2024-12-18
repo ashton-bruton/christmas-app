@@ -3832,17 +3832,22 @@ iframe {
 }
 
 .popover {
-    position: fixed; /* Fixed positioning for a true popover */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Shift the element back by half its width and height */
-    background-color: #ffffff; /* White background for the popover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
-    border-radius: 8px; /* Rounded corners */
-    padding: 20px; /* Padding inside the popover */
-    z-index: 1000; /* Ensure it's above other content */
-    display: none; /* Initially hidden */
-}
+	display: none; /* Initially hidden */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: linear-gradient(45deg, #ff7e5f, #feb47b); /* Example gradient */
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+	color: #000; /* Ensures text is black */
+	z-index: 1000;
+	text-align: center;
+	width: 80%;
+	max-width: 400px;
+  }
+  
 
 .popover.visible {
     display: block; /* Display when the popover should be visible */
