@@ -13,6 +13,7 @@
     const scoreElement = document.getElementById("score");
     let game = { score: 0, correctSong: null, allSongs: [] };
     let token = null;
+    let player = null;
   
     // Spotify Authorization Flow
     async function authenticate() {
@@ -32,9 +33,9 @@
       }
     }
   
-    // Initialize Spotify Player
-    function initializePlayer() {
-      const player = new Spotify.Player({
+    // Define onSpotifyWebPlaybackSDKReady globally
+    window.onSpotifyWebPlaybackSDKReady = function () {
+      player = new Spotify.Player({
         name: "Beat Shazam Game",
         getOAuthToken: cb => cb(token),
         volume: 0.5,
@@ -43,15 +44,19 @@
       player.addListener("ready", ({ device_id }) => {
         console.log("Player Ready with Device ID:", device_id);
         authMessage.textContent = "Player ready! Fetching songs...";
-        fetchSongs("soul"); // Load "soul" genre songs
+        fetchSongs("soul");
       });
   
       player.addListener("not_ready", ({ device_id }) => {
         console.error("Player went offline with Device ID:", device_id);
       });
   
+      player.addListener("authentication_error", ({ message }) => {
+        console.error("Authentication error:", message);
+      });
+  
       player.connect();
-    }
+    };
   
     // Fetch Songs from Backend
     async function fetchSongs(genre) {
