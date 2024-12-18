@@ -1,93 +1,124 @@
-const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
-const CLIENT_SECRET = "03f58379bd854c468edbeead30dd61c4";
-
-const game = {
-    score: 0,
-    correctSong: null,
-    token: null,
-  };
+(async function () {
+    "use strict";
   
-  // Authenticate and get access token
-  async function authenticateSpotify() {
-    const response = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Basic " + btoa(CLIENT_ID + ":" + CLIENT_SECRET),
-      },
-      body: "grant_type=client_credentials",
-    });
+    const $body = document.querySelector("body");
+    const audioElement = document.getElementById("songPreview");
+    const optionsContainer = document.getElementById("optionsContainer");
+    let game = { score: 0, correctSong: null, allSongs: [] };
   
-    const data = await response.json();
-    game.token = data.access_token;
-  }
+    // Your Spotify Client ID and Secret
+    const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
+    const CLIENT_SECRET = "03f58379bd854c468edbeead30dd61c4";
   
-  // Fetch random songs with previews
-  async function fetchRandomSongs() {
-    const genres = ["pop", "rock", "hip-hop", "jazz", "classical"];
-    const randomGenre = genres[Math.floor(Math.random() * genres.length)];
+    // Fetch Spotify OAuth Token
+    async function getSpotifyToken() {
+      try {
+        const response = await fetch("https://accounts.spotify.com/api/token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization:
+              "Basic " + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+          },
+          body: "grant_type=client_credentials",
+        });
   
-    const response = await fetch(
-      `https://api.spotify.com/v1/search?q=genre:${randomGenre}&type=track&limit=20`,
-      {
-        headers: {
-          Authorization: `Bearer ${game.token}`,
-        },
+        if (!response.ok) {
+          throw new Error("Failed to fetch Spotify token");
+        }
+  
+        const data = await response.json();
+        return data.access_token;
+      } catch (error) {
+        console.error("Error fetching Spotify token:", error.message);
+        return null;
       }
-    );
-  
-    const data = await response.json();
-  
-    // Filter tracks with preview_url
-    const tracksWithPreviews = data.tracks.items.filter((track) => track.preview_url);
-  
-    if (tracksWithPreviews.length === 0) {
-      throw new Error("No tracks with previews found. Try a different genre.");
     }
   
-    return tracksWithPreviews;
-  }
+    // Fetch Songs from Spotify
+    async function fetchSongs(genre) {
+      try {
+        const token = await getSpotifyToken();
+        if (!token) throw new Error("Unable to get Spotify token");
   
-  // Load game with a song and options
-  async function loadGame() {
-    try {
-      const songs = await fetchRandomSongs();
-      game.correctSong = songs[Math.floor(Math.random() * songs.length)];
+        const response = await fetch(
+          `https://api.spotify.com/v1/search?q=genre:"${genre}"&type=track&limit=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
   
-      // Load the song preview
-      const audioElement = document.getElementById("songPreview");
-      audioElement.src = game.correctSong.preview_url;
+        if (!response.ok) throw new Error("Failed to fetch songs from Spotify");
   
-      // Populate answer options
-      const optionsContainer = document.getElementById("optionsContainer");
+        const data = await response.json();
+        game.allSongs = data.tracks.items.map((track) => ({
+          id: track.id,
+          songName: track.name,
+          artist: track.artists.map((artist) => artist.name).join(", "),
+          previewUrl: track.preview_url,
+          album: track.album.name,
+        }));
+      } catch (error) {
+        console.error("Error fetching songs:", error.message);
+      }
+    }
+  
+    // Select Random Song
+    function getRandomSong() {
+      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
+      return game.allSongs[randomIndex];
+    }
+  
+    // Generate Options (Including Correct Answer)
+    function generateOptions(correctSong) {
+      const allOptions = game.allSongs.filter((song) => song.id !== correctSong.id);
+      const randomOptions = allOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
+      randomOptions.push(correctSong); // Add the correct answer
+      return randomOptions.sort(() => 0.5 - Math.random()); // Shuffle options
+    }
+  
+    // Load Game Round
+    function loadGameRound() {
+      const correctSong = getRandomSong();
+      const options = generateOptions(correctSong);
+      game.correctSong = correctSong;
+  
+      // Play Song Preview
+      audioElement.src = correctSong.previewUrl;
+      audioElement.play();
+  
+      // Display Options
       optionsContainer.innerHTML = "";
-  
-      songs.forEach((song) => {
+      options.forEach((option) => {
         const button = document.createElement("button");
-        button.textContent = song.name;
-        button.addEventListener("click", () => checkAnswer(song.name));
+        button.textContent = `${option.songName} - ${option.artist}`;
+        button.addEventListener("click", () => checkAnswer(option.id));
         optionsContainer.appendChild(button);
       });
-    } catch (error) {
-      console.error("Error loading game:", error.message);
-      alert("Couldn't load tracks. Please try again.");
     }
-  }
   
-  // Check if the answer is correct
-  function checkAnswer(selectedName) {
-    if (selectedName === game.correctSong.name) {
-      alert("🎉 Correct! You guessed it!");
-      game.score++;
-    } else {
-      alert(`❌ Wrong! The correct answer was: ${game.correctSong.name}`);
+    // Check Answer
+    function checkAnswer(selectedId) {
+      if (selectedId === game.correctSong.id) {
+        alert("🎉 Correct! Great job!");
+        game.score++;
+      } else {
+        alert(
+          `❌ Wrong! The correct answer was: ${game.correctSong.songName} by ${game.correctSong.artist}`
+        );
+      }
+      document.getElementById("score").textContent = `Score: ${game.score}`;
+      loadGameRound();
     }
-    document.getElementById("score").textContent = `Score: ${game.score}`;
-    loadGame();
-  }
   
-  // Initialize the game
-  (async function () {
-    await authenticateSpotify();
-    await loadGame();
+    // Initialize Game
+    async function initGame() {
+      await fetchSongs("soul"); // Fetch songs in the "Soul" genre
+      loadGameRound();
+    }
+  
+    await initGame();
   })();
+  
