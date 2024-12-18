@@ -13,6 +13,10 @@
         "destination": "/assets/json/secret_santa.json"
       },
       {
+        "source": "html/assets/json/questions.json",
+        "destination": "html/assets/json/questions.json"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
