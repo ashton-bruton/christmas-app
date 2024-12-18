@@ -17,8 +17,7 @@
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            Authorization:
-              "Basic " + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
+            Authorization: "Basic " + btoa(`${CLIENT_ID}:${CLIENT_SECRET}`),
           },
           body: "grant_type=client_credentials",
         });
@@ -42,7 +41,7 @@
         if (!token) throw new Error("Unable to get Spotify token");
   
         const response = await fetch(
-          `https://api.spotify.com/v1/search?q=genre:"${genre}"&type=track&limit=10`,
+          `https://api.spotify.com/v1/search?q=genre:"${genre}"&type=track&limit=20`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -53,15 +52,24 @@
         if (!response.ok) throw new Error("Failed to fetch songs from Spotify");
   
         const data = await response.json();
-        game.allSongs = data.tracks.items.map((track) => ({
-          id: track.id,
-          songName: track.name,
-          artist: track.artists.map((artist) => artist.name).join(", "),
-          previewUrl: track.preview_url,
-          album: track.album.name,
-        }));
+  
+        // Filter tracks to include only those with a preview URL
+        game.allSongs = data.tracks.items
+          .filter((track) => track.preview_url) // Exclude tracks with no preview URL
+          .map((track) => ({
+            id: track.id,
+            songName: track.name,
+            artist: track.artists.map((artist) => artist.name).join(", "),
+            previewUrl: track.preview_url,
+            album: track.album.name,
+          }));
+  
+        if (game.allSongs.length === 0) {
+          throw new Error("No tracks with preview URLs found.");
+        }
       } catch (error) {
         console.error("Error fetching songs:", error.message);
+        alert("Failed to fetch playable tracks. Please try again later.");
       }
     }
   
@@ -116,7 +124,11 @@
     // Initialize Game
     async function initGame() {
       await fetchSongs("soul"); // Fetch songs in the "Soul" genre
-      loadGameRound();
+      if (game.allSongs.length > 0) {
+        loadGameRound();
+      } else {
+        console.error("No songs available to start the game.");
+      }
     }
   
     await initGame();
