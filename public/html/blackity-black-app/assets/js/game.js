@@ -172,17 +172,20 @@ function updateScoreboard(state) {
   document.getElementById("team-blue-score").textContent = state.teamBlue.score;
 }
 
-// Highlight active team
+// Highlight active team name
 function highlightActiveTeam(team) {
-  const teamRed = document.getElementById("team-red-name").parentElement;
-  const teamBlue = document.getElementById("team-blue-name").parentElement;
+  const teamRedName = document.getElementById("team-red-name");
+  const teamBlueName = document.getElementById("team-blue-name");
 
-  teamRed.classList.remove("active");
-  teamBlue.classList.remove("active");
+  // Remove glow effect from both team names
+  teamRedName.classList.remove("active");
+  teamBlueName.classList.remove("active");
 
+  // Add glow effect to the active team's name
   if (team === "teamRed") {
-    teamRed.classList.add("active");
+    teamRedName.classList.add("active");
   } else {
-    teamBlue.classList.add("active");
+    teamBlueName.classList.add("active");
   }
 }
+
