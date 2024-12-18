@@ -4,26 +4,11 @@
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
     const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/redirect.html";
     const SCOPES = [
-        "streaming",                           // Enable Web Playback SDK
-        "user-read-playback-state",            // Read current playback state
-        "user-modify-playback-state",          // Modify playback state
-        "user-read-currently-playing",         // Read currently playing track
-        "app-remote-control",                  // App remote control
-        "playlist-read-private",               // Read private playlists
-        "playlist-read-collaborative",         // Read collaborative playlists
-        "playlist-modify-public",              // Modify public playlists
-        "playlist-modify-private",             // Modify private playlists
-        "user-library-read",                   // Read user’s library
-        "user-library-modify",                 // Modify user’s library
-        "user-top-read",                       // Read user’s top artists/tracks
-        "user-read-recently-played",           // Read recently played tracks
-        "user-follow-read",                    // Read followed artists/users
-        "user-follow-modify",                  // Follow or unfollow artists/users
-        "user-read-email",                     // Read user email
-        "user-read-private",                   // Read user private information
-        "user-read-playback-position",         // Read playback position in content
-      ].join(" ");
-      
+      "streaming",
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      "user-read-currently-playing",
+    ].join(" ");
   
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
@@ -50,11 +35,11 @@
         try {
           await verifyScopes(token);
           authMessage.textContent = "Authenticated! Loading player...";
-          loginButton.style.display = "none"; // Hide login button
+          loginButton.style.display = "none";
           await loadSpotifySDK(token);
         } catch (error) {
-          authMessage.textContent = "Authentication error. Please log in again.";
           console.error("Authentication error:", error.message);
+          authMessage.textContent = "Authentication failed. Please try again.";
           loginButton.style.display = "block";
         }
       } else {
@@ -65,6 +50,7 @@
       }
     }
   
+    // Verify Token Scopes
     async function verifyScopes(token) {
       const response = await fetch("https://api.spotify.com/v1/me", {
         headers: { Authorization: `Bearer ${token}` },
@@ -73,7 +59,9 @@
       if (!response.ok) {
         throw new Error("Token validation failed. Please re-authenticate.");
       }
-      console.log("Token is valid.");
+  
+      const data = await response.json();
+      console.log("Token validated. User Info:", data);
     }
   
     // Load Spotify SDK
@@ -105,17 +93,16 @@
         console.log("Player Ready with Device ID:", device_id);
         authMessage.textContent = "Player Ready! Start Playing!";
         try {
-          await transferPlayback(device_id);
+          await transferPlayback(device_id, token);
           fetchSongs("soul");
         } catch (error) {
           console.error("Error transferring playback:", error.message);
-          authMessage.textContent = "Failed to transfer playback.";
+          authMessage.textContent = "Playback transfer failed.";
         }
       });
   
       player.addListener("not_ready", ({ device_id }) => {
-        console.error("Player went offline with Device ID:", device_id);
-        authMessage.textContent = "Player offline. Please reconnect.";
+        console.error("Player went offline:", device_id);
       });
   
       player.addListener("authentication_error", ({ message }) => {
@@ -127,9 +114,8 @@
       player.connect();
     }
   
-    // Transfer Playback to Spotify Player
-    async function transferPlayback(deviceId) {
-      const token = localStorage.getItem("spotify_access_token");
+    // Transfer Playback
+    async function transferPlayback(deviceId, token) {
       const response = await fetch("https://api.spotify.com/v1/me/player", {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
@@ -137,11 +123,12 @@
       });
   
       if (!response.ok) {
-        throw new Error("Failed to transfer playback to Spotify Web Player.");
+        throw new Error("Failed to transfer playback to Web Player.");
       }
+      console.log("Playback transferred successfully.");
     }
   
-    // Fetch Songs from Backend
+    // Fetch Songs
     async function fetchSongs(genre) {
       try {
         const response = await fetch(`/fetch-songs?genre=${genre}`);
@@ -151,66 +138,47 @@
           game.allSongs = data.songs;
           loadGameRound();
         } else {
-          throw new Error(data.message);
+          throw new Error("Failed to fetch songs.");
         }
       } catch (error) {
         console.error("Error fetching songs:", error.message);
-        authMessage.textContent = "Failed to fetch songs.";
+        authMessage.textContent = "Error fetching songs.";
       }
     }
   
     // Load a Game Round
     function loadGameRound() {
-      const correctSong = getRandomSong();
-      const options = generateOptions(correctSong);
+      const correctSong = game.allSongs[Math.floor(Math.random() * game.allSongs.length)];
       game.correctSong = correctSong;
   
-      playSong(correctSong.uri);
-  
       optionsContainer.innerHTML = "";
-      options.forEach((option) => {
+      game.allSongs.slice(0, 4).forEach((song) => {
         const button = document.createElement("button");
-        button.textContent = `${option.songName} - ${option.artist}`;
-        button.addEventListener("click", () => checkAnswer(option.uri));
+        button.textContent = `${song.songName} - ${song.artist}`;
+        button.addEventListener("click", () => checkAnswer(song.uri));
         optionsContainer.appendChild(button);
       });
+  
+      playSong(correctSong.uri);
     }
   
     // Play a Song
     async function playSong(uri) {
-      try {
-        const token = localStorage.getItem("spotify_access_token");
-        await fetch("https://api.spotify.com/v1/me/player/play", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ uris: [uri] }),
-        });
-      } catch (error) {
-        console.error("Error playing song:", error.message);
-      }
+      const token = localStorage.getItem("spotify_access_token");
+      await fetch("https://api.spotify.com/v1/me/player/play", {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ uris: [uri] }),
+      });
     }
   
-    function getRandomSong() {
-      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
-      return game.allSongs[randomIndex];
-    }
-  
-    function generateOptions(correctSong) {
-      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
-      const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
-      randomOptions.push(correctSong);
-      return randomOptions.sort(() => Math.random() - 0.5);
-    }
-  
-    function checkAnswer(selectedUri) {
-      if (selectedUri === game.correctSong.uri) {
-        alert("🎉 Correct! Great job!");
+    // Check Answer
+    function checkAnswer(uri) {
+      if (uri === game.correctSong.uri) {
         game.score++;
+        alert("Correct!");
       } else {
-        alert(`❌ Wrong! The correct answer was: ${game.correctSong.songName}`);
+        alert("Wrong!");
       }
       scoreElement.textContent = `Score: ${game.score}`;
       loadGameRound();
