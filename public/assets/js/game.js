@@ -3,27 +3,31 @@
   
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
     const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/failure.html";
+    const SCOPES = "streaming user-read-playback-state user-modify-playback-state";
+  
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
-    )}&scope=streaming user-read-playback-state user-modify-playback-state`;
+    )}&scope=${encodeURIComponent(SCOPES)}`;
   
     const loginButton = document.getElementById("loginButton");
     const authMessage = document.getElementById("authMessage");
     const optionsContainer = document.getElementById("optionsContainer");
     const scoreElement = document.getElementById("score");
+  
     let game = { score: 0, correctSong: null, allSongs: [] };
     let token = null;
     let player = null;
   
-    // Spotify Authorization Flow
+    // Spotify Authentication
     async function authenticate() {
-      const response = await fetch("/spotify-token");
-      const data = await response.json();
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      token = params.get("access_token");
   
-      if (data.accessToken) {
-        token = data.accessToken;
-        authMessage.textContent = "Authenticated! Loading player...";
-        initializePlayer();
+      if (token) {
+        window.history.pushState("", document.title, window.location.pathname);
+        authMessage.textContent = "Authenticated! Initializing player...";
+        loadSpotifySDK();
       } else {
         loginButton.style.display = "block";
         loginButton.addEventListener("click", () => {
@@ -32,30 +36,38 @@
       }
     }
   
-    // Define onSpotifyWebPlaybackSDKReady globally
-    window.onSpotifyWebPlaybackSDKReady = function () {
-      player = new Spotify.Player({
-        name: "Beat Shazam Game",
-        getOAuthToken: (cb) => cb(token),
-        volume: 0.5,
-      });
+    // Load Spotify SDK and Initialize Player
+    function loadSpotifySDK() {
+      const script = document.createElement("script");
+      script.src = "https://sdk.scdn.co/spotify-player.js";
+      script.async = true;
+      document.body.appendChild(script);
   
-      player.addListener("ready", ({ device_id }) => {
-        console.log("Player Ready with Device ID:", device_id);
-        authMessage.textContent = "Player ready! Fetching songs...";
-        fetchSongs("soul");
-      });
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        player = new Spotify.Player({
+          name: "Beat Shazam Game",
+          getOAuthToken: (cb) => cb(token),
+          volume: 0.5,
+        });
   
-      player.addListener("not_ready", ({ device_id }) => {
-        console.error("Player went offline with Device ID:", device_id);
-      });
+        player.addListener("ready", ({ device_id }) => {
+          console.log("Player Ready with Device ID:", device_id);
+          authMessage.textContent = "Player ready! Fetching songs...";
+          fetchSongs("soul");
+        });
   
-      player.addListener("authentication_error", ({ message }) => {
-        console.error("Authentication error:", message);
-      });
+        player.addListener("not_ready", ({ device_id }) => {
+          console.error("Player went offline with Device ID:", device_id);
+        });
   
-      player.connect();
-    };
+        player.addListener("authentication_error", ({ message }) => {
+          console.error("Authentication error:", message);
+          authMessage.textContent = "Authentication error. Please log in again.";
+        });
+  
+        player.connect();
+      };
+    }
   
     // Fetch Songs from Backend
     async function fetchSongs(genre) {
@@ -75,7 +87,7 @@
       }
     }
   
-    // Load Game Round
+    // Load a Game Round
     function loadGameRound() {
       const correctSong = getRandomSong();
       const options = generateOptions(correctSong);
@@ -100,15 +112,13 @@
   
     // Generate Answer Options
     function generateOptions(correctSong) {
-      const otherOptions = game.allSongs.filter(
-        (song) => song.uri !== correctSong.uri
-      );
+      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
       const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
       randomOptions.push(correctSong);
       return randomOptions.sort(() => Math.random() - 0.5);
     }
   
-    // Play Song
+    // Play a Song
     async function playSong(uri) {
       try {
         await fetch("https://api.spotify.com/v1/me/player/play", {
@@ -136,6 +146,7 @@
       loadGameRound();
     }
   
+    // Start Authentication Process
     await authenticate();
   })();
   
