@@ -3755,6 +3755,11 @@ input, select, textarea {
 }
 
 /* Submit Button */
+.sub-button {
+	width: 100%;
+    height: 50px;
+}
+
 #submit {
 	display: none;
 	background: #007bff;
@@ -3766,7 +3771,7 @@ input, select, textarea {
 	cursor: pointer;
 	transition: background 0.3s;
 	align-self: center;
-	margin-top: 20px;
+	margin: 0 auto;
 }
 
 #submit.active {
