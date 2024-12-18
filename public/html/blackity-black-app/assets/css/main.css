@@ -3572,6 +3572,11 @@ input, select, textarea {
 		position: relative;
 		height: 32rem;
 		box-shadow: 0 2rem 4rem 0.25rem rgba(46, 43, 55, 0.575);
+		width: 100%; /* Adjust as needed */
+		min-height: 0; /* Ensure there's no unexpected minimum height */
+		height: auto; /* Dynamic height adjustment */
+		overflow: visible; /* Prevent content clipping */
+		padding: 1rem; 
 	}
 
 		#wrapper > .scrollZone {
