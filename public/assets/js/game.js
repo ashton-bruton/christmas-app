@@ -15,7 +15,8 @@
     const scoreElement = document.getElementById("score");
   
     let game = { score: 0, correctSong: null, allSongs: [] };
-  
+    let player = null;
+
     // Spotify Authentication
     async function authenticate() {
       const hash = window.location.hash.substring(1);
@@ -26,6 +27,7 @@
         localStorage.setItem("spotify_access_token", token);
         window.history.pushState("", document.title, window.location.pathname);
         authMessage.textContent = "Authenticated! Loading player...";
+        await loadSpotifySDK(token);
       } else {
         loginButton.style.display = "block";
         loginButton.addEventListener("click", () => {
@@ -34,12 +36,78 @@
       }
     }
   
+    // Load Spotify SDK
+    async function loadSpotifySDK(token) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          initializePlayer(token);
+          resolve();
+        };
+
+        script.onerror = () => reject(new Error("Failed to load Spotify Web Playback SDK"));
+        document.body.appendChild(script);
+      });
+    }
+  
+    // Initialize Spotify Player
+    function initializePlayer(token) {
+      player = new Spotify.Player({
+        name: "Beat Shazam Game",
+        getOAuthToken: cb => cb(token),
+        volume: 0.5,
+      });
+
+      player.addListener("ready", async ({ device_id }) => {
+        console.log("Player Ready with Device ID:", device_id);
+        authMessage.textContent = "Player ready! Fetching songs...";
+        try {
+          await transferPlayback(device_id);
+          fetchSongs("soul");
+        } catch (error) {
+          console.error("Error transferring playback:", error.message);
+          authMessage.textContent = "Failed to transfer playback.";
+        }
+      });
+
+      player.addListener("not_ready", ({ device_id }) => {
+        console.error("Player went offline with Device ID:", device_id);
+      });
+
+      player.addListener("authentication_error", ({ message }) => {
+        console.error("Authentication error:", message);
+        authMessage.textContent = "Authentication error. Please log in again.";
+      });
+
+      player.connect();
+    }
+  
+    // Transfer Playback to Spotify Player
+    async function transferPlayback(deviceId) {
+      const token = localStorage.getItem("spotify_access_token");
+      const response = await fetch("https://api.spotify.com/v1/me/player", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ device_ids: [deviceId], play: false }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to transfer playback: ${response.statusText}`);
+      }
+    }
+  
     // Fetch Songs from Backend
     async function fetchSongs(genre) {
       try {
         const response = await fetch(`/fetch-songs?genre=${genre}`);
         const data = await response.json();
-  
+
         if (data.success) {
           game.allSongs = data.songs;
           loadGameRound();
@@ -57,9 +125,9 @@
       const correctSong = getRandomSong();
       const options = generateOptions(correctSong);
       game.correctSong = correctSong;
-  
+
       playSong(correctSong.uri);
-  
+
       optionsContainer.innerHTML = "";
       options.forEach((option) => {
         const button = document.createElement("button");
@@ -67,6 +135,20 @@
         button.addEventListener("click", () => checkAnswer(option.uri));
         optionsContainer.appendChild(button);
       });
+    }
+  
+    // Get Random Song
+    function getRandomSong() {
+      const randomIndex = Math.floor(Math.random() * game.allSongs.length);
+      return game.allSongs[randomIndex];
+    }
+  
+    // Generate Answer Options
+    function generateOptions(correctSong) {
+      const otherOptions = game.allSongs.filter((song) => song.uri !== correctSong.uri);
+      const randomOptions = otherOptions.sort(() => Math.random() - 0.5).slice(0, 3);
+      randomOptions.push(correctSong);
+      return randomOptions.sort(() => Math.random() - 0.5);
     }
   
     // Play a Song
@@ -86,7 +168,18 @@
       }
     }
   
+    // Check Answer
+    function checkAnswer(selectedUri) {
+      if (selectedUri === game.correctSong.uri) {
+        alert("🎉 Correct! Great job!");
+        game.score++;
+      } else {
+        alert(`❌ Wrong! The correct answer was: ${game.correctSong.songName}`);
+      }
+      scoreElement.textContent = `Score: ${game.score}`;
+      loadGameRound();
+    }
+  
     // Start Authentication Process
     await authenticate();
   })();
-  
