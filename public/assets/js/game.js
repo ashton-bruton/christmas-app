@@ -3,7 +3,12 @@
   
     const CLIENT_ID = "17e06f98389c4e1daed074f8142138f0";
     const REDIRECT_URI = "https://christmas-app-e9bf7.web.app/html/redirect.html";
-    const SCOPES = "streaming user-read-playback-state user-modify-playback-state";
+    const SCOPES = [
+      "streaming",
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      "user-read-currently-playing",
+    ].join(" ");
   
     const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
       REDIRECT_URI
@@ -16,7 +21,7 @@
   
     let game = { score: 0, correctSong: null, allSongs: [] };
     let player = null;
-
+  
     // Spotify Authentication
     async function authenticate() {
       const hash = window.location.hash.substring(1);
@@ -26,8 +31,15 @@
       if (token) {
         localStorage.setItem("spotify_access_token", token);
         window.history.pushState("", document.title, window.location.pathname);
-        authMessage.textContent = "Authenticated! Loading player...";
-        await loadSpotifySDK(token);
+  
+        try {
+          await verifyScopes(token); // Validate token
+          authMessage.textContent = "Authenticated! Loading player...";
+          await loadSpotifySDK(token);
+        } catch (error) {
+          authMessage.textContent = "Failed to authenticate. Please log in again.";
+          console.error("Authentication error:", error.message);
+        }
       } else {
         loginButton.style.display = "block";
         loginButton.addEventListener("click", () => {
@@ -36,18 +48,29 @@
       }
     }
   
+    async function verifyScopes(token) {
+      const response = await fetch("https://api.spotify.com/v1/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Token validation failed. Please re-authenticate.");
+      }
+      console.log("Token is valid.");
+    }
+  
     // Load Spotify SDK
     async function loadSpotifySDK(token) {
       return new Promise((resolve, reject) => {
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
-
+  
         window.onSpotifyWebPlaybackSDKReady = () => {
           initializePlayer(token);
           resolve();
         };
-
+  
         script.onerror = () => reject(new Error("Failed to load Spotify Web Playback SDK"));
         document.body.appendChild(script);
       });
@@ -57,10 +80,10 @@
     function initializePlayer(token) {
       player = new Spotify.Player({
         name: "Beat Shazam Game",
-        getOAuthToken: cb => cb(token),
+        getOAuthToken: (cb) => cb(token),
         volume: 0.5,
       });
-
+  
       player.addListener("ready", async ({ device_id }) => {
         console.log("Player Ready with Device ID:", device_id);
         authMessage.textContent = "Player ready! Fetching songs...";
@@ -72,34 +95,27 @@
           authMessage.textContent = "Failed to transfer playback.";
         }
       });
-
+  
       player.addListener("not_ready", ({ device_id }) => {
         console.error("Player went offline with Device ID:", device_id);
       });
-
+  
       player.addListener("authentication_error", ({ message }) => {
         console.error("Authentication error:", message);
         authMessage.textContent = "Authentication error. Please log in again.";
       });
-
+  
       player.connect();
     }
   
     // Transfer Playback to Spotify Player
     async function transferPlayback(deviceId) {
       const token = localStorage.getItem("spotify_access_token");
-      const response = await fetch("https://api.spotify.com/v1/me/player", {
+      await fetch("https://api.spotify.com/v1/me/player", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify({ device_ids: [deviceId], play: false }),
       });
-
-      if (!response.ok) {
-        throw new Error(`Failed to transfer playback: ${response.statusText}`);
-      }
     }
   
     // Fetch Songs from Backend
@@ -107,7 +123,7 @@
       try {
         const response = await fetch(`/fetch-songs?genre=${genre}`);
         const data = await response.json();
-
+  
         if (data.success) {
           game.allSongs = data.songs;
           loadGameRound();
@@ -125,9 +141,9 @@
       const correctSong = getRandomSong();
       const options = generateOptions(correctSong);
       game.correctSong = correctSong;
-
+  
       playSong(correctSong.uri);
-
+  
       optionsContainer.innerHTML = "";
       options.forEach((option) => {
         const button = document.createElement("button");
@@ -183,3 +199,4 @@
     // Start Authentication Process
     await authenticate();
   })();
+  
