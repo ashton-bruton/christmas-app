@@ -117,7 +117,7 @@ function getStorageWithExpiration(key) {
 document.addEventListener("DOMContentLoaded", () => {
   const configForm = document.getElementById("config-form");
   const popover = document.getElementById("game-configuration");
-  const scoreboard = document.getElementById("scoreboard");
+  const scoreboard = document.getElementById("scoreboard-container");
   const contentSection = document.querySelector(".content");
 
   // Set popover text color to black
