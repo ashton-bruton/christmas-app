@@ -1018,7 +1018,7 @@
       "content_type": "youtube_video",
       "category": ["music", "comedy", "pop culture"],
       "challenge": 1
-    }
+    },
     {
       "id": 103,
       "question": "I started thinking to myself...",
@@ -1028,7 +1028,7 @@
       "content_type": "youtube_video",
       "category": ["comedy", "pop culture"],
       "challenge": 3
-    }
+    },
     {
       "id": 104,
       "question": "Before I let you...",
@@ -1038,7 +1038,8 @@
       "content_type": "youtube_video",
       "category": ["music", "pop culture", "soul"],
       "challenge": 1
-    },{
+    },
+    {
       "id": 105,
       "question": "I cant leave you alone...",
       "answer": "...you got me feenin'.",
