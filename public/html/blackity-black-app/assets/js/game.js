@@ -78,9 +78,8 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       highlightActiveTeam(gameState.currentTeam); // Highlight the active team
       const questionBlock = document.getElementById('question-block');
 
-      if(questionData.content) {
+      if (questionData.content) {
         // Replace content with the YouTube iframe
-      
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -107,7 +106,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
           </div>
         `;
       }
-      
 
       // Add event listener to the next button
       document.getElementById('next').addEventListener('click', () => {
@@ -128,9 +126,10 @@ function endGame(gameState, winningTeam) {
     </div>
   `;
 
-  // Clear game state and reload
+  // Clear game state and asked questions
   document.getElementById('restart').addEventListener('click', () => {
     localStorage.removeItem("gameState");
+    localStorage.removeItem("askedQuestions"); // Clear the list of asked questions
     location.reload();
   });
 }
