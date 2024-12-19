@@ -191,7 +191,7 @@
     },
     {
       "id": 20,
-      "question": "What film directed by Ava DuVernay focuses on the 1965 Selma to Montgomery marches?",
+      "question": "What civil rights era film is directed by Ava DuVernay in 2014?",
       "answer": "Selma",
       "incorrect_answers": ["12 Years a Slave", "The Help", "Batman Begins"],
       "content": "",
@@ -211,7 +211,7 @@
     },
     {
       "id": 22,
-      "question": "What 1992 biographical film features Denzel Washington as Malcolm X?",
+      "question": "What 1992 biographical film features Denzel Washington?",
       "answer": "Malcolm X",
       "incorrect_answers": ["Ali", "Glory", "Boyz n the Hood"],
       "content": "",
