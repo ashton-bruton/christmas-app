@@ -18,6 +18,987 @@
       "content_type": "youtube_video",
       "category": ["pop culture", "music"],
       "challenge": 1
+    },
+    {
+      "id": 3,
+      "question": "Who is known as the 'King of Pop'?",
+      "answer": "Michael Jackson",
+      "incorrect_answers": ["Prince", "Usher", "Shaquille O'Neal"],
+      "content": "https://www.youtube.com/embed/Zi_XLOBDo_Y?si=V9qeX57tq8SQbvm5&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 4,
+      "question": "What Beyoncé album features the hit song 'Formation'?",
+      "answer": "Lemonade",
+      "incorrect_answers": ["4", "B'Day", "Dangerously in Love"],
+      "content": "https://www.youtube.com/embed/WDZJPJV__bQ?si=ncgQc4cri-oxHU9p&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 5,
+      "question": "Which rapper is famous for the album 'The College Dropout'?",
+      "answer": "Kanye West",
+      "incorrect_answers": ["Jay-Z", "Drake", "MC Hammer"],
+      "content": "https://www.youtube.com/embed/8kyWDhB_QeI?si=-WbJrIeOztK87mYo&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 6,
+      "question": "Who was the first Black woman inducted into the Rock and Roll Hall of Fame?",
+      "answer": "Aretha Franklin",
+      "incorrect_answers": ["Tina Turner", "Diana Ross", "Whitney Houston"],
+      "content": "https://www.youtube.com/embed/T-fz6TAipqo?si=jCr3gzRAdQRedLOC&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 7,
+      "question": "What jazz musician is known for 'What a Wonderful World'?",
+      "answer": "Louis Armstrong",
+      "incorrect_answers": ["Duke Ellington", "Miles Davis", "Elvis Presley"],
+      "content": "https://www.youtube.com/embed/VqhCQZaH4Vs?si=35D_sYzQCPJpED2P&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 8,
+      "question": "Which hip-hop duo released the classic album 'Stankonia'?",
+      "answer": "OutKast",
+      "incorrect_answers": ["Run-D.M.C.", "The Neptunes", "Milli Vanilli"],
+      "content": "https://www.youtube.com/embed/MYxAiK6VnXw?si=jLWVXZQOQ_zgJYzA&amp;controls=0&amp;start=8",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 9,
+      "question": "Who is referred to as the 'Queen of Hip-Hop Soul'?",
+      "answer": "Mary J. Blige",
+      "incorrect_answers": ["Lauryn Hill", "Missy Elliott", "Cardi B"],
+      "content": "https://www.youtube.com/embed/Nia2C6JW4VU?si=_YcAF_CmJZgPM4h2&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 10,
+      "question": "What is the name of Rihanna’s beauty brand?",
+      "answer": "Fenty Beauty",
+      "incorrect_answers": ["Riri Glow", "Savage Fenty", "Barbados Glam"],
+      "content": "https://www.youtube.com/embed/e82VE8UtW8A?si=w1o3Te5fSS-kHDSe&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["pop culture", "business"],
+      "challenge": 1
+    },
+    {
+      "id": 11,
+      "question": "What group did Michael Jackson belong to as a child?",
+      "answer": "The Jackson 5",
+      "incorrect_answers": ["The Temptations", "The Commodores", "The Rolling Stones"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 12,
+      "question": "Which rapper famously coined the phrase 'Y’all gon’ make me lose my mind'?",
+      "answer": "DMX",
+      "incorrect_answers": ["Busta Rhymes", "Snoop Dogg", "Bill Nye"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 13,
+      "question": "Who was the first Black actor to win an Academy Award for Best Actor?",
+      "answer": "Sidney Poitier",
+      "incorrect_answers": ["Denzel Washington", "Morgan Freeman", "Kevin Hart"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 14,
+      "question": "What 2018 superhero film broke box office records with a predominantly Black cast?",
+      "answer": "Black Panther",
+      "incorrect_answers": ["Luke Cage", "Blade", "The Dark Knight"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 15,
+      "question": "Who played the lead role in 'Training Day'?",
+      "answer": "Denzel Washington",
+      "incorrect_answers": ["Jamie Foxx", "Will Smith", "Robert Downey Jr."],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 16,
+      "question": "What movie featured Angela Bassett and Laurence Fishburne as Tina and Ike Turner?",
+      "answer": "What's Love Got to Do with It",
+      "incorrect_answers": ["Ray", "Dreamgirls", "Avatar"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 17,
+      "question": "What film features the quote, 'Bye, Felicia'?",
+      "answer": "Friday",
+      "incorrect_answers": ["Barbershop", "House Party", "Gone with the Wind"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 18,
+      "question": "Which actress starred in 'Hidden Figures', 'Empire', and 'Baby Boy'?",
+      "answer": "Taraji P. Henson",
+      "incorrect_answers": ["Viola Davis", "Octavia Spencer", "Meryl Streep"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 19,
+      "question": "What movie stars Eddie Murphy as Prince Akeem?",
+      "answer": "Coming to America",
+      "incorrect_answers": ["Trading Places", "The Nutty Professor", "The Lion King"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "comedy"],
+      "challenge": 1
+    },
+    {
+      "id": 20,
+      "question": "What film directed by Ava DuVernay focuses on the 1965 Selma to Montgomery marches?",
+      "answer": "Selma",
+      "incorrect_answers": ["12 Years a Slave", "The Help", "Batman Begins"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 21,
+      "question": "Who starred in the title role of 'Black Panther'?",
+      "answer": "Chadwick Boseman",
+      "incorrect_answers": ["Michael B. Jordan", "Idris Elba", "Chris Evans"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 22,
+      "question": "What 1992 biographical film features Denzel Washington as Malcolm X?",
+      "answer": "Malcolm X",
+      "incorrect_answers": ["Ali", "Glory", "Boyz n the Hood"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 23,
+      "question": "What sitcom featured the Huxtable family?",
+      "answer": "The Cosby Show",
+      "incorrect_answers": ["Family Matters", "Good Times", "Friends"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 24,
+      "question": "Who is the longest-running cast member on 'Saturday Night Live'?",
+      "answer": "Kenan Thompson",
+      "incorrect_answers": ["Chris Rock", "Eddie Murphy", "Dave Chappelle"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "comedy"],
+      "challenge": 2
+    },
+    {
+      "id": 25,
+      "question": "What show launched Issa Rae’s career on HBO?",
+      "answer": "Insecure",
+      "incorrect_answers": ["The Misadventures of Awkward Black Girl", "A Black Lady Sketch Show", "Euphoria"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 26,
+      "question": "Who played the character Gina in 'Martin'?",
+      "answer": "Tisha Campbell",
+      "incorrect_answers": ["Tichina Arnold", "Regina King", "Halle Berry"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "comedy"],
+      "challenge": 1
+    },
+    {
+      "id": 27,
+      "question": "What animated series features Huey and Riley Freeman?",
+      "answer": "The Boondocks",
+      "incorrect_answers": ["Static Shock", "Young Justice", "SpongeBob SquarePants"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "comedy"],
+      "challenge": 2
+    },
+    {
+      "id": 28,
+      "question": "What is the name of the spin-off series of 'Black-ish' featuring Zoey Johnson?",
+      "answer": "Grown-ish",
+      "incorrect_answers": ["Mixed-ish", "College-ish", "Young-ish"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 29,
+      "question": "What 90s sitcom was set at the fictional Hillman College?",
+      "answer": "A Different World",
+      "incorrect_answers": ["Living Single", "Sister, Sister", "Saved by the Bell"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 30,
+      "question": "Who played Olivia Pope in 'Scandal'?",
+      "answer": "Kerry Washington",
+      "incorrect_answers": ["Viola Davis", "Taraji P. Henson", "Gabrielle Union"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "drama"],
+      "challenge": 2
+    },
+    {
+      "id": 31,
+      "question": "What talk show did Oprah Winfrey host for 25 years?",
+      "answer": "The Oprah Winfrey Show",
+      "incorrect_answers": ["The View", "Ellen", "The Jerry Springer Show"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 32,
+      "question": "Which comedian created the sketch comedy show 'Key & Peele'?",
+      "answer": "Jordan Peele",
+      "incorrect_answers": ["Keegan-Michael Key", "Dave Chappelle", "Chris Rock"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "comedy"],
+      "challenge": 2
+    },
+    {
+      "id": 33,
+      "question": "Who was the first Black baseball player to integrate Major League Baseball?",
+      "answer": "Jackie Robinson",
+      "incorrect_answers": ["Satchel Paige", "Hank Aaron", "Babe Ruth"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 34,
+      "question": "What NBA player is nicknamed 'King James'?",
+      "answer": "LeBron James",
+      "incorrect_answers": ["Michael Jordan", "Kobe Bryant", "Shaquille O'Neal"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 35,
+      "question": "Which tennis star has won 23 Grand Slam singles titles?",
+      "answer": "Serena Williams",
+      "incorrect_answers": ["Venus Williams", "Naomi Osaka", "Roger Federer"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 36,
+      "question": "Who is the only Black quarterback to have won multiple Super Bowls?",
+      "answer": "Patrick Mahomes",
+      "incorrect_answers": ["Doug Williams", "Russell Wilson", "Tom Brady"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 37,
+      "question": "What boxer was known as 'The Greatest' and 'The People's Champion'?",
+      "answer": "Muhammad Ali",
+      "incorrect_answers": ["Joe Frazier", "Mike Tyson", "Rocky Balboa"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 38,
+      "question": "Who was the first Black woman to win an Olympic gold medal?",
+      "answer": "Alice Coachman",
+      "incorrect_answers": ["Wilma Rudolph", "Florence Griffith-Joyner", "Simone Biles"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 39,
+      "question": "What team did Michael Jordan win six championships with?",
+      "answer": "Chicago Bulls",
+      "incorrect_answers": ["Washington Wizards", "Los Angeles Lakers", "New York Knicks"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 40,
+      "question": "Who became the first Black head coach to win a Super Bowl?",
+      "answer": "Tony Dungy",
+      "incorrect_answers": ["Mike Tomlin", "Lovie Smith", "Bill Belichick"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 41,
+      "question": "What city is known as the birthplace of hip-hop?",
+      "answer": "The Bronx",
+      "incorrect_answers": ["Brooklyn", "Atlanta", "Detroit"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 42,
+      "question": "Who founded FUBU, the iconic streetwear brand?",
+      "answer": "Daymond John",
+      "incorrect_answers": ["Russell Simmons", "Sean Combs", "Virgil Abloh"],
+      "content": "",
+      "content_type": "",
+      "category": ["fashion", "business"],
+      "challenge": 2
+    },
+    {
+      "id": 43,
+      "question": "What artist painted the famous work 'Sugar Shack'?",
+      "answer": "Ernie Barnes",
+      "incorrect_answers": ["Jean-Michel Basquiat", "Kerry James Marshall", "Bob Ross"],
+      "content": "",
+      "content_type": "",
+      "category": ["art", "pop culture"],
+      "challenge": 3
+    },
+    {
+      "id": 44,
+      "question": "Which Black author wrote 'The Bluest Eye' and 'Beloved'?",
+      "answer": "Toni Morrison",
+      "incorrect_answers": ["Maya Angelou", "Zora Neale Hurston", "Alice Walker"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 45,
+      "question": "Who gave the famous 'I Have a Dream' speech?",
+      "answer": "Martin Luther King Jr.",
+      "incorrect_answers": ["Malcolm X", "Barack Obama", "Frederick Douglass"],
+      "content": "",
+      "content_type": "",
+      "category": ["history", "civil rights"],
+      "challenge": 1
+    },
+    {
+      "id": 46,
+      "question": "What music festival celebrating Black culture was featured in 'Summer of Soul'?",
+      "answer": "Harlem Cultural Festival",
+      "incorrect_answers": ["Afropunk Festival", "Essence Festival", "Woodstock"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 47,
+      "question": "What cultural movement in the 1920s centered around Black art, music, and literature?",
+      "answer": "Harlem Renaissance",
+      "incorrect_answers": ["Black Arts Movement", "Civil Rights Movement", "Jazz Age"],
+      "content": "",
+      "content_type": "",
+      "category": ["history", "culture"],
+      "challenge": 2
+    },
+    {
+      "id": 48,
+      "question": "What fashion designer became the first Black creative director at Louis Vuitton?",
+      "answer": "Virgil Abloh",
+      "incorrect_answers": ["Olivier Rousteing", "Telfar Clemens", "Dapper Dan"],
+      "content": "",
+      "content_type": "",
+      "category": ["fashion", "business"],
+      "challenge": 2
+    },
+    {
+      "id": 49,
+      "question": "Who wrote the book 'Between the World and Me'?",
+      "answer": "Ta-Nehisi Coates",
+      "incorrect_answers": ["James Baldwin", "Cornel West", "Richard Wright"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 50,
+      "question": "What historical event inspired the film 'Judas and the Black Messiah'?",
+      "answer": "The assassination of Fred Hampton",
+      "incorrect_answers": ["The Montgomery Bus Boycott", "The Watts Riots", "The Harlem Riots"],
+      "content": "",
+      "content_type": "",
+      "category": ["history", "film"],
+      "challenge": 3
+    },
+    {
+      "id": 51,
+      "question": "What genre of music is Kendrick Lamar primarily known for?",
+      "answer": "Hip-hop",
+      "incorrect_answers": ["R&B", "Jazz", "Classical"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 52,
+      "question": "Who played the character Wakanda's Queen Mother in 'Black Panther'?",
+      "answer": "Angela Bassett",
+      "incorrect_answers": ["Viola Davis", "Lupita Nyong'o", "Halle Berry"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 53,
+      "question": "Which artist is famous for the song 'Alright', which became an anthem for the Black Lives Matter movement?",
+      "answer": "Kendrick Lamar",
+      "incorrect_answers": ["J. Cole", "Drake", "Childish Gambino"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 54,
+      "question": "What actress starred as Annalise Keating in the TV show 'How to Get Away with Murder'?",
+      "answer": "Viola Davis",
+      "incorrect_answers": ["Kerry Washington", "Taraji P. Henson", "Regina King"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "drama"],
+      "challenge": 2
+    },
+    {
+      "id": 55,
+      "question": "Who was the first Black person to win an EGOT (Emmy, Grammy, Oscar, and Tony)?",
+      "answer": "Whoopi Goldberg",
+      "incorrect_answers": ["Oprah Winfrey", "Harry Belafonte", "Sidney Poitier"],
+      "content": "",
+      "content_type": "",
+      "category": ["history", "pop culture"],
+      "challenge": 3
+    },
+    {
+      "id": 56,
+      "question": "What comedian is known for the stand-up special 'Bigger & Blacker'?",
+      "answer": "Chris Rock",
+      "incorrect_answers": ["Dave Chappelle", "Eddie Murphy", "Kevin Hart"],
+      "content": "",
+      "content_type": "",
+      "category": ["comedy", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 57,
+      "question": "What film stars Beyoncé as Deena Jones in a story inspired by the Supremes?",
+      "answer": "Dreamgirls",
+      "incorrect_answers": ["The Color Purple", "Cadillac Records", "Sparkle"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 58,
+      "question": "Who became the first Black woman to win an individual gold medal at the Winter Olympics?",
+      "answer": "Debi Thomas",
+      "incorrect_answers": ["Gabby Douglas", "Serena Williams", "Alice Coachman"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 59,
+      "question": "What TV show featured the characters Tia Landry and Tamera Campbell?",
+      "answer": "Sister, Sister",
+      "incorrect_answers": ["Living Single", "Family Matters", "Girlfriends"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 60,
+      "question": "Which athlete lit the Olympic cauldron at the 1996 Atlanta Games?",
+      "answer": "Muhammad Ali",
+      "incorrect_answers": ["Michael Jordan", "Carl Lewis", "Jesse Owens"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 61,
+      "question": "Which artist is known for the song 'This Is America'?",
+      "answer": "Childish Gambino",
+      "incorrect_answers": ["Drake", "Kanye West", "J. Cole"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 62,
+      "question": "What is the name of Jay-Z's music streaming platform?",
+      "answer": "Tidal",
+      "incorrect_answers": ["Spotify", "Apple Music", "SoundCloud"],
+      "content": "",
+      "content_type": "",
+      "category": ["business", "music"],
+      "challenge": 2
+    },
+    {
+      "id": 63,
+      "question": "Who played Malcolm X in Spike Lee's 1992 biopic?",
+      "answer": "Denzel Washington",
+      "incorrect_answers": ["Will Smith", "Laurence Fishburne", "Morgan Freeman"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 64,
+      "question": "Which comedian is known for creating the sketch 'I'm Rick James, B****'?",
+      "answer": "Dave Chappelle",
+      "incorrect_answers": ["Kevin Hart", "Chris Rock", "Eddie Murphy"],
+      "content": "",
+      "content_type": "",
+      "category": ["comedy", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 65,
+      "question": "Which TV show featured Queen Latifah as Khadijah James?",
+      "answer": "Living Single",
+      "incorrect_answers": ["Girlfriends", "Sister, Sister", "Moesha"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 66,
+      "question": "What 90s sitcom starred Brandy Norwood as the title character?",
+      "answer": "Moesha",
+      "incorrect_answers": ["The Parkers", "Sister, Sister", "Girlfriends"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 67,
+      "question": "Who played Celie in the 1985 film 'The Color Purple'?",
+      "answer": "Whoopi Goldberg",
+      "incorrect_answers": ["Oprah Winfrey", "Viola Davis", "Halle Berry"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 68,
+      "question": "Which rap group released the album 'Straight Outta Compton'?",
+      "answer": "N.W.A.",
+      "incorrect_answers": ["Wu-Tang Clan", "Public Enemy", "Run-D.M.C."],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 69,
+      "question": "Which Black filmmaker directed 'Do the Right Thing'?",
+      "answer": "Spike Lee",
+      "incorrect_answers": ["John Singleton", "Ava DuVernay", "Tyler Perry"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 1
+    },
+    {
+      "id": 70,
+      "question": "Which athlete was the first Black woman to appear on the cover of Sports Illustrated Swimsuit Issue?",
+      "answer": "Tyra Banks",
+      "incorrect_answers": ["Serena Williams", "Naomi Campbell", "Gabby Douglas"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "fashion"],
+      "challenge": 2
+    },
+    {
+      "id": 71,
+      "question": "Who wrote and performed the spoken word poem 'Still I Rise'?",
+      "answer": "Maya Angelou",
+      "incorrect_answers": ["Toni Morrison", "Nikki Giovanni", "Alice Walker"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 72,
+      "question": "What is the name of the debut album by Lauryn Hill?",
+      "answer": "The Miseducation of Lauryn Hill",
+      "incorrect_answers": ["Unplugged", "Fugees Forever", "Songs in A Minor"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 73,
+      "question": "Who portrayed Storm in the original X-Men movie series?",
+      "answer": "Halle Berry",
+      "incorrect_answers": ["Angela Bassett", "Zoe Saldana", "Taraji P. Henson"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 74,
+      "question": "Which Black scientist is known for his work with peanuts and agricultural science?",
+      "answer": "George Washington Carver",
+      "incorrect_answers": ["Percy Julian", "Mae Jemison", "Neil deGrasse Tyson"],
+      "content": "",
+      "content_type": "",
+      "category": ["science", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 75,
+      "question": "Who played Killmonger in 'Black Panther'?",
+      "answer": "Michael B. Jordan",
+      "incorrect_answers": ["Chadwick Boseman", "Winston Duke", "Idris Elba"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 76,
+      "question": "Which artist created the album 'To Pimp a Butterfly'?",
+      "answer": "Kendrick Lamar",
+      "incorrect_answers": ["J. Cole", "Drake", "Childish Gambino"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "pop culture"],
+      "challenge": 2
+    },
+    {
+      "id": 77,
+      "question": "What 90s sitcom starred Will Smith as a fictionalized version of himself?",
+      "answer": "The Fresh Prince of Bel-Air",
+      "incorrect_answers": ["Martin", "Family Matters", "Living Single"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 78,
+      "question": "Which Black playwright wrote 'A Raisin in the Sun'?",
+      "answer": "Lorraine Hansberry",
+      "incorrect_answers": ["August Wilson", "Zora Neale Hurston", "Toni Morrison"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 79,
+      "question": "What hip-hop group is known for the song 'Fight the Power'?",
+      "answer": "Public Enemy",
+      "incorrect_answers": ["N.W.A.", "Run-D.M.C.", "Beastie Boys"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 80,
+      "question": "Who is the first Black woman to win the Best Actress Oscar?",
+      "answer": "Halle Berry",
+      "incorrect_answers": ["Viola Davis", "Octavia Spencer", "Cicely Tyson"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 81,
+      "question": "Which actor portrayed Jackie Robinson in the film '42'?",
+      "answer": "Chadwick Boseman",
+      "incorrect_answers": ["Denzel Washington", "Michael B. Jordan", "Will Smith"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 82,
+      "question": "What is the name of the character played by Eddie Murphy in 'Beverly Hills Cop'?",
+      "answer": "Axel Foley",
+      "incorrect_answers": ["Billy Ray Valentine", "Prince Akeem", "Reggie Hammond"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "comedy"],
+      "challenge": 1
+    },
+    {
+      "id": 83,
+      "question": "Which athlete was the first Black man to win the Masters Tournament?",
+      "answer": "Tiger Woods",
+      "incorrect_answers": ["Lee Elder", "Calvin Peete", "Charlie Sifford"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 84,
+      "question": "Who wrote the novel 'Their Eyes Were Watching God'?",
+      "answer": "Zora Neale Hurston",
+      "incorrect_answers": ["Toni Morrison", "Maya Angelou", "Alice Walker"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 85,
+      "question": "Which singer is known as the 'Empress of the Blues'?",
+      "answer": "Bessie Smith",
+      "incorrect_answers": ["Ella Fitzgerald", "Billie Holiday", "Nina Simone"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 86,
+      "question": "What is the name of Beyoncé's first solo studio album?",
+      "answer": "Dangerously in Love",
+      "incorrect_answers": ["B'Day", "4", "Lemonade"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 87,
+      "question": "Who played Detective Alonzo Harris in the movie 'Training Day'?",
+      "answer": "Denzel Washington",
+      "incorrect_answers": ["Samuel L. Jackson", "Laurence Fishburne", "Morgan Freeman"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 88,
+      "question": "Which author wrote 'The Souls of Black Folk'?",
+      "answer": "W.E.B. Du Bois",
+      "incorrect_answers": ["Frederick Douglass", "James Baldwin", "Ralph Ellison"],
+      "content": "",
+      "content_type": "",
+      "category": ["literature", "history"],
+      "challenge": 3
+    },
+    {
+      "id": 89,
+      "question": "Which rap artist founded the record label Roc-A-Fella Records?",
+      "answer": "Jay-Z",
+      "incorrect_answers": ["Nas", "P. Diddy", "Dr. Dre"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "business"],
+      "challenge": 2
+    },
+    {
+      "id": 90,
+      "question": "Who was the first Black woman elected to the U.S. Congress?",
+      "answer": "Shirley Chisholm",
+      "incorrect_answers": ["Kamala Harris", "Barbara Jordan", "Condoleezza Rice"],
+      "content": "",
+      "content_type": "",
+      "category": ["history", "politics"],
+      "challenge": 3
+    },
+    {
+      "id": 91,
+      "question": "What movie features the line 'You is kind, you is smart, you is important'?",
+      "answer": "The Help",
+      "incorrect_answers": ["12 Years a Slave", "Fences", "Precious"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 92,
+      "question": "Who directed the movie 'Selma'?",
+      "answer": "Ava DuVernay",
+      "incorrect_answers": ["Spike Lee", "Barry Jenkins", "Ryan Coogler"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 93,
+      "question": "Which Black superhero film was released in 1998, starring Wesley Snipes?",
+      "answer": "Blade",
+      "incorrect_answers": ["Spawn", "Steel", "Black Panther"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 94,
+      "question": "What sitcom featured Jaleel White as Steve Urkel?",
+      "answer": "Family Matters",
+      "incorrect_answers": ["The Fresh Prince of Bel-Air", "Martin", "Sister, Sister"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 95,
+      "question": "What is the name of the iconic Black fashion magazine founded in 1945?",
+      "answer": "Ebony",
+      "incorrect_answers": ["Essence", "Jet", "Black Enterprise"],
+      "content": "",
+      "content_type": "",
+      "category": ["fashion", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 96,
+      "question": "Which actress played Foxy Brown in the 1974 film?",
+      "answer": "Pam Grier",
+      "incorrect_answers": ["Cicely Tyson", "Diahann Carroll", "Aretha Franklin"],
+      "content": "",
+      "content_type": "",
+      "category": ["film", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 97,
+      "question": "Which athlete is known as 'The Black Mamba'?",
+      "answer": "Kobe Bryant",
+      "incorrect_answers": ["LeBron James", "Michael Jordan", "Shaquille O'Neal"],
+      "content": "",
+      "content_type": "",
+      "category": ["sports", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 98,
+      "question": "Who sang the song 'Respect', which became an anthem for civil rights and feminism?",
+      "answer": "Aretha Franklin",
+      "incorrect_answers": ["Nina Simone", "Ella Fitzgerald", "Diana Ross"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 2
+    },
+    {
+      "id": 99,
+      "question": "Which actress starred in the TV series 'Scandal' as Olivia Pope?",
+      "answer": "Kerry Washington",
+      "incorrect_answers": ["Viola Davis", "Regina King", "Taraji P. Henson"],
+      "content": "",
+      "content_type": "",
+      "category": ["television", "pop culture"],
+      "challenge": 1
+    },
+    {
+      "id": 100,
+      "question": "What album is considered a classic by the rap group A Tribe Called Quest?",
+      "answer": "The Low End Theory",
+      "incorrect_answers": ["Enter the Wu-Tang (36 Chambers)", "Illmatic", "Doggy Style"],
+      "content": "",
+      "content_type": "",
+      "category": ["music", "history"],
+      "challenge": 2
     }
   ]
+  
   
