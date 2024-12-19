@@ -76,23 +76,38 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       updateScoreboard(gameState); // Update the scoreboard
       highlightActiveTeam(gameState.currentTeam); // Highlight the active team
-
-      // Replace content with the YouTube iframe
       const questionBlock = document.getElementById('question-block');
-      questionBlock.innerHTML = `
-        <div class="content color0 span-3-75" style="margin:0 auto;">
-          <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
-            ${feedback.textContent}
-          </p>
-          <iframe width="560" height="315" 
-            src="${questionData.content}&autoplay=1" 
-            title="YouTube video player" frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-          </iframe>
-          <button id="next">Next</button>
-        </div>
-      `;
+
+      if(questionData.content) {
+        // Replace content with the YouTube iframe
+      
+        questionBlock.innerHTML = `
+          <div class="content color0 span-3-75" style="margin:0 auto;">
+            <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+              ${feedback.textContent}
+            </p>
+            <iframe width="560" height="315" 
+              src="${questionData.content}&autoplay=1" 
+              title="YouTube video player" frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+            <button id="next">Next</button>
+          </div>
+        `;
+      } else {
+        // Replace content with the fallback image
+        questionBlock.innerHTML = `
+          <div class="content color0 span-3-75" style="margin:0 auto;">
+            <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+              ${feedback.textContent}
+            </p>
+            <img src="../../assets/coming-soon.jpg" alt="Coming Soon" width="500" height="600">
+            <button id="next">Next</button>
+          </div>
+        `;
+      }
+      
 
       // Add event listener to the next button
       document.getElementById('next').addEventListener('click', () => {

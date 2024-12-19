@@ -141,9 +141,9 @@
     },
     {
       "id": 15,
-      "question": "Who played the lead role in 'Training Day'?",
-      "answer": "Denzel Washington",
-      "incorrect_answers": ["Jamie Foxx", "Will Smith", "Robert Downey Jr."],
+      "question": "Who directed the film 'Training Day'?",
+      "answer": "Antoine Fuqua",
+      "incorrect_answers": ["Forest Whitaker", "Ryan Coogler", "Tyler Perry"],
       "content": "",
       "content_type": "",
       "category": ["film", "pop culture"],
@@ -611,7 +611,7 @@
     },
     {
       "id": 62,
-      "question": "What is the name of Jay-Z's music streaming platform?",
+      "question": "What is the name of the streaming platform Jay-Z once owned?",
       "answer": "Tidal",
       "incorrect_answers": ["Spotify", "Apple Music", "SoundCloud"],
       "content": "",
@@ -621,9 +621,9 @@
     },
     {
       "id": 63,
-      "question": "Who played Malcolm X in Spike Lee's 1992 biopic?",
-      "answer": "Denzel Washington",
-      "incorrect_answers": ["Will Smith", "Laurence Fishburne", "Morgan Freeman"],
+      "question": "Who played Betty Shabazz in Spike Lee's 1992 Malcolm X biopic?",
+      "answer": "Angela Bassett",
+      "incorrect_answers": ["Viola Davis", "Diahann Carroll", "Halle Berry"],
       "content": "",
       "content_type": "",
       "category": ["film", "history"],
@@ -761,7 +761,7 @@
     },
     {
       "id": 77,
-      "question": "What 90s sitcom starred Will Smith as a fictionalized version of himself?",
+      "question": "What 90s sitcom starred Will Smith and has a dramatized rebbot?",
       "answer": "The Fresh Prince of Bel-Air",
       "incorrect_answers": ["Martin", "Family Matters", "Living Single"],
       "content": "",
@@ -998,6 +998,55 @@
       "content_type": "",
       "category": ["music", "history"],
       "challenge": 2
+    },
+    {
+      "id": 101,
+      "question": "But Black Dynamite...",
+      "answer": "I sell drugs to the community.",
+      "incorrect_answers": ["...ain't nobody messing with my kung fu skills!","...the orphans need their cereal!","...justice never takes a day off!"],
+      "content": "https://www.youtube.com/embed/l4-8eh3caY0?si=g8UJRrltp_juZjRH&amp;start=175",
+      "content_type": "youtube_video",
+      "category": ["comedy", "pop culture", "film"],
+      "challenge": 2
+    },
+    {
+      "id": 102,
+      "question": "Hey Dirty!...",
+      "answer": "...baby, I got your money!",
+      "incorrect_answers": ["...don't you mess with my style!","...shimmy shimmy ya!","...your reputation precedes you!"],
+      "content": "https://www.youtube.com/embed/XXTzm5GtqVo?si=Bb9A1q0dluPl7VDJ&amp;start=198",
+      "content_type": "youtube_video",
+      "category": ["music", "comedy", "pop culture"],
+      "challenge": 1
+    }
+    {
+      "id": 103,
+      "question": "I started thinking to myself...",
+      "answer": "...Man, what did he do to make them ni**as that mad?",
+      "incorrect_answers": ["...What if this is exactly where I'm supposed to be?","...Am I the drama?","...Did these fools eat all the cereal?"],
+      "content": "https://www.youtube.com/embed/A6Tzg0tTJ1Y?si=xw0O8jDn_zrsLtg5&amp;start=18",
+      "content_type": "youtube_video",
+      "category": ["comedy", "pop culture"],
+      "challenge": 3
+    }
+    {
+      "id": 104,
+      "question": "Before I let you...",
+      "answer": "...go",
+      "incorrect_answers": ["...leave","...down","...walk away"],
+      "content": "https://www.youtube.com/embed/y4854yQ1sHc?si=taUdA0zugxbip7K7&amp;start=125",
+      "content_type": "youtube_video",
+      "category": ["music", "pop culture", "soul"],
+      "challenge": 1
+    },{
+      "id": 105,
+      "question": "I cant leave you alone...",
+      "answer": "...you got me feenin'.",
+      "incorrect_answers": ["...because I love you.","...you go me going.","...but I'll try."],
+      "content": "https://www.youtube.com/embed/eB6pGn2UK2U?si=zE38dciqyXEp6fAA&amp;start=114",
+      "content_type": "youtube_video",
+      "category": ["music", "R&B", "pop culture"],
+      "challenge": 
     }
   ]
   
