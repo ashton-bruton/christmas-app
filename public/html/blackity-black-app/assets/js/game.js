@@ -102,7 +102,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
               ${feedback.textContent}
             </p>
-            <img src="../../assets/coming-soon.jpg" alt="Coming Soon" width="500" height="600">
+            <img src="../../images/coming-soon.jpg" alt="Coming Soon" width="500" height="600">
             <button id="next">Next</button>
           </div>
         `;
