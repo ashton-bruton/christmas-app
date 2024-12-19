@@ -64,6 +64,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         feedback.classList.add('incorrect');
       }
 
+      // Check if the current team has reached the target score
+      if (gameState[currentTeam].score >= gameState.playTo) {
+        endGame(gameState, currentTeam);
+        return; // Exit to prevent reloading the page
+      }
+
       // Switch turns to the other team
       gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
       setStorageWithExpiration("gameState", gameState, 12); // Update game state
@@ -96,6 +102,24 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   })
   .catch(error => console.error('Error loading questions:', error));
 
+// Function to end the game
+function endGame(gameState, winningTeam) {
+  const questionBlock = document.getElementById('question-block');
+  questionBlock.innerHTML = `
+    <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
+      <h2>Game Over</h2>
+      <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
+      <button id="restart">Restart Game</button>
+    </div>
+  `;
+
+  // Clear game state and reload
+  document.getElementById('restart').addEventListener('click', () => {
+    localStorage.removeItem("gameState");
+    location.reload();
+  });
+}
+
 // Helper function to shuffle an array
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -109,7 +133,6 @@ function storeAskedQuestion(id) {
   const askedQuestions = getAskedQuestions();
   askedQuestions.push(id);
   localStorage.setItem("askedQuestions", JSON.stringify(askedQuestions));
-  // setStorageWithExpiration("askedQuestions", JSON.stringify(askedQuestions), 12);
 }
 
 // Helper to retrieve asked question IDs
