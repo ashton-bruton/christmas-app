@@ -129,7 +129,7 @@ function endGame(gameState, winningTeam) {
   // Clear game state and asked questions
   document.getElementById('restart').addEventListener('click', () => {
     localStorage.removeItem("gameState");
-    localStorage.removeItem("askedQuestions"); // Clear the list of asked questions
+    //localStorage.removeItem("askedQuestions"); // Clear the list of asked questions
     location.reload();
   });
 }

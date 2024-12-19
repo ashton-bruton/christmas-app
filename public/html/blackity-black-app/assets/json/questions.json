@@ -201,7 +201,7 @@
     },
     {
       "id": 21,
-      "question": "Who was the played the main protaganist of the movie 'Black Panther'?",
+      "question": "Who was the played the main antagonist of the movie 'Black Panther'?",
       "answer": "Michael B. Jordan",
       "incorrect_answers": ["Chadwick Boseman", "Idris Elba", "Chris Evans"],
       "content": "https://www.youtube.com/embed/4MVQXdtrEQM?si=wPZY7aFXPHY8N-eR&amp;controls=0",
@@ -594,8 +594,8 @@
       "question": "Which athlete lit the Olympic cauldron at the 1996 Atlanta Games?",
       "answer": "Muhammad Ali",
       "incorrect_answers": ["Michael Jordan", "Carl Lewis", "Jesse Owens"],
-      "content": "",
-      "content_type": "",
+      "content": "https://www.youtube.com/embed/80wMMFAcweQ?si=jOGiH8X42ay_gZPj&amp;controls=0",
+      "content_type": "youtube_video",
       "category": ["sports", "history"],
       "challenge": 2
     },
@@ -604,8 +604,8 @@
       "question": "Which artist is known for the song 'This Is America'?",
       "answer": "Childish Gambino",
       "incorrect_answers": ["Drake", "Kanye West", "J. Cole"],
-      "content": "",
-      "content_type": "",
+      "content": "https://www.youtube.com/embed/VYOjWnS4cMY?si=yPOiCJeKEwmhJtsd&amp;controls=0",
+      "content_type": "youtube_video",
       "category": ["music", "history"],
       "challenge": 1
     },
@@ -614,19 +614,19 @@
       "question": "What is the name of the streaming platform Jay-Z once owned?",
       "answer": "Tidal",
       "incorrect_answers": ["Spotify", "Apple Music", "SoundCloud"],
-      "content": "",
-      "content_type": "",
+      "content": "https://www.youtube.com/embed/Revmkhxu7dk?si=9EqlU3E6Di6XpEUT&amp;controls=0&amp;start=41",
+      "content_type": "youtube_video",
       "category": ["business", "music"],
       "challenge": 2
     },
     {
       "id": 63,
-      "question": "Who played Betty Shabazz in Spike Lee's 1992 Malcolm X biopic?",
-      "answer": "Angela Bassett",
-      "incorrect_answers": ["Viola Davis", "Diahann Carroll", "Halle Berry"],
-      "content": "",
-      "content_type": "",
-      "category": ["film", "history"],
+      "question": "Which soul music legend sang the National Anthem at the 1983 NBA All-Star Game?",
+      "answer": "Marvin Gaye",
+      "incorrect_answers": ["James Brown", "Luther Vandross", "Aretha Franklin"],
+      "content": "https://www.youtube.com/embed/NC-Jt58FbRc?si=c2NTW0TDOZH-E8sT&amp;controls=0",
+      "content_type": "youtube_video",
+      "category": ["soul", "sports", "music"],
       "challenge": 1
     },
     {
@@ -1002,7 +1002,7 @@
     {
       "id": 101,
       "question": "But Black Dynamite...",
-      "answer": "I sell drugs to the community.",
+      "answer": "...I sell drugs to the community.",
       "incorrect_answers": ["...ain't nobody messing with my kung fu skills!","...the orphans need their cereal!","...justice never takes a day off!"],
       "content": "https://www.youtube.com/embed/l4-8eh3caY0?si=g8UJRrltp_juZjRH&amp;start=175",
       "content_type": "youtube_video",
@@ -1041,7 +1041,7 @@
     },
     {
       "id": 105,
-      "question": "I cant leave you alone...",
+      "question": "I can't leave you alone...",
       "answer": "...you got me feenin'.",
       "incorrect_answers": ["...because I love you.","...you go me going.","...but I'll try."],
       "content": "https://www.youtube.com/embed/eB6pGn2UK2U?si=zE38dciqyXEp6fAA&amp;start=114",
