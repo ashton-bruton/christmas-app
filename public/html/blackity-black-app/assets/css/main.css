@@ -3709,7 +3709,7 @@ input, select, textarea {
 
 /* Question Styling */
 #question {
-	font-size: 1.5em;
+	font-size: 2em;
 	font-weight: bold;
 	margin-bottom: 20px;
 	color: black;
