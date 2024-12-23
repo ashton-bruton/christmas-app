@@ -52,16 +52,8 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    let currentTimer;
-
-    // Check the game state and start the timer only if the status is "start"
-    const gameState = getStorageWithExpiration("gameState");
-    if (gameState && gameState.status === "start") {
-      // Start the timer for the question countdown
-      startCountdown(15, () => {
-        switchToSteal(questionData);
-      });
-    }
+    // Start the timer for the question countdown
+    startCountdown(15, () => switchToSteal(questionData));
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
@@ -73,6 +65,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       feedback.classList.add('feedback'); // Add feedback styling class
 
       // Retrieve the game state and determine the current team
+      const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
       // Check if the selected answer is correct
@@ -310,6 +303,9 @@ document.addEventListener("DOMContentLoaded", () => {
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
     highlightActiveTeam("teamRed");
+
+    // Start a new question after game setup
+    loadQuestion();
   });
 
   // Function to update the scoreboard dynamically
@@ -333,33 +329,5 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       teamBlueName.classList.add("active");
     }
-  }
-
-  // Function to reset the game
-  function resetGame() {
-    const initialGameState = {
-      teamRed: { name: "Red", score: 0 },
-      teamBlue: { name: "Blue", score: 0 },
-      currentTeam: "teamRed",
-      playTo: 10, // Default play-to score
-      status: "reset", // Set status to reset
-    };
-
-    setStorageWithExpiration("gameState", initialGameState, 12);
-    updateScoreboard(initialGameState);
-    highlightActiveTeam("teamRed");
-    location.reload();
-  }
-
-  // Adding event listener for the reset button
-  document.getElementById("reset-button").addEventListener("click", resetGame);
-
-  // Ensure timers behave correctly on page load
-  const timerElement = document.getElementById("timer");
-
-  if (gameState && gameState.status === "start") {
-    loadQuestion(); // Start the game if the status is set to "start"
-  } else if (timerElement) {
-    timerElement.textContent = ""; // Clear the timer if the game is not started
   }
 });
