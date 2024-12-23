@@ -3939,7 +3939,8 @@ img {
     font-weight: normal;    
     color: white;           /* White color for the message */
     position: absolute;     /* Position the message independently */
-    top: 45px;              /* Space the message below the timer */
+	top: 45px;              /* Space the message below the timer */
+	width: 370px;
 }
 
 
