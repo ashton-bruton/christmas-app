@@ -52,12 +52,13 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    let currentTimer;
-
-    // Start the timer for the question countdown
-    startCountdown(15, () => {
-      switchToSteal(questionData);
-    });
+    // Start the timer only if the game state is "start"
+    const gameState = getStorageWithExpiration("gameState");
+    if (gameState && gameState.status === "start") {
+      startCountdown(15, () => {
+        switchToSteal(questionData);
+      });
+    }
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
@@ -69,7 +70,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       feedback.classList.add('feedback'); // Add feedback styling class
 
       // Retrieve the game state and determine the current team
-      const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
       // Check if the selected answer is correct
