@@ -3573,6 +3573,8 @@ input, select, textarea {
 		height: 32rem;
 		width: 100%;
 		box-shadow: 0 2rem 4rem 0.25rem rgba(46, 43, 55, 0.575);
+		background-image: url("../../images/overlay.png"), linear-gradient(45deg, #726193 20%, #e37b7c 60%, #ffe4b4);
+		background-size: 128px 128px, auto;
 		min-height: 0; /* Ensure there's no unexpected minimum height */
 		height: auto; /* Dynamic height adjustment */
 		/* padding: 1rem;  */
