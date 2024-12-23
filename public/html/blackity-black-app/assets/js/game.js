@@ -44,15 +44,13 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    let currentTimer;
-    startCountdown(15, () => {
+    let currentTimer = startCountdown(15, () => {
       switchToSteal(questionData);
     });
 
     // Submit button logic
     submitButton.addEventListener('click', () => {
-      clearInterval(currentTimer); // Stop the timer when an answer is submitted
-
+      clearInterval(currentTimer); // Stop the timer when the answer is submitted
       const selectedChoice = document.querySelector('.selected');
       if (!selectedChoice) return; // Prevent submission without a selection
 
@@ -88,7 +86,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       if (questionData.content) {
         // Replace content with the YouTube iframe
-
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -161,15 +158,17 @@ function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
   timerElement.textContent = seconds;
 
-  currentTimer = setInterval(() => {
+  const timer = setInterval(() => {
     seconds--;
     timerElement.textContent = seconds;
 
     if (seconds <= 0) {
-      clearInterval(currentTimer);
+      clearInterval(timer);
       callback();
     }
   }, 1000);
+
+  return timer;
 }
 
 function switchToSteal(questionData) {
@@ -188,7 +187,7 @@ function switchToSteal(questionData) {
   }
   messageElement.textContent = "It's your chance to steal the point!";
 
-  startCountdown(10, () => {
+  let stealTimer = startCountdown(10, () => {
       const submitButton = document.getElementById('submit');
       submitButton.textContent = "Time's up";
       submitButton.disabled = true;
@@ -205,6 +204,8 @@ function switchToSteal(questionData) {
           });
       }, 2000);
   });
+
+  return stealTimer;
 }
 
 // Helper functions
