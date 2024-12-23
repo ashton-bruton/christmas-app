@@ -3505,6 +3505,7 @@ input, select, textarea {
 		height: 100%;
 		padding: 1rem;
 		flex-direction: column;
+		background-color: black;
 	}
 
 		@media screen and (orientation: portrait) {
@@ -3573,8 +3574,9 @@ input, select, textarea {
 		height: 32rem;
 		width: 100%;
 		box-shadow: 0 2rem 4rem 0.25rem rgba(46, 43, 55, 0.575);
-		background-image: url("../../images/overlay.png"), linear-gradient(45deg, #726193 20%, #e37b7c 60%, #ffe4b4);
+		/* background-image: url("../../images/overlay.png"), linear-gradient(45deg, #726193 20%, #e37b7c 60%, #ffe4b4); */
 		background-size: 128px 128px, auto;
+		background-color: black;
 		min-height: 0; /* Ensure there's no unexpected minimum height */
 		height: auto; /* Dynamic height adjustment */
 		/* padding: 1rem;  */
@@ -3726,12 +3728,14 @@ input, select, textarea {
 /* Answer Choices Styling */
 #answer-choices {
 	list-style-type: none;
-	padding: 0;
+	padding: 25px;
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	gap: 10px;
+	margin: 0 auto;
+	width: 95%;
 }
 
 #answer-choices li {
@@ -3883,7 +3887,7 @@ img {
   }
 
   #scoreboard-container {
-	  width: 600px;
+	  width: 58%;
   }
   
   .team {

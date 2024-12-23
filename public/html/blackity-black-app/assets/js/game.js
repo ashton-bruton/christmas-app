@@ -44,8 +44,14 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
+    let currentTimer;
+    startCountdown(15, () => {
+      switchToSteal(questionData);
+    });
+
     // Submit button logic
     submitButton.addEventListener('click', () => {
+      clearInterval(currentTimer);
       const selectedChoice = document.querySelector('.selected');
       if (!selectedChoice) return; // Prevent submission without a selection
 
@@ -76,10 +82,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       updateScoreboard(gameState); // Update the scoreboard
       highlightActiveTeam(gameState.currentTeam); // Highlight the active team
+
       const questionBlock = document.getElementById('question-block');
 
       if (questionData.content) {
         // Replace content with the YouTube iframe
+
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -126,15 +134,64 @@ function endGame(gameState, winningTeam) {
     </div>
   `;
 
-  // Clear game state and asked questions
+  // Clear game state and reload
   document.getElementById('restart').addEventListener('click', () => {
     localStorage.removeItem("gameState");
-    //localStorage.removeItem("askedQuestions"); // Clear the list of asked questions
+    localStorage.removeItem("askedQuestions"); // Clear asked questions
     location.reload();
   });
 }
 
-// Helper function to shuffle an array
+// Timer management
+function startCountdown(seconds, callback) {
+  const timerElement = document.getElementById('timer');
+  timerElement.textContent = seconds;
+
+  currentTimer = setInterval(() => {
+    seconds--;
+    timerElement.textContent = seconds;
+
+    if (seconds <= 0) {
+      clearInterval(currentTimer);
+      callback();
+    }
+  }, 1000);
+}
+
+function switchToSteal(questionData) {
+  const gameState = getStorageWithExpiration("gameState");
+  const currentTeam = gameState.currentTeam;
+  gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
+  updateScoreboard(gameState);
+  highlightActiveTeam(gameState.currentTeam);
+  setStorageWithExpiration("gameState", gameState, 12);
+
+  const message = document.getElementById('message');
+  message.textContent = "It's your chance to steal the point!";
+
+  startCountdown(10, () => {
+    const submitButton = document.getElementById('submit');
+    submitButton.textContent = "Time's up";
+    submitButton.disabled = true;
+    setTimeout(() => {
+      const feedback = document.createElement('p');
+      feedback.textContent = "Time's up";
+      feedback.classList.add('feedback', 'incorrect');
+      const questionBlock = document.getElementById('question-block');
+      questionBlock.innerHTML = `
+        <div class="content color0 span-3-75" style="margin:0 auto;">
+          <p class="feedback incorrect">Time's up</p>
+          <button id="next">Next</button>
+        </div>
+      `;
+      document.getElementById('next').addEventListener('click', () => {
+        location.reload();
+      });
+    }, 2000);
+  });
+}
+
+// Helper functions
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -142,19 +199,16 @@ function shuffleArray(array) {
   }
 }
 
-// Helper to store asked question IDs
 function storeAskedQuestion(id) {
   const askedQuestions = getAskedQuestions();
   askedQuestions.push(id);
   localStorage.setItem("askedQuestions", JSON.stringify(askedQuestions));
 }
 
-// Helper to retrieve asked question IDs
 function getAskedQuestions() {
   return JSON.parse(localStorage.getItem("askedQuestions")) || [];
 }
 
-// Helper to set and get localStorage with expiration
 function setStorageWithExpiration(key, value, hours) {
   const now = new Date();
   const expiration = now.getTime() + hours * 60 * 60 * 1000;
@@ -217,7 +271,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Update scoreboard dynamically
 function updateScoreboard(state) {
   document.getElementById("team-red-name").textContent = state.teamRed.name;
   document.getElementById("team-red-score").textContent = state.teamRed.score;
@@ -225,7 +278,6 @@ function updateScoreboard(state) {
   document.getElementById("team-blue-score").textContent = state.teamBlue.score;
 }
 
-// Highlight active team name
 function highlightActiveTeam(team) {
   const teamRedName = document.getElementById("team-red-name");
   const teamBlueName = document.getElementById("team-blue-name");
