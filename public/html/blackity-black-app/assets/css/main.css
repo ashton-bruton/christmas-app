@@ -3927,11 +3927,11 @@ img {
 }
 
 #timer {
-    font-size: 35px;        /* Increase font size for better visibility */
+    font-size: 45px;        /* Increase font size for better visibility */
     font-weight: bold;      /* Make the text bold */
     color: #ff0000;         /* Example: Red color for timer */
     position: absolute;     /* Fix the position of the timer */
-    top: 0;                 /* Stick to the top of the container */
+    top: -20px;                 /* Stick to the top of the container */
 }
 
 #message {
