@@ -125,15 +125,16 @@ function startCountdown(seconds, callback) {
 
   clearInterval(currentTimer); // Clear any existing timer
 
-  timerElement.textContent = seconds;
+  timerElement.textContent = seconds; // Display the initial seconds
+  timerElement.style.visibility = "visible"; // Ensure the timer is visible
 
   currentTimer = setInterval(() => {
     seconds--;
-    timerElement.textContent = seconds;
+    timerElement.textContent = seconds; // Update the clock display
 
     if (seconds <= 0) {
       clearInterval(currentTimer);
-      callback();
+      callback(); // Trigger the callback when the timer hits 0
     }
   }, 1000);
 }
@@ -283,4 +284,3 @@ function highlightActiveTeam(team) {
     teamBlueName.classList.add("active");
   }
 }
-
