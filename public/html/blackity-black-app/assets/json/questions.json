@@ -191,7 +191,7 @@
     },
     {
       "id": 20,
-      "question": "What civil rights era film is directed by Ava DuVernay in 2014?",
+      "question": "What civil rights era film was directed by Ava DuVernay in 2014?",
       "answer": "Selma",
       "incorrect_answers": ["12 Years a Slave", "The Help", "Batman Begins"],
       "content": "https://www.youtube.com/embed/Pt6zM9s1cjw?si=6zxpdVqN288E9uv-&amp;controls=0",
@@ -201,7 +201,7 @@
     },
     {
       "id": 21,
-      "question": "Who was the played the main antagonist of the movie 'Black Panther'?",
+      "question": "Who played the main antagonist of the movie 'Black Panther'?",
       "answer": "Michael B. Jordan",
       "incorrect_answers": ["Chadwick Boseman", "Idris Elba", "Chris Evans"],
       "content": "https://www.youtube.com/embed/4MVQXdtrEQM?si=wPZY7aFXPHY8N-eR&amp;controls=0",
@@ -691,7 +691,7 @@
     },
     {
       "id": 70,
-      "question": "Which athlete was the first Black woman to appear on the cover of Sports Illustrated Swimsuit Issue?",
+      "question": "Who was the first Black woman to appear on the cover of Sports Illustrated Swimsuit Issue?",
       "answer": "Tyra Banks",
       "incorrect_answers": ["Serena Williams", "Naomi Campbell", "Gabby Douglas"],
       "content": "https://www.youtube.com/embed/CvHqpkDBO94?si=mDmxRJgSXBFLuLlz&amp;controls=0",
@@ -741,7 +741,7 @@
     },
     {
       "id": 75,
-      "question": "According to the song 'Cry For You' by Jodeci, how long has be gone and is it too long?",
+      "question": "According to the song 'Cry For You' by Jodeci, how long has she been gone and is it too long?",
       "answer": "An Hour, Yes",
       "incorrect_answers": ["10 Hours, No", "7 Whole Days, Yes", "10 Minutes, No"],
       "content": "https://www.youtube.com/embed/Iznvc-eqKpU?si=uRT_Jp3Cwm9638k3&amp;controls=0",
@@ -1043,7 +1043,7 @@
       "id": 105,
       "question": "I can't leave you alone...",
       "answer": "...you got me feenin'.",
-      "incorrect_answers": ["...because I love you.","...you go me going.","...but I'll try."],
+      "incorrect_answers": ["...because I love you.","...you got me going.","...but I'll try."],
       "content": "https://www.youtube.com/embed/eB6pGn2UK2U?si=zE38dciqyXEp6fAA&amp;start=114",
       "content_type": "youtube_video",
       "category": ["music", "R&B", "pop culture"],
