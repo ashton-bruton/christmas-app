@@ -3934,7 +3934,9 @@ img {
 #message {
     font-size: 25px;        /* Slightly smaller than the timer */
     font-weight: normal;
-    color: white;         /* Example: Black color for the message */
+	color: white;         /* Example: Black color for the message */
+	position: relative;
+	bottom: -15px;
 }
 
   
