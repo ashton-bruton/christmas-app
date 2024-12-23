@@ -3915,6 +3915,28 @@ img {
 	text-shadow: 0 0 10px rgba(255, 255, 0, 1), 0 0 20px rgba(255, 255, 0, 0.8);
 	transition: text-shadow 0.3s ease-in-out;
   }
+
+  #timer-message-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;    /* Center align horizontally */
+    justify-content: center; /* Center align vertically */
+    margin: 10px 0;         /* Add spacing above and below */
+}
+
+#timer {
+    font-size: 24px;        /* Increase font size for better visibility */
+    font-weight: bold;      /* Make the text bold */
+    color: #ff0000;         /* Example: Red color for timer */
+    margin-bottom: 5px;     /* Add spacing below the timer */
+}
+
+#message {
+    font-size: 18px;        /* Slightly smaller than the timer */
+    font-weight: normal;
+    color: #000000;         /* Example: Black color for the message */
+}
+
   
   
   @keyframes fadeIn {
