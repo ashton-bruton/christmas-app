@@ -54,14 +54,10 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     let currentTimer;
 
-    // Check the game state and start the timer only if the status is "start"
-    const gameState = getStorageWithExpiration("gameState");
-    if (gameState && gameState.status === "start") {
-      console.log("Game started. Initializing timer...");
-      startCountdown(15, () => {
-        switchToSteal(questionData);
-      });
-    }
+    // Start the timer for the question countdown
+    startCountdown(15, () => {
+      switchToSteal(questionData);
+    });
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
@@ -73,6 +69,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       feedback.classList.add('feedback'); // Add feedback styling class
 
       // Retrieve the game state and determine the current team
+      const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
       // Check if the selected answer is correct
@@ -176,12 +173,10 @@ function endGame(gameState, winningTeam, questionData) {
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
-  if (!timerElement) {
-    console.error("Timer element not found.");
-    return;
-  }
+  if (!timerElement) return; // Exit if the timer element is missing
 
   timerElement.textContent = seconds;
+
   if (typeof currentTimer !== 'undefined') {
     clearInterval(currentTimer); // Clear any existing timer
   }
@@ -306,7 +301,6 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
-      status: "start", // Set the game status to "start"
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
@@ -340,3 +334,4 @@ function highlightActiveTeam(team) {
     teamBlueName.classList.add("active");
   }
 }
+
