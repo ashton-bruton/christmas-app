@@ -3747,7 +3747,7 @@ input, select, textarea {
 	transition: background 0.3s;
 	color: black;
 	font-size: 30px;
-	font-weight: bolder;
+	font-weight: bold;
 }
 
 #answer-choices li:hover {
@@ -3925,16 +3925,16 @@ img {
 }
 
 #timer {
-    font-size: 24px;        /* Increase font size for better visibility */
+    font-size: 35px;        /* Increase font size for better visibility */
     font-weight: bold;      /* Make the text bold */
     color: #ff0000;         /* Example: Red color for timer */
     margin-bottom: 5px;     /* Add spacing below the timer */
 }
 
 #message {
-    font-size: 18px;        /* Slightly smaller than the timer */
+    font-size: 25px;        /* Slightly smaller than the timer */
     font-weight: normal;
-    color: #000000;         /* Example: Black color for the message */
+    color: white;         /* Example: Black color for the message */
 }
 
   
