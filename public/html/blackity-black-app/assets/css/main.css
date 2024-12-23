@@ -3712,6 +3712,7 @@ input, select, textarea {
 	font-size: 1.5em;
 	font-weight: bold;
 	margin-bottom: 20px;
+	color: black;
 }
 
 /* Answer Choices Styling */
@@ -3733,6 +3734,8 @@ input, select, textarea {
 	cursor: pointer;
 	transition: background 0.3s;
 	color: black;
+	font-size: 30px;
+	font-weight: bolder;
 }
 
 #answer-choices li:hover {
