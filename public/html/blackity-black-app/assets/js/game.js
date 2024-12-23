@@ -72,7 +72,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
-        endGame(gameState, currentTeam);
+        endGame(gameState, currentTeam, questionData);
         return; // Exit to prevent reloading the page
       }
 
