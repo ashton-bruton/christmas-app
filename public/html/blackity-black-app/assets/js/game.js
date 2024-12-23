@@ -54,10 +54,14 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     let currentTimer;
 
-    // Start the timer for the question countdown
-    startCountdown(15, () => {
-      switchToSteal(questionData);
-    });
+    // Check the game state and start the timer only if the status is "start"
+    const gameState = getStorageWithExpiration("gameState");
+    if (gameState && gameState.status === "start") {
+      // Start the timer for the question countdown
+      startCountdown(15, () => {
+        switchToSteal(questionData);
+      });
+    }
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
@@ -69,7 +73,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       feedback.classList.add('feedback'); // Add feedback styling class
 
       // Retrieve the game state and determine the current team
-      const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
       // Check if the selected answer is correct
@@ -301,6 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
+      status: "start", // Set the game status to "start"
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
@@ -334,4 +338,3 @@ function highlightActiveTeam(team) {
     teamBlueName.classList.add("active");
   }
 }
-
