@@ -3920,24 +3920,28 @@ img {
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;    /* Center align horizontally */
-    justify-content: center; /* Center align vertically */
+    justify-content: flex-start; /* Align items at the top */
     margin: 10px 0;         /* Add spacing above and below */
+    height: 80px;           /* Set a fixed height for the container */
+    position: relative;     /* Allow positioning within the container */
 }
 
 #timer {
     font-size: 35px;        /* Increase font size for better visibility */
     font-weight: bold;      /* Make the text bold */
     color: #ff0000;         /* Example: Red color for timer */
-    margin-bottom: 5px;     /* Add spacing below the timer */
+    position: absolute;     /* Fix the position of the timer */
+    top: 0;                 /* Stick to the top of the container */
 }
 
 #message {
     font-size: 25px;        /* Slightly smaller than the timer */
-    font-weight: normal;
-	color: white;         /* Example: Black color for the message */
-	position: relative;
-	bottom: -15px;
+    font-weight: normal;    
+    color: white;           /* White color for the message */
+    position: absolute;     /* Position the message independently */
+    top: 45px;              /* Space the message below the timer */
 }
+
 
   
   
