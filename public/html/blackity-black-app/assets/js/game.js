@@ -124,23 +124,37 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   .catch(error => console.error('Error loading questions:', error));
 
 // Function to end the game
-function endGame(gameState, winningTeam) {
+function endGame(gameState, winningTeam, questionData) {
   const questionBlock = document.getElementById('question-block');
+
+  // Check if the questionData contains iframe content
+  const iframeContent = questionData && questionData.content 
+    ? `<iframe width="560" height="315" 
+          src="${questionData.content}&autoplay=1" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+       </iframe>` 
+    : '';
+
+  // Render the game-over screen
   questionBlock.innerHTML = `
     <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
       <h2>Game Over</h2>
       <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
+      ${iframeContent} <!-- Add the iframe content here -->
       <button id="restart">Restart Game</button>
     </div>
   `;
 
-  // Clear game state and reload
+  // Clear game state and asked questions, and reload the game
   document.getElementById('restart').addEventListener('click', () => {
     localStorage.removeItem("gameState");
     localStorage.removeItem("askedQuestions"); // Clear asked questions
     location.reload();
   });
 }
+
 
 // Timer management
 function startCountdown(seconds, callback) {
