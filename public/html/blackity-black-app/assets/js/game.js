@@ -33,6 +33,9 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     // Get answer choice elements and set up button states
     const answerChoices = document.querySelectorAll('#answer-choices li');
     const submitButton = document.getElementById('submit');
+    const timerElement = document.getElementById('timer');
+    let currentTimer; // Define currentTimer for global usage
+
     submitButton.classList.remove('active'); // Ensure the button is hidden initially
     submitButton.disabled = true; // Initially disable the submit button
 
@@ -52,8 +55,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    // Start the timer for the question countdown
-    startCountdown(15, () => switchToSteal(questionData));
+    // Start the timer when the question loads
+    if (timerElement) {
+      startCountdown(15, () => {
+        switchToSteal(questionData);
+      });
+    }
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
