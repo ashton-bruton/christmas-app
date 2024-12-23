@@ -44,13 +44,14 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    let currentTimer = startCountdown(15, () => {
+    let currentTimer;
+    startCountdown(15, () => {
       switchToSteal(questionData);
     });
 
     // Submit button logic
     submitButton.addEventListener('click', () => {
-      clearInterval(currentTimer); // Stop the timer when the answer is submitted
+      clearInterval(currentTimer);
       const selectedChoice = document.querySelector('.selected');
       if (!selectedChoice) return; // Prevent submission without a selection
 
@@ -71,6 +72,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
+        console.log('Final question content:', questionData.content);
         endGame(gameState, currentTeam, questionData);
         return; // Exit to prevent reloading the page
       }
@@ -86,6 +88,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       if (questionData.content) {
         // Replace content with the YouTube iframe
+
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -145,6 +148,8 @@ function endGame(gameState, winningTeam, questionData) {
     </div>
   `;
 
+  updateScoreboard(gameState); // Ensure the scoreboard updates with final score
+
   // Clear game state and asked questions, and reload the game
   document.getElementById('restart').addEventListener('click', () => {
     localStorage.removeItem("gameState");
@@ -156,19 +161,23 @@ function endGame(gameState, winningTeam, questionData) {
 // Timer management
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
+  if (!timerElement) return; // Avoid issues if timer element is missing
+
   timerElement.textContent = seconds;
 
-  const timer = setInterval(() => {
+  if (typeof currentTimer !== 'undefined') {
+    clearInterval(currentTimer); // Clear any running timer before starting a new one
+  }
+
+  currentTimer = setInterval(() => {
     seconds--;
     timerElement.textContent = seconds;
 
     if (seconds <= 0) {
-      clearInterval(timer);
+      clearInterval(currentTimer);
       callback();
     }
   }, 1000);
-
-  return timer;
 }
 
 function switchToSteal(questionData) {
@@ -187,7 +196,7 @@ function switchToSteal(questionData) {
   }
   messageElement.textContent = "It's your chance to steal the point!";
 
-  let stealTimer = startCountdown(10, () => {
+  startCountdown(10, () => {
       const submitButton = document.getElementById('submit');
       submitButton.textContent = "Time's up";
       submitButton.disabled = true;
@@ -204,8 +213,6 @@ function switchToSteal(questionData) {
           });
       }, 2000);
   });
-
-  return stealTimer;
 }
 
 // Helper functions
