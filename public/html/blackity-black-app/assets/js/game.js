@@ -33,9 +33,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     // Get answer choice elements and set up button states
     const answerChoices = document.querySelectorAll('#answer-choices li');
     const submitButton = document.getElementById('submit');
-    const timerElement = document.getElementById('timer');
-    let currentTimer; // Define currentTimer for global usage
-
     submitButton.classList.remove('active'); // Ensure the button is hidden initially
     submitButton.disabled = true; // Initially disable the submit button
 
@@ -55,8 +52,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    // Start the timer when the question loads
-    if (timerElement) {
+    let currentTimer;
+
+    // Check the game state and start the timer only if the status is "start"
+    const gameState = getStorageWithExpiration("gameState");
+    if (gameState && gameState.status === "start") {
+      console.log("Game started. Initializing timer...");
       startCountdown(15, () => {
         switchToSteal(questionData);
       });
@@ -72,7 +73,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       feedback.classList.add('feedback'); // Add feedback styling class
 
       // Retrieve the game state and determine the current team
-      const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
       // Check if the selected answer is correct
@@ -176,11 +176,15 @@ function endGame(gameState, winningTeam, questionData) {
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
-  if (!timerElement) return; // Exit if the timer element is missing
+  if (!timerElement) {
+    console.error("Timer element not found.");
+    return;
+  }
 
   timerElement.textContent = seconds;
-
-  clearInterval(currentTimer); // Clear any existing timer
+  if (typeof currentTimer !== 'undefined') {
+    clearInterval(currentTimer); // Clear any existing timer
+  }
 
   currentTimer = setInterval(() => {
     seconds--;
@@ -276,6 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreboard = document.getElementById("scoreboard-container");
   const contentSection = document.querySelector(".content");
 
+  popover.style.color = "black";
+
   const gameState = getStorageWithExpiration("gameState");
 
   if (gameState) {
@@ -291,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   configForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const teamRedName = document.getElementById("team-red").value || "Red";
     const teamBlueName = document.getElementById("team-blue").value || "Blue";
     const playTo = parseInt(document.getElementById("game-score").value, 10);
@@ -301,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
-      status: "start",
+      status: "start", // Set the game status to "start"
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
@@ -310,31 +315,28 @@ document.addEventListener("DOMContentLoaded", () => {
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
     highlightActiveTeam("teamRed");
-
-    // Start a new question after game setup
-    loadQuestion();
   });
-
-  // Function to update the scoreboard dynamically
-  function updateScoreboard(state) {
-    document.getElementById("team-red-name").textContent = state.teamRed.name;
-    document.getElementById("team-red-score").textContent = state.teamRed.score;
-    document.getElementById("team-blue-name").textContent = state.teamBlue.name;
-    document.getElementById("team-blue-score").textContent = state.teamBlue.score;
-  }
-
-  // Function to highlight the active team on the scoreboard
-  function highlightActiveTeam(team) {
-    const teamRedName = document.getElementById("team-red-name");
-    const teamBlueName = document.getElementById("team-blue-name");
-
-    teamRedName.classList.remove("active");
-    teamBlueName.classList.remove("active");
-
-    if (team === "teamRed") {
-      teamRedName.classList.add("active");
-    } else {
-      teamBlueName.classList.add("active");
-    }
-  }
 });
+
+// Function to update the scoreboard dynamically
+function updateScoreboard(state) {
+  document.getElementById("team-red-name").textContent = state.teamRed.name;
+  document.getElementById("team-red-score").textContent = state.teamRed.score;
+  document.getElementById("team-blue-name").textContent = state.teamBlue.name;
+  document.getElementById("team-blue-score").textContent = state.teamBlue.score;
+}
+
+// Function to highlight the active team on the scoreboard
+function highlightActiveTeam(team) {
+  const teamRedName = document.getElementById("team-red-name");
+  const teamBlueName = document.getElementById("team-blue-name");
+
+  teamRedName.classList.remove("active");
+  teamBlueName.classList.remove("active");
+
+  if (team === "teamRed") {
+    teamRedName.classList.add("active");
+  } else {
+    teamBlueName.classList.add("active");
+  }
+}
