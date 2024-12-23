@@ -1,55 +1,140 @@
 // Load the JSON file and dynamically populate the HTML
-function loadQuestion() {
-  fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
-    .then(response => response.json())
-    .then(data => {
-      const askedQuestions = getAskedQuestions();
-      const remainingQuestions = data.filter(question => !askedQuestions.includes(question.id));
+fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
+  .then(response => response.json())
+  .then(data => {
+    // Retrieve already asked questions from localStorage
+    const askedQuestions = getAskedQuestions();
 
-      if (remainingQuestions.length === 0) {
-        alert("All questions have been used!");
-        return;
+    // Filter out questions that have already been asked
+    const remainingQuestions = data.filter(question => !askedQuestions.includes(question.id));
+
+    // Check if there are no remaining questions
+    if (remainingQuestions.length === 0) {
+      alert("All questions have been used!");
+      return;
+    }
+
+    // Select a random question from the remaining ones
+    const questionData = remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
+
+    // Store the asked question ID to prevent repetition
+    storeAskedQuestion(questionData.id);
+
+    // Populate the question text in the DOM
+    const questionElement = document.getElementById('question');
+    questionElement.textContent = questionData.question;
+
+    // Prepare answers by combining correct and incorrect answers
+    const allAnswers = [...questionData.incorrect_answers, questionData.answer];
+
+    // Shuffle the answers to randomize their order
+    shuffleArray(allAnswers);
+
+    // Get answer choice elements and set up button states
+    const answerChoices = document.querySelectorAll('#answer-choices li');
+    const submitButton = document.getElementById('submit');
+    submitButton.classList.remove('active'); // Ensure the button is hidden initially
+    submitButton.disabled = true; // Initially disable the submit button
+
+    // Populate answer choices and set up event listeners for selection
+    answerChoices.forEach((choice, index) => {
+      choice.textContent = allAnswers[index];
+      choice.dataset.answer = allAnswers[index];
+
+      // Add click event listener to each choice
+      choice.addEventListener('click', () => {
+        answerChoices.forEach(c => c.classList.remove('selected'));
+        choice.classList.add('selected');
+
+        // Enable and show the submit button
+        submitButton.disabled = false;
+        submitButton.classList.add('active');
+      });
+    });
+
+    let currentTimer;
+
+    // Start the timer for the question countdown
+    startCountdown(15, () => {
+      switchToSteal(questionData);
+    });
+
+    // Add event listener for the submit button
+    submitButton.addEventListener('click', () => {
+      clearInterval(currentTimer); // Stop the timer when the answer is submitted
+      const selectedChoice = document.querySelector('.selected');
+      if (!selectedChoice) return; // Prevent submission without a selection
+
+      const feedback = document.createElement('p');
+      feedback.classList.add('feedback'); // Add feedback styling class
+
+      // Retrieve the game state and determine the current team
+      const gameState = getStorageWithExpiration("gameState");
+      const currentTeam = gameState.currentTeam;
+
+      // Check if the selected answer is correct
+      if (selectedChoice.dataset.answer === questionData.answer) {
+        feedback.textContent = 'Correct';
+        feedback.classList.add('correct');
+        gameState[currentTeam].score += 1; // Increment the score for the current team
+      } else {
+        feedback.textContent = 'Incorrect';
+        feedback.classList.add('incorrect');
       }
 
-      const questionData = remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
-      storeAskedQuestion(questionData.id);
+      // Check if the current team has reached the target score
+      if (gameState[currentTeam].score >= gameState.playTo) {
+        endGame(gameState, currentTeam, questionData);
+        return; // Exit to prevent reloading the page
+      }
 
-      const questionElement = document.getElementById('question');
-      questionElement.textContent = questionData.question;
+      // Switch turns to the other team
+      gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
+      setStorageWithExpiration("gameState", gameState, 12); // Update game state
 
-      const allAnswers = [...questionData.incorrect_answers, questionData.answer];
-      shuffleArray(allAnswers);
+      // Update the scoreboard and highlight the active team
+      updateScoreboard(gameState);
+      highlightActiveTeam(gameState.currentTeam);
 
-      const answerChoices = document.querySelectorAll('#answer-choices li');
-      const submitButton = document.getElementById('submit');
-      submitButton.classList.remove('active');
-      submitButton.disabled = true;
+      // Replace the content block with the next question or content
+      const questionBlock = document.getElementById('question-block');
 
-      answerChoices.forEach((choice, index) => {
-        choice.textContent = allAnswers[index];
-        choice.dataset.answer = allAnswers[index];
-        choice.classList.remove('selected');
+      if (questionData.content) {
+        // Display YouTube iframe if content exists
+        questionBlock.innerHTML = `
+          <div class="content color0 span-3-75" style="margin:0 auto;">
+            <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+              ${feedback.textContent}
+            </p>
+            <iframe width="560" height="315" 
+              src="${questionData.content}&autoplay=1" 
+              title="YouTube video player" frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+            <button id="next">Next</button>
+          </div>
+        `;
+      } else {
+        // Fallback image if content is unavailable
+        questionBlock.innerHTML = `
+          <div class="content color0 span-3-75" style="margin:0 auto;">
+            <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
+              ${feedback.textContent}
+            </p>
+            <img src="https://christmas-app-e9bf7.web.app/html/blackity-black-app/images/coming-soon.jpg" alt="Coming Soon" width="500" height="600">
+            <button id="next">Next</button>
+          </div>
+        `;
+      }
 
-        choice.addEventListener('click', () => {
-          answerChoices.forEach(c => c.classList.remove('selected'));
-          choice.classList.add('selected');
-          submitButton.disabled = false;
-          submitButton.classList.add('active');
-        });
+      // Reload the page for the next question
+      document.getElementById('next').addEventListener('click', () => {
+        location.reload();
       });
-
-      // Start the timer for the new question
-      startCountdown(15, () => {
-        switchToSteal(questionData);
-      });
-
-      submitButton.addEventListener('click', () => {
-        clearInterval(currentTimer);
-        handleAnswerSubmission(questionData);
-      });
-    })
-    .catch(error => console.error('Error loading questions:', error));
-}
+    });
+  })
+  .catch(error => console.error('Error loading questions:', error));
 
 // Function to end the game
 function endGame(gameState, winningTeam, questionData) {
@@ -85,56 +170,24 @@ function endGame(gameState, winningTeam, questionData) {
   });
 }
 
-// Function to handle answer submission
-function handleAnswerSubmission(questionData) {
-  const selectedChoice = document.querySelector('.selected');
-  if (!selectedChoice) return;
-
-  const feedback = document.createElement('p');
-  feedback.classList.add('feedback');
-
-  const gameState = getStorageWithExpiration("gameState");
-  const currentTeam = gameState.currentTeam;
-
-  if (selectedChoice.dataset.answer === questionData.answer) {
-    feedback.textContent = 'Correct';
-    feedback.classList.add('correct');
-    gameState[currentTeam].score += 1;
-  } else {
-    feedback.textContent = 'Incorrect';
-    feedback.classList.add('incorrect');
-  }
-
-  if (gameState[currentTeam].score >= gameState.playTo) {
-    endGame(gameState, currentTeam, questionData);
-    return;
-  }
-
-  gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
-  setStorageWithExpiration("gameState", gameState, 12);
-  updateScoreboard(gameState);
-  highlightActiveTeam(gameState.currentTeam);
-
-  loadQuestion();
-}
-
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
-  if (!timerElement) return;
+  if (!timerElement) return; // Exit if the timer element is missing
 
-  clearInterval(currentTimer); // Clear any existing timer
+  timerElement.textContent = seconds;
 
-  timerElement.textContent = seconds; // Display the initial seconds
-  timerElement.style.visibility = "visible"; // Ensure the timer is visible
+  if (typeof currentTimer !== 'undefined') {
+    clearInterval(currentTimer); // Clear any existing timer
+  }
 
   currentTimer = setInterval(() => {
     seconds--;
-    timerElement.textContent = seconds; // Update the clock display
+    timerElement.textContent = seconds;
 
     if (seconds <= 0) {
       clearInterval(currentTimer);
-      callback(); // Trigger the callback when the timer hits 0
+      callback();
     }
   }, 1000);
 }
@@ -222,6 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreboard = document.getElementById("scoreboard-container");
   const contentSection = document.querySelector(".content");
 
+  popover.style.color = "black";
+
   const gameState = getStorageWithExpiration("gameState");
 
   if (gameState) {
@@ -230,7 +285,6 @@ document.addEventListener("DOMContentLoaded", () => {
     scoreboard.classList.remove("hidden");
     popover.style.display = "none";
     contentSection.style.visibility = "visible";
-    loadQuestion(); // Load the first question if the game state exists
   } else {
     popover.style.display = "block";
     contentSection.style.visibility = "hidden";
@@ -238,7 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   configForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const teamRedName = document.getElementById("team-red").value || "Red";
     const teamBlueName = document.getElementById("team-blue").value || "Blue";
     const playTo = parseInt(document.getElementById("game-score").value, 10);
@@ -256,9 +309,6 @@ document.addEventListener("DOMContentLoaded", () => {
     contentSection.style.visibility = "visible";
     scoreboard.classList.remove("hidden");
     highlightActiveTeam("teamRed");
-
-    // Start the game by loading the first question
-    loadQuestion();
   });
 });
 
@@ -284,3 +334,4 @@ function highlightActiveTeam(team) {
     teamBlueName.classList.add("active");
   }
 }
+
