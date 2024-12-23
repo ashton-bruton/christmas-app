@@ -166,30 +166,33 @@ function switchToSteal(questionData) {
   highlightActiveTeam(gameState.currentTeam);
   setStorageWithExpiration("gameState", gameState, 12);
 
-  const message = document.getElementById('message');
-  message.textContent = "It's your chance to steal the point!";
+  let messageElement = document.getElementById('message');
+  if (!messageElement) {
+      messageElement = document.createElement('div');
+      messageElement.id = 'message';
+      document.getElementById('scoreboard-container').appendChild(messageElement);
+  }
+  messageElement.textContent = "It's your chance to steal the point!";
 
   startCountdown(10, () => {
-    const submitButton = document.getElementById('submit');
-    submitButton.textContent = "Time's up";
-    submitButton.disabled = true;
-    setTimeout(() => {
-      const feedback = document.createElement('p');
-      feedback.textContent = "Time's up";
-      feedback.classList.add('feedback', 'incorrect');
-      const questionBlock = document.getElementById('question-block');
-      questionBlock.innerHTML = `
-        <div class="content color0 span-3-75" style="margin:0 auto;">
-          <p class="feedback incorrect">Time's up</p>
-          <button id="next">Next</button>
-        </div>
-      `;
-      document.getElementById('next').addEventListener('click', () => {
-        location.reload();
-      });
-    }, 2000);
+      const submitButton = document.getElementById('submit');
+      submitButton.textContent = "Time's up";
+      submitButton.disabled = true;
+      setTimeout(() => {
+          const questionBlock = document.getElementById('question-block');
+          questionBlock.innerHTML = `
+              <div class="content color0 span-3-75" style="margin:0 auto;">
+                  <p class="feedback incorrect">Time's up</p>
+                  <button id="next">Next</button>
+              </div>
+          `;
+          document.getElementById('next').addEventListener('click', () => {
+              location.reload();
+          });
+      }, 2000);
   });
 }
+
 
 // Helper functions
 function shuffleArray(array) {
