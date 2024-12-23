@@ -180,9 +180,7 @@ function startCountdown(seconds, callback) {
 
   timerElement.textContent = seconds;
 
-  if (typeof currentTimer !== 'undefined') {
-    clearInterval(currentTimer); // Clear any existing timer
-  }
+  clearInterval(currentTimer); // Clear any existing timer
 
   currentTimer = setInterval(() => {
     seconds--;
@@ -278,8 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreboard = document.getElementById("scoreboard-container");
   const contentSection = document.querySelector(".content");
 
-  popover.style.color = "black";
-
   const gameState = getStorageWithExpiration("gameState");
 
   if (gameState) {
@@ -295,6 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   configForm.addEventListener("submit", (e) => {
     e.preventDefault();
+
     const teamRedName = document.getElementById("team-red").value || "Red";
     const teamBlueName = document.getElementById("team-blue").value || "Blue";
     const playTo = parseInt(document.getElementById("game-score").value, 10);
@@ -304,7 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
-      status: "start", // Set the game status to "start"
+      status: "start",
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
@@ -314,27 +311,55 @@ document.addEventListener("DOMContentLoaded", () => {
     scoreboard.classList.remove("hidden");
     highlightActiveTeam("teamRed");
   });
-});
 
-// Function to update the scoreboard dynamically
-function updateScoreboard(state) {
-  document.getElementById("team-red-name").textContent = state.teamRed.name;
-  document.getElementById("team-red-score").textContent = state.teamRed.score;
-  document.getElementById("team-blue-name").textContent = state.teamBlue.name;
-  document.getElementById("team-blue-score").textContent = state.teamBlue.score;
-}
-
-// Function to highlight the active team on the scoreboard
-function highlightActiveTeam(team) {
-  const teamRedName = document.getElementById("team-red-name");
-  const teamBlueName = document.getElementById("team-blue-name");
-
-  teamRedName.classList.remove("active");
-  teamBlueName.classList.remove("active");
-
-  if (team === "teamRed") {
-    teamRedName.classList.add("active");
-  } else {
-    teamBlueName.classList.add("active");
+  // Function to update the scoreboard dynamically
+  function updateScoreboard(state) {
+    document.getElementById("team-red-name").textContent = state.teamRed.name;
+    document.getElementById("team-red-score").textContent = state.teamRed.score;
+    document.getElementById("team-blue-name").textContent = state.teamBlue.name;
+    document.getElementById("team-blue-score").textContent = state.teamBlue.score;
   }
-}
+
+  // Function to highlight the active team on the scoreboard
+  function highlightActiveTeam(team) {
+    const teamRedName = document.getElementById("team-red-name");
+    const teamBlueName = document.getElementById("team-blue-name");
+
+    teamRedName.classList.remove("active");
+    teamBlueName.classList.remove("active");
+
+    if (team === "teamRed") {
+      teamRedName.classList.add("active");
+    } else {
+      teamBlueName.classList.add("active");
+    }
+  }
+
+  // Function to reset the game
+  function resetGame() {
+    const initialGameState = {
+      teamRed: { name: "Red", score: 0 },
+      teamBlue: { name: "Blue", score: 0 },
+      currentTeam: "teamRed",
+      playTo: 10, // Default play-to score
+      status: "reset", // Set status to reset
+    };
+
+    setStorageWithExpiration("gameState", initialGameState, 12);
+    updateScoreboard(initialGameState);
+    highlightActiveTeam("teamRed");
+    location.reload();
+  }
+
+  // Adding event listener for the reset button
+  document.getElementById("reset-button").addEventListener("click", resetGame);
+
+  // Ensure timers behave correctly on page load
+  const timerElement = document.getElementById("timer");
+
+  if (gameState && gameState.status === "start") {
+    loadQuestion(); // Start the game if the status is set to "start"
+  } else if (timerElement) {
+    timerElement.textContent = ""; // Clear the timer if the game is not started
+  }
+});
