@@ -175,9 +175,11 @@ function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
   if (!timerElement) return; // Exit if the timer element is missing
 
-  clearInterval(currentTimer); // Clear any existing timer
-
   timerElement.textContent = seconds;
+
+  if (typeof currentTimer !== 'undefined') {
+    clearInterval(currentTimer); // Clear any existing timer
+  }
 
   currentTimer = setInterval(() => {
     seconds--;
@@ -201,28 +203,28 @@ function switchToSteal(questionData) {
 
   let messageElement = document.getElementById('message');
   if (!messageElement) {
-    messageElement = document.createElement('div');
-    messageElement.id = 'message';
-    document.getElementById('scoreboard-container').appendChild(messageElement);
+      messageElement = document.createElement('div');
+      messageElement.id = 'message';
+      document.getElementById('scoreboard-container').appendChild(messageElement);
   }
   messageElement.textContent = "It's your chance to steal the point!";
 
   startCountdown(10, () => {
-    const submitButton = document.getElementById('submit');
-    submitButton.textContent = "Time's up";
-    submitButton.disabled = true;
-    setTimeout(() => {
-      const questionBlock = document.getElementById('question-block');
-      questionBlock.innerHTML = `
-        <div class="content color0 span-3-75" style="margin:0 auto;">
-          <p class="feedback incorrect">Time's up</p>
-          <button id="next">Next</button>
-        </div>
-      `;
-      document.getElementById('next').addEventListener('click', () => {
-        location.reload();
-      });
-    }, 2000);
+      const submitButton = document.getElementById('submit');
+      submitButton.textContent = "Time's up";
+      submitButton.disabled = true;
+      setTimeout(() => {
+          const questionBlock = document.getElementById('question-block');
+          questionBlock.innerHTML = `
+              <div class="content color0 span-3-75" style="margin:0 auto;">
+                  <p class="feedback incorrect">Time's up</p>
+                  <button id="next">Next</button>
+              </div>
+          `;
+          document.getElementById('next').addEventListener('click', () => {
+              location.reload();
+          });
+      }, 2000);
   });
 }
 
@@ -332,3 +334,4 @@ function highlightActiveTeam(team) {
     teamBlueName.classList.add("active");
   }
 }
+
