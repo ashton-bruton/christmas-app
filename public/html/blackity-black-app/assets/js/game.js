@@ -72,6 +72,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
       // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
+        console.log('Final question content:', questionData.content);
         endGame(gameState, currentTeam, questionData);
         return; // Exit to prevent reloading the page
       }
@@ -127,7 +128,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 function endGame(gameState, winningTeam, questionData) {
   const questionBlock = document.getElementById('question-block');
 
-  // Check if the questionData contains iframe content
+  // Ensure questionData and its content exist
   const iframeContent = questionData && questionData.content 
     ? `<iframe width="560" height="315" 
           src="${questionData.content}&autoplay=1" 
@@ -135,9 +136,9 @@ function endGame(gameState, winningTeam, questionData) {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
           referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
        </iframe>` 
-    : '';
+    : `<p>No content available for this question.</p>`;
 
-  // Render the game-over screen
+  // Render the game-over screen with the iframe
   questionBlock.innerHTML = `
     <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
       <h2>Game Over</h2>
@@ -154,7 +155,6 @@ function endGame(gameState, winningTeam, questionData) {
     location.reload();
   });
 }
-
 
 // Timer management
 function startCountdown(seconds, callback) {
