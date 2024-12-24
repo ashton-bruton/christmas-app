@@ -2,35 +2,51 @@
 fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
+    // Retrieve already asked questions from localStorage
     const askedQuestions = getAskedQuestions();
+
+    // Filter out questions that have already been asked
     const remainingQuestions = data.filter(question => !askedQuestions.includes(question.id));
 
+    // Check if there are no remaining questions
     if (remainingQuestions.length === 0) {
       alert("All questions have been used!");
       return;
     }
 
+    // Select a random question from the remaining ones
     const questionData = remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
+
+    // Store the asked question ID to prevent repetition
     storeAskedQuestion(questionData.id);
 
+    // Populate the question text in the DOM
     const questionElement = document.getElementById('question');
     questionElement.textContent = questionData.question;
 
+    // Prepare answers by combining correct and incorrect answers
     const allAnswers = [...questionData.incorrect_answers, questionData.answer];
+
+    // Shuffle the answers to randomize their order
     shuffleArray(allAnswers);
 
+    // Get answer choice elements and set up button states
     const answerChoices = document.querySelectorAll('#answer-choices li');
     const submitButton = document.getElementById('submit');
-    submitButton.classList.remove('active');
-    submitButton.disabled = true;
+    submitButton.classList.remove('active'); // Ensure the button is hidden initially
+    submitButton.disabled = true; // Initially disable the submit button
 
+    // Populate answer choices and set up event listeners for selection
     answerChoices.forEach((choice, index) => {
       choice.textContent = allAnswers[index];
       choice.dataset.answer = allAnswers[index];
 
+      // Add click event listener to each choice
       choice.addEventListener('click', () => {
         answerChoices.forEach(c => c.classList.remove('selected'));
         choice.classList.add('selected');
+
+        // Enable and show the submit button
         submitButton.disabled = false;
         submitButton.classList.add('active');
       });
@@ -38,60 +54,63 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     let currentTimer;
 
-    // Ensure the timer element is present
-    const timerElement = document.getElementById('timer');
-    if (!timerElement) {
-      console.error('Timer element not found!');
-      return;
-    }
-
+    // Check if the game state is "start" and initialize the countdown timer
     const gameState = getStorageWithExpiration("gameState");
+    const timerElement = document.getElementById('timer');
 
     if (gameState && gameState.status === "start") {
+      // Clear any existing timer and start a new one
       if (currentTimer) clearInterval(currentTimer);
 
-      // Explicitly show the timer and start countdown
-      timerElement.style.display = 'block';
       startCountdown(15, () => {
         switchToSteal(questionData);
       });
     } else {
-      timerElement.style.display = 'none';
+      // Clear the timer display if the game hasn't started
+      if (timerElement) timerElement.textContent = "";
     }
 
+    // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
-      clearInterval(currentTimer);
+      clearInterval(currentTimer); // Stop the timer when the answer is submitted
       const selectedChoice = document.querySelector('.selected');
-      if (!selectedChoice) return;
+      if (!selectedChoice) return; // Prevent submission without a selection
 
       const feedback = document.createElement('p');
-      feedback.classList.add('feedback');
+      feedback.classList.add('feedback'); // Add feedback styling class
 
+      // Retrieve the game state and determine the current team
       const currentTeam = gameState.currentTeam;
 
+      // Check if the selected answer is correct
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
         feedback.classList.add('correct');
-        gameState[currentTeam].score += 1;
+        gameState[currentTeam].score += 1; // Increment the score for the current team
       } else {
         feedback.textContent = 'Incorrect';
         feedback.classList.add('incorrect');
       }
 
+      // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
         endGame(gameState, currentTeam, questionData);
-        return;
+        return; // Exit to prevent reloading the page
       }
 
+      // Switch turns to the other team
       gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
-      setStorageWithExpiration("gameState", gameState, 12);
+      setStorageWithExpiration("gameState", gameState, 12); // Update game state
 
+      // Update the scoreboard and highlight the active team
       updateScoreboard(gameState);
       highlightActiveTeam(gameState.currentTeam);
 
+      // Replace the content block with the next question or content
       const questionBlock = document.getElementById('question-block');
 
       if (questionData.content) {
+        // Display YouTube iframe if content exists
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -107,6 +126,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
           </div>
         `;
       } else {
+        // Fallback image if content is unavailable
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -118,6 +138,7 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         `;
       }
 
+      // Reload the page for the next question
       document.getElementById('next').addEventListener('click', () => {
         location.reload();
       });
@@ -125,35 +146,15 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   })
   .catch(error => console.error('Error loading questions:', error));
 
-// Function to end the game
-function endGame(gameState, winningTeam, questionData) {
-  const questionBlock = document.getElementById('question-block');
-
-  questionBlock.innerHTML = `
-    <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
-      <h2>Game Over</h2>
-      <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
-      <button id="restart">Restart Game</button>
-    </div>
-  `;
-
-  document.getElementById('restart').addEventListener('click', () => {
-    localStorage.removeItem("gameState");
-    localStorage.removeItem("askedQuestions");
-    location.reload();
-  });
-}
-
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
-  if (!timerElement) {
-    console.error('Timer element not found!');
-    return;
-  }
+  if (!timerElement) return; // Exit if the timer element is missing
 
+  // Clear any existing timer
   clearInterval(currentTimer);
 
+  // Initialize countdown
   timerElement.textContent = seconds;
   currentTimer = setInterval(() => {
     seconds--;
@@ -165,6 +166,9 @@ function startCountdown(seconds, callback) {
     }
   }, 1000);
 }
+
+// The rest of the helper functions remain unchanged...
+
 
 // Function to switch to the steal phase
 function switchToSteal(questionData) {
@@ -275,7 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
-      status: "start",
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
