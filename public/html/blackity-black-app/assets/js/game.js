@@ -74,6 +74,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         timerElement.style.display = 'none';
       }
 
+      // Clear the steal message if it exists
+      const messageElement = document.getElementById('message');
+      if (messageElement) {
+        messageElement.textContent = ''; // Clear the message
+      }
+
       const selectedChoice = document.querySelector('.selected');
       if (!selectedChoice) return; // Prevent submission without a selection
 
