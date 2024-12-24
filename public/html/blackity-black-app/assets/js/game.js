@@ -1,58 +1,51 @@
+// Declare the timer variable at a higher scope
+let currentTimer;
+
+// Helper function to clear the timer
+function clearCurrentTimer() {
+  if (currentTimer) {
+    clearInterval(currentTimer);
+    currentTimer = null;
+  }
+}
+
 // Load the JSON file and dynamically populate the HTML
 fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/questions.json')
   .then(response => response.json())
   .then(data => {
-    // Retrieve already asked questions from localStorage
     const askedQuestions = getAskedQuestions();
-
-    // Filter out questions that have already been asked
     const remainingQuestions = data.filter(question => !askedQuestions.includes(question.id));
 
-    // Check if there are no remaining questions
     if (remainingQuestions.length === 0) {
       alert("All questions have been used!");
       return;
     }
 
-    // Select a random question from the remaining ones
     const questionData = remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
-
-    // Store the asked question ID to prevent repetition
     storeAskedQuestion(questionData.id);
 
-    // Populate the question text in the DOM
     const questionElement = document.getElementById('question');
     questionElement.textContent = questionData.question;
 
-    // Prepare answers by combining correct and incorrect answers
     const allAnswers = [...questionData.incorrect_answers, questionData.answer];
-
-    // Shuffle the answers to randomize their order
     shuffleArray(allAnswers);
 
-    // Get answer choice elements and set up button states
     const answerChoices = document.querySelectorAll('#answer-choices li');
     const submitButton = document.getElementById('submit');
-    submitButton.classList.remove('active'); // Ensure the button is hidden initially
-    submitButton.disabled = true; // Initially disable the submit button
+    submitButton.classList.remove('active');
+    submitButton.disabled = true;
 
-    // Populate answer choices and set up event listeners for selection
     answerChoices.forEach((choice, index) => {
       choice.textContent = allAnswers[index];
       choice.dataset.answer = allAnswers[index];
 
-      // Add click event listener to each choice
       choice.addEventListener('click', () => {
         answerChoices.forEach(c => c.classList.remove('selected'));
         choice.classList.add('selected');
-
-        // Enable and show the submit button
         submitButton.disabled = false;
         submitButton.classList.add('active');
       });
     });
-
-    let currentTimer;
 
     // Start the timer for the question countdown
     const timerElement = document.getElementById('timer');
@@ -63,46 +56,39 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
-      clearInterval(currentTimer); // Stop the timer when the answer is submitted
+      clearCurrentTimer(); // Stop the timer when the answer is submitted
       const selectedChoice = document.querySelector('.selected');
-      if (!selectedChoice) return; // Prevent submission without a selection
+      if (!selectedChoice) return;
 
       const feedback = document.createElement('p');
-      feedback.classList.add('feedback'); // Add feedback styling class
+      feedback.classList.add('feedback');
 
-      // Retrieve the game state and determine the current team
       const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
 
-      // Check if the selected answer is correct
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
         feedback.classList.add('correct');
-        gameState[currentTeam].score += 1; // Increment the score for the current team
+        gameState[currentTeam].score += 1;
       } else {
         feedback.textContent = 'Incorrect';
         feedback.classList.add('incorrect');
       }
 
-      // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
         endGame(gameState, currentTeam, questionData);
-        return; // Exit to prevent reloading the page
+        return;
       }
 
-      // Switch turns to the other team
       gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
-      setStorageWithExpiration("gameState", gameState, 12); // Update game state
+      setStorageWithExpiration("gameState", gameState, 12);
 
-      // Update the scoreboard and highlight the active team
       updateScoreboard(gameState);
       highlightActiveTeam(gameState.currentTeam);
 
-      // Replace the content block with the next question or content
       const questionBlock = document.getElementById('question-block');
 
       if (questionData.content) {
-        // Display YouTube iframe if content exists
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -118,7 +104,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
           </div>
         `;
       } else {
-        // Fallback image if content is unavailable
         questionBlock.innerHTML = `
           <div class="content color0 span-3-75" style="margin:0 auto;">
             <p class="feedback ${feedback.classList.contains('correct') ? 'correct' : 'incorrect'}">
@@ -130,7 +115,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         `;
       }
 
-      // Reload the page for the next question
       document.getElementById('next').addEventListener('click', () => {
         location.reload();
       });
@@ -138,64 +122,24 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   })
   .catch(error => console.error('Error loading questions:', error));
 
-// Function to end the game
-function endGame(gameState, winningTeam, questionData) {
-  const questionBlock = document.getElementById('question-block');
-
-  // Check if questionData contains content to display
-  const iframeContent = questionData?.content
-    ? `<iframe width="560" height="315" 
-          src="${questionData.content}&autoplay=1" 
-          title="YouTube video player" frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-       </iframe>` 
-    : `<p>No content available for this question.</p>`;
-
-  // Render the game-over screen
-  questionBlock.innerHTML = `
-    <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
-      <h2>Game Over</h2>
-      <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
-      ${iframeContent}
-      <button id="restart">Restart Game</button>
-    </div>
-  `;
-
-  updateScoreboard(gameState); // Update scoreboard with final scores
-
-  // Clear game state and restart
-  document.getElementById('restart').addEventListener('click', () => {
-    localStorage.removeItem("gameState");
-    localStorage.removeItem("askedQuestions");
-    location.reload();
-  });
-}
-
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
-  if (!timerElement) return; // Exit if the timer element is missing
+  if (!timerElement) return;
+
+  clearCurrentTimer();
 
   timerElement.textContent = seconds;
-
-  if (typeof currentTimer !== 'undefined') {
-    clearInterval(currentTimer); // Clear any existing timer
-  }
-
   currentTimer = setInterval(() => {
     seconds--;
     timerElement.textContent = seconds;
 
     if (seconds <= 0) {
-      clearInterval(currentTimer);
+      clearCurrentTimer();
       callback();
     }
   }, 1000);
 }
-
-// Other functions remain unchanged...
-
 
 // Function to switch to the steal phase
 function switchToSteal(questionData) {
@@ -208,28 +152,28 @@ function switchToSteal(questionData) {
 
   let messageElement = document.getElementById('message');
   if (!messageElement) {
-      messageElement = document.createElement('div');
-      messageElement.id = 'message';
-      document.getElementById('scoreboard-container').appendChild(messageElement);
+    messageElement = document.createElement('div');
+    messageElement.id = 'message';
+    document.getElementById('scoreboard-container').appendChild(messageElement);
   }
   messageElement.textContent = "It's your chance to steal the point!";
 
   startCountdown(10, () => {
-      const submitButton = document.getElementById('submit');
-      submitButton.textContent = "Time's up";
-      submitButton.disabled = true;
-      setTimeout(() => {
-          const questionBlock = document.getElementById('question-block');
-          questionBlock.innerHTML = `
-              <div class="content color0 span-3-75" style="margin:0 auto;">
-                  <p class="feedback incorrect">Time's up</p>
-                  <button id="next">Next</button>
-              </div>
-          `;
-          document.getElementById('next').addEventListener('click', () => {
-              location.reload();
-          });
-      }, 2000);
+    const submitButton = document.getElementById('submit');
+    submitButton.textContent = "Time's up";
+    submitButton.disabled = true;
+    setTimeout(() => {
+      const questionBlock = document.getElementById('question-block');
+      questionBlock.innerHTML = `
+        <div class="content color0 span-3-75" style="margin:0 auto;">
+          <p class="feedback incorrect">Time's up</p>
+          <button id="next">Next</button>
+        </div>
+      `;
+      document.getElementById('next').addEventListener('click', () => {
+        location.reload();
+      });
+    }, 2000);
   });
 }
 
