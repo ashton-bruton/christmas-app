@@ -61,17 +61,29 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
 
     // Add event listener for the submit button
     submitButton.addEventListener('click', () => {
-      clearInterval(currentTimer); // Stop the timer when the answer is submitted
+      // Clear the timer interval
+      clearInterval(currentTimer);
+    
+      // Remove or hide the timer
+      const timerElement = document.getElementById('timer');
+      if (timerElement) {
+        // Option 1: Remove the timer from the DOM
+        // timerElement.remove();
+    
+        // Option 2: Hide the timer
+        timerElement.style.display = 'none';
+      }
+    
       const selectedChoice = document.querySelector('.selected');
       if (!selectedChoice) return; // Prevent submission without a selection
-
+    
       const feedback = document.createElement('p');
       feedback.classList.add('feedback'); // Add feedback styling class
-
+    
       // Retrieve the game state and determine the current team
       const gameState = getStorageWithExpiration("gameState");
       const currentTeam = gameState.currentTeam;
-
+    
       // Check if the selected answer is correct
       if (selectedChoice.dataset.answer === questionData.answer) {
         feedback.textContent = 'Correct';
@@ -81,24 +93,24 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
         feedback.textContent = 'Incorrect';
         feedback.classList.add('incorrect');
       }
-
+    
       // Check if the current team has reached the target score
       if (gameState[currentTeam].score >= gameState.playTo) {
         endGame(gameState, currentTeam, questionData);
         return; // Exit to prevent reloading the page
       }
-
+    
       // Switch turns to the other team
       gameState.currentTeam = currentTeam === "teamRed" ? "teamBlue" : "teamRed";
       setStorageWithExpiration("gameState", gameState, 12); // Update game state
-
+    
       // Update the scoreboard and highlight the active team
       updateScoreboard(gameState);
       highlightActiveTeam(gameState.currentTeam);
-
+    
       // Replace the content block with the next question or content
       const questionBlock = document.getElementById('question-block');
-
+    
       if (questionData.content) {
         // Display YouTube iframe if content exists
         questionBlock.innerHTML = `
@@ -127,14 +139,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
           </div>
         `;
       }
-
+    
       // Reload the page for the next question
       document.getElementById('next').addEventListener('click', () => {
         location.reload();
       });
-    });
-  })
-  .catch(error => console.error('Error loading questions:', error));
+    });    
 
 // Function to end the game
 function endGame(gameState, winningTeam, questionData) {
