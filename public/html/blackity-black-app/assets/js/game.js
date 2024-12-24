@@ -52,22 +52,12 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
       });
     });
 
-    let currentTimer;
-
-    // Check if the game state is "start" and initialize the countdown timer
+    // Start the timer only if the game state is "start"
     const gameState = getStorageWithExpiration("gameState");
-    const timerElement = document.getElementById('timer');
-
     if (gameState && gameState.status === "start") {
-      // Clear any existing timer and start a new one
-      if (currentTimer) clearInterval(currentTimer);
-
       startCountdown(15, () => {
         switchToSteal(questionData);
       });
-    } else {
-      // Clear the timer display if the game hasn't started
-      if (timerElement) timerElement.textContent = "";
     }
 
     // Add event listener for the submit button
@@ -146,16 +136,51 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   })
   .catch(error => console.error('Error loading questions:', error));
 
+// Function to end the game
+function endGame(gameState, winningTeam, questionData) {
+  const questionBlock = document.getElementById('question-block');
+
+  // Check if questionData contains content to display
+  const iframeContent = questionData?.content
+    ? `<iframe width="560" height="315" 
+          src="${questionData.content}&autoplay=1" 
+          title="YouTube video player" frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+       </iframe>` 
+    : `<p>No content available for this question.</p>`;
+
+  // Render the game-over screen
+  questionBlock.innerHTML = `
+    <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
+      <h2>Game Over</h2>
+      <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
+      ${iframeContent}
+      <button id="restart">Restart Game</button>
+    </div>
+  `;
+
+  updateScoreboard(gameState); // Update scoreboard with final scores
+
+  // Clear game state and restart
+  document.getElementById('restart').addEventListener('click', () => {
+    localStorage.removeItem("gameState");
+    localStorage.removeItem("askedQuestions");
+    location.reload();
+  });
+}
+
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
   if (!timerElement) return; // Exit if the timer element is missing
 
-  // Clear any existing timer
-  clearInterval(currentTimer);
-
-  // Initialize countdown
   timerElement.textContent = seconds;
+
+  if (typeof currentTimer !== 'undefined') {
+    clearInterval(currentTimer); // Clear any existing timer
+  }
+
   currentTimer = setInterval(() => {
     seconds--;
     timerElement.textContent = seconds;
@@ -166,9 +191,6 @@ function startCountdown(seconds, callback) {
     }
   }, 1000);
 }
-
-// The rest of the helper functions remain unchanged...
-
 
 // Function to switch to the steal phase
 function switchToSteal(questionData) {
