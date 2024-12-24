@@ -125,6 +125,25 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
   })
   .catch(error => console.error('Error loading questions:', error));
 
+// Function to end the game
+function endGame(gameState, winningTeam, questionData) {
+  const questionBlock = document.getElementById('question-block');
+
+  questionBlock.innerHTML = `
+    <div class="content color0 span-3-75" style="margin:0 auto; text-align: center;">
+      <h2>Game Over</h2>
+      <p>${gameState[winningTeam].name} wins with a score of ${gameState[winningTeam].score}!</p>
+      <button id="restart">Restart Game</button>
+    </div>
+  `;
+
+  document.getElementById('restart').addEventListener('click', () => {
+    localStorage.removeItem("gameState");
+    localStorage.removeItem("askedQuestions");
+    location.reload();
+  });
+}
+
 // Function to start the countdown timer
 function startCountdown(seconds, callback) {
   const timerElement = document.getElementById('timer');
@@ -146,9 +165,6 @@ function startCountdown(seconds, callback) {
     }
   }, 1000);
 }
-
-// Other helper functions remain unchanged...
-
 
 // Function to switch to the steal phase
 function switchToSteal(questionData) {
@@ -259,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
       teamBlue: { name: teamBlueName, score: 0 },
       currentTeam: "teamRed",
       playTo,
+      status: "start",
     };
 
     setStorageWithExpiration("gameState", initialGameState, 12);
