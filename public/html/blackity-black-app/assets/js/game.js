@@ -55,8 +55,6 @@ fetch('https://christmas-app-e9bf7.web.app/html/blackity-black-app/assets/json/q
     let currentTimer;
 
     // Start the timer for the question countdown
-    const timerElement = document.getElementById('timer');
-    timerElement.style.display = 'block';
     startCountdown(15, () => {
       switchToSteal(questionData);
     });
@@ -193,9 +191,6 @@ function startCountdown(seconds, callback) {
     }
   }, 1000);
 }
-
-// Other functions remain unchanged...
-
 
 // Function to switch to the steal phase
 function switchToSteal(questionData) {
